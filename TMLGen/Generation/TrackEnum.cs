@@ -1,0 +1,36 @@
+﻿namespace TMLGen.Generation
+{
+    public enum TrackEnum
+    {
+        TimelineActorPropertiesReflection,
+        TLAnimation,
+        TLAtmosphereAndLighting,
+        TLAttitudeEvent,
+        TLCameraDoF,
+        TLCameraExposure,
+        TLCameraFoV,
+        TLCameraLookAt,
+        TLEffectPhaseEvent,
+        TLEmotionEvent,
+        TLGenomeTextEvent,
+        TLHandsIK,
+        TLLookAtEvent,
+        TLMaterial,
+        TLPhysics,
+        TLPlayEffectEvent,
+        TLPlayRate,
+        TLShapeshift,
+        TLShot,
+        TLShowArmor,
+        TLShowPeanuts,
+        TLShowVisual,
+        TLShowWeapon,
+        TLSoundEvent,
+        TLSplatter,
+        TLSprings,
+        TLSwitchLocation,
+        TLSwitchStage,
+        TLTransform,
+        TLVoice
+    }
+}

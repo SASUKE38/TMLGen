@@ -1,0 +1,38 @@
+﻿namespace TMLGen.Models.Track.Component
+{
+    public enum VocalTypeEnum
+    {
+        VOCALTYPE_None,
+        VOCALTYPE_Attack,
+        VOCALTYPE_Death,
+        VOCALTYPE_Dodge,
+        VOCALTYPE_Pain,
+        VOCALTYPE_Anticipation,
+        VOCALTYPE_Fall,
+        VOCALTYPE_Shout,
+        VOCALTYPE_Spawn,
+        VOCALTYPE_Alert,
+        VOCALTYPE_Angry,
+        VOCALTYPE_Awake,
+        VOCALTYPE_Bored,
+        VOCALTYPE_Victory,
+        VOCALTYPE_Reborn,
+        VOCALTYPE_Relaxed,
+        VOCALTYPE_Snore,
+        VOCALTYPE_Exhausted,
+        VOCALTYPE_Efforts,
+        VOCALTYPE_Initiative,
+        VOCALTYPE_Weak,
+        VOCALTYPE_Laughter,
+        VOCALTYPE_Recover,
+        VOCALTYPE_Buff,
+        VOCALTYPE_Idle1,
+        VOCALTYPE_Idle2,
+        VOCALTYPE_Idle3,
+        VOCALTYPE_IdleCombat1,
+        VOCALTYPE_IdleCombat2,
+        VOCALTYPE_IdleCombat3,
+        VOCALTYPE_Gasp,
+        VOCALTYPE_LaughterManiacal
+    }
+}
