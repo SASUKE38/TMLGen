@@ -36,6 +36,7 @@ namespace TMLGen
             public string templateDirectory;
             public string outputPath;
             public bool manual;
+            public bool separateAnimations;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -143,7 +144,8 @@ namespace TMLGen
                     dbFile = dbFile,
                     templateDirectory = templateDirectory,
                     outputPath = textBoxOutput.Text,
-                    manual = checkBoxManual.Checked
+                    manual = checkBoxManual.Checked,
+                    separateAnimations = checkBoxSeparateAnimations.Checked
                 };
                 buttonGenerate.Enabled = false;
                 WriteSettingsToCache();
@@ -235,7 +237,7 @@ namespace TMLGen
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             GenerationArgs args = (GenerationArgs)e.Argument;
-            e.Result = GenerationDriver.DoGeneration(args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.templateDirectory, args.outputPath, args.manual);
+            e.Result = GenerationDriver.DoGeneration(args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.templateDirectory, args.outputPath, args.manual, args.separateAnimations);
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -268,6 +270,7 @@ namespace TMLGen
                     textBoxTT.Text = cache.templatePath;
                     textBoxOutput.Text = cache.outputPath;
                     checkBoxManual.Checked = cache.manual;
+                    checkBoxSeparateAnimations.Checked = cache.separateAnimations;
                 }
             }
         }
@@ -279,7 +282,7 @@ namespace TMLGen
 
         private void WriteSettingsToCache()
         {
-            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxData.Text, textBoxTT.Text, textBoxOutput.Text, checkBoxManual.Checked));
+            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxData.Text, textBoxTT.Text, textBoxOutput.Text, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked));
         }
     }
 }

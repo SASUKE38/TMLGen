@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TMLGen.Forms.Cache
+﻿namespace TMLGen.Forms.Cache
 {
     public class Cache
     {
@@ -15,6 +9,7 @@ namespace TMLGen.Forms.Cache
         public string templatePath;
         public string outputPath;
         public bool manual;
+        public bool separateAnimations;
 
         public Cache()
         {
@@ -25,9 +20,10 @@ namespace TMLGen.Forms.Cache
             templatePath = string.Empty;
             outputPath = string.Empty;
             manual = false;
+            separateAnimations = true;
         }
 
-        public Cache(string sourcePath, string gdtPath, string dbPath, string dataPath, string templatePath, string outputPath, bool manual)
+        public Cache(string sourcePath, string gdtPath, string dbPath, string dataPath, string templatePath, string outputPath, bool manual, bool separateAnimations)
         {
             this.sourcePath = sourcePath;
             this.gdtPath = gdtPath;
@@ -36,6 +32,7 @@ namespace TMLGen.Forms.Cache
             this.templatePath = templatePath;
             this.outputPath = outputPath;
             this.manual = manual;
+            this.separateAnimations = separateAnimations;
         }
     }
 }

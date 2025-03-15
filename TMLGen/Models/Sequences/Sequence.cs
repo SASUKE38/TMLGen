@@ -44,6 +44,8 @@ namespace TMLGen.Models.Sequences
         [XmlIgnore]
         public Dictionary<(Guid groupId, Guid actorId), Dictionary<Guid, List<(float startTime, float endTime)>>> usedMaterialTimings;
         [XmlIgnore]
+        public Dictionary<(Guid groupId, Guid actorId), Dictionary<Guid, List<(float startTime, float endTime)>>> usedAnimationTimings;
+        [XmlIgnore]
         public Dictionary<Guid, int> discoveredSoundEvents;
 
         public Sequence()
@@ -64,6 +66,7 @@ namespace TMLGen.Models.Sequences
             componentDict = [];
             lsfStartTime = 0f;
             usedMaterialTimings = [];
+            usedAnimationTimings = [];
             discoveredSoundEvents = [];
         }
 

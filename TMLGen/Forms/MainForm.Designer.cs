@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             buttonGenerate = new System.Windows.Forms.Button();
             openFileDialogSource = new System.Windows.Forms.OpenFileDialog();
             buttonSourceBrowse = new System.Windows.Forms.Button();
@@ -56,6 +57,7 @@
             buttonOutputBrowse = new System.Windows.Forms.Button();
             textBoxOutput = new System.Windows.Forms.TextBox();
             toolTip = new System.Windows.Forms.ToolTip(components);
+            checkBoxSeparateAnimations = new System.Windows.Forms.CheckBox();
             formConsole = new System.Windows.Forms.RichTextBox();
             labelConsole = new System.Windows.Forms.Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -63,7 +65,7 @@
             // 
             // buttonGenerate
             // 
-            buttonGenerate.Location = new System.Drawing.Point(12, 329);
+            buttonGenerate.Location = new System.Drawing.Point(12, 341);
             buttonGenerate.Name = "buttonGenerate";
             buttonGenerate.Size = new System.Drawing.Size(679, 40);
             buttonGenerate.TabIndex = 0;
@@ -92,6 +94,7 @@
             textBoxSource.Name = "textBoxSource";
             textBoxSource.Size = new System.Drawing.Size(598, 23);
             textBoxSource.TabIndex = 1;
+            toolTip.SetToolTip(textBoxSource, resources.GetString("textBoxSource.ToolTip"));
             // 
             // labelSource
             // 
@@ -120,6 +123,7 @@
             textBoxGDT.Name = "textBoxGDT";
             textBoxGDT.Size = new System.Drawing.Size(598, 23);
             textBoxGDT.TabIndex = 4;
+            toolTip.SetToolTip(textBoxGDT, resources.GetString("textBoxGDT.ToolTip"));
             // 
             // labelGDT
             // 
@@ -149,6 +153,7 @@
             textBoxDB.Name = "textBoxDB";
             textBoxDB.Size = new System.Drawing.Size(598, 23);
             textBoxDB.TabIndex = 7;
+            toolTip.SetToolTip(textBoxDB, resources.GetString("textBoxDB.ToolTip"));
             // 
             // buttonTTBrowse
             // 
@@ -178,6 +183,7 @@
             textBoxTT.Name = "textBoxTT";
             textBoxTT.Size = new System.Drawing.Size(598, 23);
             textBoxTT.TabIndex = 7;
+            toolTip.SetToolTip(textBoxTT, resources.GetString("textBoxTT.ToolTip"));
             // 
             // labelTT
             // 
@@ -192,11 +198,12 @@
             // checkBoxManual
             // 
             checkBoxManual.AutoSize = true;
-            checkBoxManual.Location = new System.Drawing.Point(12, 236);
+            checkBoxManual.Location = new System.Drawing.Point(12, 280);
             checkBoxManual.Name = "checkBoxManual";
             checkBoxManual.Size = new System.Drawing.Size(306, 19);
             checkBoxManual.TabIndex = 9;
             checkBoxManual.Text = "Manually select GDT file, DB file, and templates folder";
+            toolTip.SetToolTip(checkBoxManual, "Select which timeline data files to use manually.");
             checkBoxManual.UseVisualStyleBackColor = true;
             checkBoxManual.CheckedChanged += checkBox1_CheckedChanged;
             // 
@@ -225,6 +232,7 @@
             textBoxData.Name = "textBoxData";
             textBoxData.Size = new System.Drawing.Size(598, 23);
             textBoxData.TabIndex = 11;
+            toolTip.SetToolTip(textBoxData, "The path to the top level of your unpacked data, such as that extracted by the BG3 Modder's Multitool.\r\nExample: F:\\BG3Multitool\\UnpackedData");
             // 
             // openFileDialogGDT
             // 
@@ -241,7 +249,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(12, 269);
+            label6.Location = new System.Drawing.Point(12, 233);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(69, 15);
             label6.TabIndex = 15;
@@ -249,7 +257,7 @@
             // 
             // buttonOutputBrowse
             // 
-            buttonOutputBrowse.Location = new System.Drawing.Point(616, 287);
+            buttonOutputBrowse.Location = new System.Drawing.Point(616, 251);
             buttonOutputBrowse.Name = "buttonOutputBrowse";
             buttonOutputBrowse.Size = new System.Drawing.Size(75, 23);
             buttonOutputBrowse.TabIndex = 13;
@@ -259,10 +267,29 @@
             // 
             // textBoxOutput
             // 
-            textBoxOutput.Location = new System.Drawing.Point(12, 287);
+            textBoxOutput.Location = new System.Drawing.Point(12, 251);
             textBoxOutput.Name = "textBoxOutput";
             textBoxOutput.Size = new System.Drawing.Size(598, 23);
             textBoxOutput.TabIndex = 14;
+            // 
+            // toolTip
+            // 
+            toolTip.AutoPopDelay = 5000;
+            toolTip.InitialDelay = 500;
+            toolTip.ReshowDelay = 10;
+            // 
+            // checkBoxSeparateAnimations
+            // 
+            checkBoxSeparateAnimations.AutoSize = true;
+            checkBoxSeparateAnimations.Checked = true;
+            checkBoxSeparateAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxSeparateAnimations.Location = new System.Drawing.Point(12, 304);
+            checkBoxSeparateAnimations.Name = "checkBoxSeparateAnimations";
+            checkBoxSeparateAnimations.Size = new System.Drawing.Size(305, 19);
+            checkBoxSeparateAnimations.TabIndex = 18;
+            checkBoxSeparateAnimations.Text = "Separate overlapping animations into different tracks";
+            toolTip.SetToolTip(checkBoxSeparateAnimations, "Animations will be moved to their own track if they overlap.\r\nThis can reduce crashes in the editor, but could significantly\r\nincrease the track count.");
+            checkBoxSeparateAnimations.UseVisualStyleBackColor = true;
             // 
             // formConsole
             // 
@@ -295,6 +322,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(704, 566);
+            Controls.Add(checkBoxSeparateAnimations);
             Controls.Add(labelConsole);
             Controls.Add(formConsole);
             Controls.Add(label6);
@@ -360,6 +388,7 @@
         private System.Windows.Forms.Label labelConsole;
         public System.Windows.Forms.RichTextBox formConsole;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.CheckBox checkBoxSeparateAnimations;
     }
 }
 

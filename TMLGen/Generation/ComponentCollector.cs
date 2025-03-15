@@ -21,12 +21,15 @@ namespace TMLGen.Generation
         private readonly XElement dbNodes;
         private readonly Dictionary<int, List<TrackBase>> globalTrackMapping = [];
         private readonly Dictionary<(Guid, Guid), List<ComponentTrackMaterial>> otherMaterialTracks = [];
+        private readonly Dictionary<(Guid, Guid), List<ComponentTrackAnimation>> animationTracks = [];
         private readonly Dictionary<Guid, int> totalSoundEvents = [];
         private readonly List<ComponentTrackSoundEvent> globalSoundEventTracks = [];
+        private static bool separateOverlappingAnimations;
 
-        public ComponentCollector(XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
+        public ComponentCollector(XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations) : base(doc, gdtDoc, timeline)
         {
             dbNodes = dbDoc.XPathSelectElement("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children");
+            separateOverlappingAnimations = separateAnimations;
         }
 
         public override void Collect()
@@ -386,6 +389,58 @@ namespace TMLGen.Generation
             }
         }
 
+        // Combine this animation separation stuff with the material track logic
+        private ComponentAnimation GetSeparatedAnimationComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer)
+        {
+            float startTime = ExtractFloat(componentData.XPathSelectElement("./attribute[@id='StartTime']")) ?? 0f;
+            float endTime = ExtractFloat(componentData.XPathSelectElement("./attribute[@id='EndTime']")) ?? 0f;
+
+            try
+            {
+                ActorTrackBase actorTrack = trackMapping[actorId];
+                int trackKey = (int)TrackEnum.TLAnimation;
+                trackId = ExtractGuid(componentData.XPathSelectElement("./attribute[@id='AnimationGroup']")) ?? Guid.NewGuid();
+                if (!actorTrack.actorChildTracks.TryGetValue(trackKey, out List<TrackBase> trackList))
+                {
+                    ComponentTrackAnimation newTrack = GetNewAnimationTrack(componentData, trackId);
+                    actorTrack.actorChildTracks.Add(trackKey, [newTrack]);
+                    actorTrack.Tracks.Add(newTrack);
+                    animationTracks.Add((trackId, actorId), [newTrack]);
+                    var val = new Dictionary<Guid, List<(float startTime, float endTime)>> { { newTrack.TrackId, [(startTime, endTime)] } };
+                    seq.usedAnimationTimings.Add((trackId, actorId), val);
+                }
+                else if (!animationTracks.TryGetValue((trackId, actorId), out List<ComponentTrackAnimation> actorMaterialTracks))
+                {
+                    ComponentTrackAnimation newTrack = GetNewAnimationTrack(componentData, trackId);
+                    trackList.Add(newTrack);
+                    actorTrack.Tracks.Add(newTrack);
+                    animationTracks.Add((trackId, actorId), [newTrack]);
+                    var val = new Dictionary<Guid, List<(float startTime, float endTime)>> { { newTrack.TrackId, [(startTime, endTime)] } };
+                    seq.usedAnimationTimings.Add((trackId, actorId), val);
+                }
+                else
+                {
+                    ComponentTrackAnimation selectedTrack = GetCompatibleAnimationTrack(componentData, seq, trackId, actorId, startTime, endTime);
+                    if (selectedTrack == null)
+                    {
+                        selectedTrack = GetNewAnimationTrack(componentData, trackId);
+                        selectedTrack.TrackId = Guid.NewGuid();
+                        trackList.Add(selectedTrack);
+                        actorTrack.Tracks.Add(selectedTrack);
+                        animationTracks[(trackId, actorId)].Add(selectedTrack);
+                        var newTimingMap = seq.usedAnimationTimings[(trackId, actorId)];
+                        newTimingMap.Add(selectedTrack.TrackId, [(startTime, endTime)]);
+                    }
+                    trackId = selectedTrack.TrackId;
+                }
+                return GetComponentInternal<ComponentAnimation>(trackId, componentData, seq, out curContainer);
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+        }
+
         private static ComponentTrackAnimation GetNewAnimationTrack(XElement componentData, Guid trackId)
         {
             ComponentTrackAnimation newTrack = new() { TrackId = trackId };
@@ -395,6 +450,32 @@ namespace TMLGen.Generation
                 newTrack.SlotId = value;
             }
             return newTrack;
+        }
+
+        private ComponentTrackAnimation GetCompatibleAnimationTrack(XElement componentData, Sequence seq, Guid groupId, Guid actorId, float startTime, float endTime)
+        {
+            if (!seq.usedAnimationTimings.TryGetValue((groupId, actorId), out Dictionary<Guid, List<(float startTime, float endTime)>> idDict))
+            {
+                ComponentTrackAnimation selected = animationTracks[(groupId, actorId)][0];
+                var val = new Dictionary<Guid, List<(float startTime, float endTime)>> { { selected.TrackId, [(startTime, endTime)] } };
+                seq.usedAnimationTimings.Add((groupId, actorId), val);
+                return selected;
+            }
+            else
+            {
+                foreach (ComponentTrackAnimation track in animationTracks[(groupId, actorId)])
+                {
+                    if (idDict.TryGetValue(track.TrackId, out List<(float startTime, float endTime)> timeList))
+                    {
+                        if (IsTrackTimingValid(timeList, startTime, endTime))
+                        {
+                            timeList.Add((startTime, endTime));
+                            return track;
+                        }
+                    }
+                }
+                return null;
+            }
         }
 
         private ComponentMaterial GetMaterialComponent(Guid actorId, XElement componentData, Sequence seq, out ComponentTrackMaterial trackToUse, out Guid trackId, out ComponentContainer curContainer)
@@ -517,7 +598,7 @@ namespace TMLGen.Generation
                 {
                     if (idDict.TryGetValue(track.TrackId, out List<(float startTime, float endTime)> timeList))
                     {
-                        if (IsMaterialTrackTimingValid(timeList, startTime, endTime))
+                        if (IsTrackTimingValid(timeList, startTime, endTime))
                         {
                             timeList.Add((startTime, endTime));
                             return track;
@@ -528,11 +609,11 @@ namespace TMLGen.Generation
             }
         }
 
-        private static bool IsMaterialTrackTimingValid(List<(float startTime, float endTime)> timeList, float start, float end)
+        private static bool IsTrackTimingValid(List<(float startTime, float endTime)> timeList, float startA, float endA)
         {
-            foreach ((float startTime, float endTime) timePair in timeList)
-            { 
-                if ((start > timePair.startTime && start < timePair.endTime) || (end > timePair.startTime && end < timePair.endTime))
+            foreach ((float startB, float endB) in timeList)
+            {
+                if (startA < endB && startB < endA)
                 {
                     return false;
                 }
@@ -942,14 +1023,15 @@ namespace TMLGen.Generation
 
         // TLAnimation, TLAdditiveAnimation, TLLayeredAnimation
 
-        private static void HandleTLAnimation(XElement componentData, Sequence seq, object animType)
+        private void HandleTLAnimation(XElement componentData, Sequence seq, object animType)
         {
             Guid? actorId = GetComponentActor(componentData);
             if (actorId.HasValue)
             {
-                ComponentAnimation curComponent =
-                    GetAnimationComponent((Guid) actorId, componentData, seq, out Guid trackId, out ComponentContainer curContainer);
-
+                ComponentAnimation curComponent = separateOverlappingAnimations ? 
+                    GetSeparatedAnimationComponent((Guid)actorId, componentData, seq, out Guid trackId, out ComponentContainer curContainer) : 
+                    GetAnimationComponent((Guid)actorId, componentData, seq, out trackId, out curContainer);
+                
                 curComponent.IsInfinite = false;
                 curComponent.AnimationSourceId = ExtractGuid(componentData.XPathSelectElement("./attribute[@id='AnimationSourceId']")) ?? Guid.Empty;
                 curComponent.PlayRate = ExtractDouble(componentData.XPathSelectElement("./attribute[@id='AnimationPlayRate']")) ?? curComponent.PlayRate;

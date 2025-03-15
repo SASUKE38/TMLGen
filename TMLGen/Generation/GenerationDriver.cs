@@ -12,7 +12,7 @@ namespace TMLGen.Generation
 {
     public static class GenerationDriver
     {
-        public static int DoGeneration(string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string templatePath, string outputPath, bool extraPathsGiven)
+        public static int DoGeneration(string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string templatePath, string outputPath, bool extraPathsGiven, bool separateAnimations)
         {
             LoggingHelper.Write("Starting generation...");
             if (!extraPathsGiven)
@@ -66,7 +66,8 @@ namespace TMLGen.Generation
                 XDocument.Load(sourcePath),
                 XDocument.Load(gdtPath),
                 XDocument.Load(dbPath),
-                t);
+                t,
+                separateAnimations);
             LoggingHelper.Write("Collecting timeline settings...");
             ts.Collect();
             LoggingHelper.Write("Collecting actor data...");
