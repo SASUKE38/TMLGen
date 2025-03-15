@@ -473,6 +473,11 @@ namespace TMLGen.Generation
                             return track;
                         }
                     }
+                    else if (timeList == null)
+                    {
+                        idDict[track.TrackId] = [(startTime, endTime)];
+                        return track;
+                    }
                 }
                 return null;
             }
@@ -603,6 +608,11 @@ namespace TMLGen.Generation
                             timeList.Add((startTime, endTime));
                             return track;
                         }
+                    }
+                    else if (timeList == null)
+                    {
+                        idDict[track.TrackId] = [(startTime, endTime)];
+                        return track;
                     }
                 }
                 return null;

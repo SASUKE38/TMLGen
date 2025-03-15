@@ -53,10 +53,10 @@ namespace TMLGen.Models.Component
 
         public ComponentBase()
         {
-            Channel = new List<Channel>();
+            Channel = [];
             TimeStart = 0f;
             TimeDuration = 1f;
-            IsInfinite = true;
+            IsInfinite = false;
         }
     }
 }
