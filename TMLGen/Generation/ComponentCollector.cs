@@ -24,6 +24,7 @@ namespace TMLGen.Generation
         private readonly Dictionary<(Guid, Guid), List<ComponentTrackAnimation>> animationTracks = [];
         private readonly Dictionary<Guid, int> totalSoundEvents = [];
         private readonly List<ComponentTrackSoundEvent> globalSoundEventTracks = [];
+        private readonly HashSet<string> foundUnsupportedComponentTypes = [];
         private static bool separateOverlappingAnimations;
 
         public ComponentCollector(XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations) : base(doc, gdtDoc, timeline)
@@ -175,6 +176,11 @@ namespace TMLGen.Generation
                                 HandleTLVoice(componentData, seq);
                                 break;
                             default:
+                                if (!foundUnsupportedComponentTypes.Contains(componentType))
+                                {
+                                    LoggingHelper.Write("Timeline contains unsupported component type: " + componentType, 2);
+                                    foundUnsupportedComponentTypes.Add(componentType);
+                                }
                                 break;
                         }
                     }
@@ -1288,9 +1294,9 @@ namespace TMLGen.Generation
             GetImmutableTargetKeyTarget(keyData, keyValue);
             keyValue.TargetBone = ExtractString(keyData.XPathSelectElement("./attribute[@id='Bone']")) ?? keyValue.TargetBone;
             keyValue.TrackingMode = GetNameFromEnum<LookAtTrackingMode>(keyData, "TrackingMode") ?? keyValue.TrackingMode;
-            keyValue.LookAtMode = GetNameFromEnum<LookAtTrackingMode>(keyData, "LookAtMode") ?? keyValue.LookAtMode;
-            keyValue.LookAtInterpMode = GetNameFromEnum<LookAtTrackingMode>(keyData, "LookAtInterpMode") ?? keyValue.LookAtInterpMode;
-            keyValue.TurnMode = GetNameFromEnum<LookAtTrackingMode>(keyData, "TurnMode") ?? keyValue.TurnMode;
+            keyValue.LookAtMode = GetNameFromEnum<LookAtLookAtMode>(keyData, "LookAtMode") ?? keyValue.LookAtMode;
+            keyValue.LookAtInterpMode = GetNameFromEnum<LookAtLookAtInterpMode>(keyData, "LookAtInterpMode") ?? keyValue.LookAtInterpMode;
+            keyValue.TurnMode = GetNameFromEnum<LookAtTurnMode>(keyData, "TurnMode") ?? keyValue.TurnMode;
             keyValue.TurnSpeedMultiplier = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='TurnSpeedMultiplier']")) ?? keyValue.TurnSpeedMultiplier;
             keyValue.TorsoTurnSpeedMultiplier = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='TorsoTurnSpeedMultiplier']")) ?? keyValue.TorsoTurnSpeedMultiplier;
             keyValue.HeadTurnSpeedMultiplier = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='HeadTurnSpeedMultiplier']")) ?? keyValue.HeadTurnSpeedMultiplier;
