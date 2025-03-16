@@ -4,7 +4,7 @@
 
 ## Usage
 
-The tool requires the path to your unpacked game directory (as unpacked by the [Baldur's Gate 3 Modders Multitool](https://github.com/ShinyHobo/BG3-Modders-Multitool)) along with the source file of the timeline you wish to edit.
+The tool requires the path to your unpacked game directory (as unpacked by the [Baldur's Gate 3 Modder's Multitool](https://github.com/ShinyHobo/BG3-Modders-Multitool)) along with the source file of the timeline you wish to edit.
 Additionally, you may select the timeline data to use manually. The definitions below detail the data the tool uses. Note that only the first two are needed for automatic selection; the rest may be ignored.
 - Unpacked Data Directory: Top level of unpacked game data.
 - Source File: .lsf source file of the timeline you wish to edit. Likely located in a Timeline\Generated directory.
@@ -29,9 +29,10 @@ The steps below detail how to link a generated .tml file to its dialog. The edit
 11. Return to the opened dialog.
 12. Open the timeline.
 
-## Known Limitations
+## Known Limitations and Workarounds
 
 - The tool currently has only been tested on the "Generic NPC Dialog" category, which encompasses most dialogs. World/Behavior dialog is not yet supported.
+- Generation does not give actors descriptive names, relying instead on names like "Additional 2" or "Initiator 1." You can find their actual names by referencing the dialog's speaker list or by hovering over the actor's track.
 - Slot materials might not work correctly as is. To overcome this, try the following steps:
   1. Select the actor that owns the slot material.
   2. Locate the Visual Resource ID property in the sidebar and copy the associated GUID.
