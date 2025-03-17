@@ -268,7 +268,7 @@ namespace TMLGen.Generation
                 Quat rotation = ExtractQuat(transformData.XPathSelectElement("./attribute[@id='RotationQuat']"));
 
                 if (scale != null && position != null && rotation != null) 
-                    actor.setTransform(rotation, (float) scale, position);
+                    actor.SetTransform(rotation, (float) scale, position);
             }
         }
 

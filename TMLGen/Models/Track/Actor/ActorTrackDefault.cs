@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using TMLGen.Models.Core;
 
@@ -21,9 +17,9 @@ namespace TMLGen.Models.Track.Actor
             this.Type = "ActorTrackDefault";
         }
 
-        public void setTransform(Quat rotation, float scale, Vector3 translate)
+        public void SetTransform(Quat rotation, float scale, Vector3 translate)
         {
-            Transform tra = new Transform(rotation, scale, translate);
+            Transform tra = new(rotation, scale, translate);
             this.InitialTransform = tra.getMatrix().ToString();
         }
     }

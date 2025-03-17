@@ -1498,10 +1498,14 @@ namespace TMLGen.Generation
             foreach (XElement data in cameraData)
             {
                 Guid? actorId = ExtractGuid(data.XPathSelectElement("./attribute[@id='Object']"));
-                if (actorId.HasValue)
+                if (actorId.HasValue && (Guid) actorId != Guid.Empty)
                 {
                     Guid trackId = actorTrackMapping[(Guid)actorId];
                     res.Add(new Camera { CameraId = trackId });
+                }
+                else if ((Guid) actorId == Guid.Empty)
+                {
+                    res.Add(new Camera { CameraId = Guid.Empty });
                 }
             }
             return res;

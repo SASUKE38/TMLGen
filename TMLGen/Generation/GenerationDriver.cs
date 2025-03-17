@@ -22,6 +22,8 @@ namespace TMLGen.Generation
             else
             {
                 gdtPath = PreparationHelper.SaveToLsxFile(gdtPath);
+                gdtPath = PreparationHelper.GetGDTElementFromMerged(gdtPath, Path.GetFileNameWithoutExtension(sourceName));
+
             }
             dbPath = PreparationHelper.SaveToLsxFile(dbPath);
 

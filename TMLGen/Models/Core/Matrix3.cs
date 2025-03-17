@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TMLGen.Models.Core
+﻿namespace TMLGen.Models.Core
 {
     public class Matrix3
     {
@@ -18,47 +12,60 @@ namespace TMLGen.Models.Core
         private readonly float m21;
         private readonly float m22;
 
+        public Matrix3()
+        {
+            m00 = 0f;
+            m01 = 0f;
+            m02 = 0f;
+            m10 = 0f;
+            m11 = 0f;
+            m12 = 0f;
+            m20 = 0f;
+            m21 = 0f;
+            m22 = 0f;
+        }
+
         public Matrix3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
         {
-            this.m00 = 0f;
-            this.m01 = 0f;
-            this.m02 = 0f;
-            this.m10 = 0f;
-            this.m11 = 0f;
-            this.m12 = 0f;
-            this.m20 = 0f;
-            this.m21 = 0f;
-            this.m22 = 0f;
+            this.m00 = m00;
+            this.m01 = m01;
+            this.m02 = m02;
+            this.m10 = m10;
+            this.m11 = m11;
+            this.m12 = m12;
+            this.m20 = m20;
+            this.m21 = m21;
+            this.m22 = m22;
         }
 
         public Matrix3(Vector3 v1, Vector3 v2, Vector3 v3)
         {
-            this.m00 = v1.x;
-            this.m01 = v2.x;
-            this.m02 = v3.x;
-            this.m10 = v1.y;
-            this.m11 = v2.y;
-            this.m12 = v3.y;
-            this.m20 = v1.z;
-            this.m21 = v2.z;
-            this.m22 = v3.z;
+            m00 = v1.x;
+            m01 = v2.x;
+            m02 = v3.x;
+            m10 = v1.y;
+            m11 = v2.y;
+            m12 = v3.y;
+            m20 = v1.z;
+            m21 = v2.z;
+            m22 = v3.z;
         }
 
         public static Matrix3 Rotation(Quat q)
         {
-            float num = q.x + q.x;
-            float num2 = q.y + q.y;
-            float num3 = q.z + q.z;
-            float num4 = q.x * num;
-            float num5 = q.x * num2;
-            float num6 = q.x * num3;
-            float num7 = q.w * num;
-            float num8 = q.y * num2;
-            float num9 = q.y * num3;
-            float num10 = q.w * num2;
-            float num11 = q.z * num3;
-            float num12 = q.w * num3;
-            return new Matrix3(new Vector3(1f - num8 - num11, num5 + num12, num6 - num10), new Vector3(num5 - num12, 1f - num4 - num11, num9 + num7), new Vector3(num6 + num10, num9 - num7, 1f - num4 - num8));
+            float x2 = q.x * 2;
+            float y2 = q.y * 2;
+            float z2 = q.z * 2;
+            float xx2 = q.x * x2;
+            float xy2 = q.x * y2;
+            float xz2 = q.x * z2;
+            float wx2 = q.w * x2;
+            float yy2 = q.y * y2;
+            float yz2 = q.y * z2;
+            float wy2 = q.w * y2;
+            float zz2 = q.z * z2;
+            float wz2 = q.w * z2;
+            return new Matrix3(new Vector3(1f - yy2 - zz2, xy2 + wz2, xz2 - wy2), new Vector3(xy2 - wz2, 1f - xx2 - zz2, yz2 + wx2), new Vector3(xz2 + wy2, yz2 - wx2, 1f - xx2 - yy2));
         }
 
         public Matrix4 ToMatrix4(Vector3 translate, Vector3 scale)

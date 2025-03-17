@@ -54,19 +54,8 @@ namespace TMLGen.Generation
                         if (File.Exists(filePath)) return filePath;
                         if (File.Exists(mergedPath))
                         {
-                            string sourceNameWithoutExtension = Path.GetFileNameWithoutExtension(sourceName);
                             string mergedTempFile = SaveToLsxFile(mergedPath);
-                            XDocument mergedDoc = XDocument.Load(mergedTempFile);
-                            XElement gdtElement = mergedDoc.XPathSelectElement("save/region[@id='TimelineBank']/node[@id='TimelineBank']/children/node[@id='Resource'][attribute[@id='Name'][@value='" + sourceNameWithoutExtension + "']]");
-                            if (gdtElement != null)
-                            {
-                                XAttribute resAtt = new("id", "TimelineBank");
-                                XDocument res =
-                                    new(new XElement("save", new XElement("region", resAtt, new XElement("node", resAtt, new XElement("children", gdtElement)))));
-                                res.Save(mergedTempFile);
-                                return mergedTempFile;
-                            }
-                            File.Delete(mergedTempFile);
+                            return GetGDTElementFromMerged(mergedTempFile, Path.GetFileNameWithoutExtension(sourceName));
                         }
                     }
                     catch (Exception)
@@ -146,6 +135,22 @@ namespace TMLGen.Generation
                     }
                 }
             }
+            return null;
+        }
+
+        public static string GetGDTElementFromMerged(string gdtPath, string name)
+        {
+            XDocument mergedDoc = XDocument.Load(gdtPath);
+            XElement gdtElement = mergedDoc.XPathSelectElement("save/region[@id='TimelineBank']/node[@id='TimelineBank']/children/node[@id='Resource'][attribute[@id='Name'][@value='" + name + "']]");
+            if (gdtElement != null)
+            {
+                XAttribute resAtt = new("id", "TimelineBank");
+                XDocument res =
+                    new(new XElement("save", new XElement("region", resAtt, new XElement("node", resAtt, new XElement("children", gdtElement)))));
+                res.Save(gdtPath);
+                return gdtPath;
+            }
+            File.Delete(gdtPath);
             return null;
         }
     }
