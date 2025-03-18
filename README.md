@@ -60,4 +60,3 @@ The steps below detail how to link a generated .tml file to its dialog. The edit
 ## Known Issues
 
 - Only the first of grouped cinematic nodes appears in the Playlists tab. This can be fixed by opening the dialog and selecting Tools > Timeline > Generate > Refresh.
-- Transform rotations sometimes use values that cross from positive to negative, but this can cause actors to rotate quickly and/or unexpectedly. This can be fixed by replacing the offending value(s) with their equivalent positive/negative value(s).

@@ -48,30 +48,43 @@ namespace TMLGen.Models.Core
 
         public static Vector3 ToEulerAngles(Quat q)
         {
-            Vector3 angles = new();
-
-            // roll / x
-            double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
-            double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
-            angles.x = (float)Math.Atan2(sinr_cosp, cosr_cosp);
-
-            // pitch / y
-            double sinp = 2 * (q.w * q.y - q.z * q.x);
-            if (Math.Abs(sinp) >= 1)
+            Vector3 res = new();
+            float positiveBound = 0.49999995f;
+            float negativeBound = -0.49999995f;
+            float singularityTest = q.z * q.x - q.w * q.y;
+            if (singularityTest > positiveBound || singularityTest < negativeBound)
             {
-                angles.y = (float)Math.CopySign(Math.PI / 2, sinp);
+                res.x = BoundAngle((float) (2 * Math.Atan2(q.x, q.w)));
+                res.y = (float)((singularityTest < negativeBound ? Math.PI : -Math.PI) / 2);
+                res.z = 0f;
             }
             else
             {
-                angles.y = (float)Math.Asin(sinp);
+                float xsq = q.x * q.x;
+                float ysq = q.y * q.y;
+                float zsq = q.z * q.z;
+                res.x = -(float) Math.Atan2((-2f * (q.w * q.x + q.y * q.z)), 1f - 2f * (xsq + ysq));
+                res.y = -(float) Math.Asin(2f * singularityTest);
+                res.z = (float) Math.Atan2(2f * (q.w * q.z + q.x * q.y), 1f - 2f * (ysq + zsq));
+                float xBound = BoundAngle((float)(res.x - Math.PI));
+                float yBound = BoundAngle((float)(Math.PI - res.y));
+                float zBound = BoundAngle((float)(res.z - Math.PI));
+                if (xBound * xBound + yBound * yBound + zBound * zBound < res.x * res.x + res.y * res.y + res.z * res.z)
+                {
+                    res.x = xBound;
+                    res.y = yBound;
+                    res.z = zBound;
+                }
             }
+            return res;
+        }
 
-            // yaw / z
-            double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
-            double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
-            angles.z = (float)Math.Atan2(siny_cosp, cosy_cosp);
-
-            return angles;
+        private static float BoundAngle(float angle)
+        {
+            float pi2 = (float)(2 * Math.PI);
+            if (angle < -Math.PI) angle += pi2;
+            else if (angle > Math.PI) angle -= pi2;
+            return angle;
         }
 
         public string ToAnimationString()
