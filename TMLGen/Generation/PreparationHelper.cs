@@ -1,7 +1,10 @@
 ﻿using LSLib.LS;
 using LSLib.LS.Enums;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -11,6 +14,9 @@ namespace TMLGen.Generation
 {
     public static class PreparationHelper
     {
+        public static List<XDocument> visualFiles = [];
+        public static string[] visualPaths = [];
+
         public static string SaveToLsxFile(string path)
         {
             if (Path.GetExtension(path) == ".lsf")
@@ -31,6 +37,15 @@ namespace TMLGen.Generation
                 }
             }
             return null;
+        }
+
+        public static void SaveToLsxFile(string path, string output)
+        {
+            if (Path.GetExtension(path) == ".lsf")
+            {
+                Resource resource = ResourceUtils.LoadResource(path, ResourceLoadParameters.FromGameVersion(Game.BaldursGate3));
+                ResourceUtils.SaveResource(resource, output, ResourceConversionParameters.FromGameVersion(Game.BaldursGate3));
+            }
         }
 
         public static string FindGeneratedDialogTimelinesFile(string dataDirectory, string sourceName)
@@ -152,6 +167,49 @@ namespace TMLGen.Generation
             }
             File.Delete(gdtPath);
             return null;
+        }
+
+        public static void FindCharacterVisualsFiles(string dataDirectory, string[] extraPaths)
+        {
+            string directoryName = "TmlVisualFilesCache";
+            List<(string prefix, string package)> packageNames = [("Gustav", "GustavDev"), ("Gustav", "Gustav"), ("Shared", "SharedDev"), ("Shared", "Shared")];
+            Directory.CreateDirectory(directoryName);
+            foreach ((string prefix, string package) in packageNames)
+            {
+                try
+                {
+                    string cachePath = Path.Join(directoryName, package + ".lsx");
+                    if (!File.Exists(cachePath))
+                    {
+                        CreateCachedVisualFile(dataDirectory, cachePath, prefix, package);
+                    }
+                    visualFiles.Add(XDocument.Load(cachePath));
+                }
+                catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+                {
+                    LoggingHelper.Write("Couldn't find character visuals file for " + package + ".", 2);
+                }
+            }
+
+            foreach (string path in extraPaths)
+            {
+                if (Path.GetExtension(path) == ".lsf")
+                {
+                    string lsxFile = SaveToLsxFile(path);
+                    visualFiles.Add(XDocument.Load(lsxFile));
+                    visualPaths = (string[])visualPaths.Append(lsxFile);
+                }
+                else
+                {
+                    LoggingHelper.Write("A character visual file is not a .lsf file.", 2);
+                }
+            }
+        }
+
+        private static void CreateCachedVisualFile(string dataDirectory, string cachePath, string packagePrefix, string package)
+        {
+            string filePath = Path.Join([dataDirectory, packagePrefix, "Public", package, "Content", "[PAK]_CharacterVisuals", "_merged.lsf"]);
+            SaveToLsxFile(filePath, Path.GetFullPath(cachePath));
         }
     }
 }

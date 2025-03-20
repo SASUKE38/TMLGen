@@ -345,6 +345,7 @@
             Controls.Add(buttonGDTBrowse);
             Controls.Add(labelGDT);
             Controls.Add(textBoxGDT);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MaximumSize = new System.Drawing.Size(720, 605);
             MinimumSize = new System.Drawing.Size(720, 605);

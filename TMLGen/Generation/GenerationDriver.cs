@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Xml.XPath;
@@ -11,7 +12,7 @@ namespace TMLGen.Generation
 {
     public static class GenerationDriver
     {
-        public static int DoGeneration(string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string templatePath, string outputPath, bool extraPathsGiven, bool separateAnimations)
+        public static int DoGeneration(Form sender, string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string templatePath, string outputPath, bool extraPathsGiven, bool separateAnimations)
         {
             LoggingHelper.Write("Starting generation...");
             if (!extraPathsGiven)
@@ -43,6 +44,8 @@ namespace TMLGen.Generation
                 return 1;
             }
 
+            PreparationHelper.FindCharacterVisualsFiles(dataPath, []);
+
             Root root = new();
             XmlSerializer serializer = new(typeof(Root));
             XmlSerializerNamespaces namespaces = new();
@@ -64,6 +67,7 @@ namespace TMLGen.Generation
                 XDocument.Load(dbPath),
                 t);
             ComponentCollector c = new(
+                sender,
                 XDocument.Load(sourcePath),
                 XDocument.Load(gdtPath),
                 XDocument.Load(dbPath),

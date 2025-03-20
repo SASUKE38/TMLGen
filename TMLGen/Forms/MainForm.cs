@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
+using TMLGen.Forms;
 using TMLGen.Forms.Cache;
 using TMLGen.Forms.Logging;
 using TMLGen.Generation;
@@ -13,6 +15,8 @@ namespace TMLGen
     {
         public delegate void UpdateLog();
         public static UpdateLog logDelegate;
+        public delegate Guid ShowMaterialSelection(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId);
+        public static ShowMaterialSelection selectionDelegate;
 
         public void UpdateLogMethod()
         {
@@ -24,6 +28,20 @@ namespace TMLGen
             InitializeComponent();
             LoggingHelper.Set(new(100u), formConsole, this);
             logDelegate = new UpdateLog(UpdateLogMethod);
+            selectionDelegate = new ShowMaterialSelection(SelectionMethod);
+        }
+
+        public Guid SelectionMethod(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId)
+        {
+            Guid selectionRes = Guid.Empty;
+            SlotMaterialSelection selection = new(candidates, materialId, resourceId);
+            DialogResult diaRes = selection.ShowDialog();
+            if (diaRes == DialogResult.OK)
+            {
+                selectionRes = selection.selected;
+            }
+            selection.Dispose();
+            return selectionRes;
         }
 
         private struct GenerationArgs
@@ -41,9 +59,6 @@ namespace TMLGen
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            labelData.Enabled = !labelData.Enabled;
-            buttonDataBrowse.Enabled = !buttonDataBrowse.Enabled;
-            textBoxData.Enabled = !textBoxData.Enabled;
             labelGDT.Enabled = !labelGDT.Enabled;
             buttonGDTBrowse.Enabled = !buttonGDTBrowse.Enabled;
             textBoxGDT.Enabled = !textBoxGDT.Enabled;
@@ -123,12 +138,8 @@ namespace TMLGen
                 string gdtFile = null;
                 string dbFile = null;
                 string templateDirectory = null;
-                string dataDirectory = null;
-                if (!checkBoxManual.Checked)
-                {
-                    dataDirectory = textBoxData.Text;
-                }
-                else
+                string dataDirectory = textBoxData.Text;
+                if (checkBoxManual.Checked)
                 {
                     dbFile = textBoxDB.Text;
                     gdtFile = textBoxGDT.Text;
@@ -206,6 +217,11 @@ namespace TMLGen
                 LoggingHelper.Write("No output destination provided.", 2);
                 checkSuccess = false;
             }
+            if (!Directory.Exists(textBoxData.Text))
+            {
+                LoggingHelper.Write("Failed to locate unpacked data directory.", 2);
+                checkSuccess = false;
+            }
             if (checkBoxManual.Checked)
             {
                 if (!File.Exists(textBoxGDT.Text))
@@ -223,21 +239,13 @@ namespace TMLGen
                     LoggingHelper.Write("Failed to locate timeline templates directory. This failure should be ignored if the timeline does not have templates.", 2);
                 }
             }
-            else
-            {
-                if (!Directory.Exists(textBoxData.Text))
-                {
-                    LoggingHelper.Write("Failed to locate unpacked data directory.", 2);
-                    checkSuccess = false;
-                }
-            }
             return checkSuccess;
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             GenerationArgs args = (GenerationArgs)e.Argument;
-            e.Result = GenerationDriver.DoGeneration(args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.templateDirectory, args.outputPath, args.manual, args.separateAnimations);
+            e.Result = GenerationDriver.DoGeneration(this, args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.templateDirectory, args.outputPath, args.manual, args.separateAnimations);
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -247,7 +255,8 @@ namespace TMLGen
             else
                 LoggingHelper.Write("Generation finished.", 1);
             buttonGenerate.Enabled = true;
-            CleanupHelper.EmptyStaticDictionaries();
+            CleanupHelper.EmptyStaticCollections();
+            CleanupHelper.DeleteTempFiles(PreparationHelper.visualPaths);
         }
 
         private void formConsole_TextChanged(object sender, EventArgs e)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
@@ -26,11 +27,13 @@ namespace TMLGen.Generation
         private readonly List<ComponentTrackSoundEvent> globalSoundEventTracks = [];
         private readonly HashSet<string> foundUnsupportedComponentTypes = [];
         private static bool separateOverlappingAnimations;
+        private Form sender;
 
-        public ComponentCollector(XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations) : base(doc, gdtDoc, timeline)
+        public ComponentCollector(Form sender, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations) : base(doc, gdtDoc, timeline)
         {
             dbNodes = dbDoc.XPathSelectElement("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children");
             separateOverlappingAnimations = separateAnimations;
+            this.sender = sender;
         }
 
         public override void Collect()
@@ -498,7 +501,7 @@ namespace TMLGen.Generation
                 GetSlotMaterialComponent(actorId, componentData, seq, slotSettings, materialGroup, out trackToUse, out trackId, out curContainer);
         }
 
-        private static ComponentMaterial GetSlotMaterialComponent(Guid actorId, XElement componentData, Sequence seq, XElement slotSettings, Guid groupId, out ComponentTrackMaterial trackToUse, out Guid trackId, out ComponentContainer curContainer)
+        private ComponentMaterial GetSlotMaterialComponent(Guid actorId, XElement componentData, Sequence seq, XElement slotSettings, Guid groupId, out ComponentTrackMaterial trackToUse, out Guid trackId, out ComponentContainer curContainer)
         {
             try
             {
@@ -506,14 +509,14 @@ namespace TMLGen.Generation
                 int trackKey = (int)TrackEnum.TLMaterial;
                 if (!actorTrack.actorChildTracks.TryGetValue(trackKey, out List<TrackBase> trackList))
                 {
-                    ComponentTrackMaterial newTrack = GetNewSlotMaterialTrack(slotSettings, groupId);
+                    ComponentTrackMaterial newTrack = GetNewSlotMaterialTrack(actorTrack.ActorId, slotSettings, groupId);
                     actorTrack.actorChildTracks.Add(trackKey, [newTrack]);
                     actorTrack.Tracks.Add(newTrack);
                     trackToUse = newTrack;
                 }
                 else if (!ActorHasChildTrack(groupId, trackList))
                 {
-                    ComponentTrackMaterial newTrack = GetNewSlotMaterialTrack(slotSettings, groupId);
+                    ComponentTrackMaterial newTrack = GetNewSlotMaterialTrack(actorTrack.ActorId, slotSettings, groupId);
                     trackList.Add(newTrack);
                     actorTrack.Tracks.Add(newTrack);
                     trackToUse = newTrack;
@@ -531,12 +534,14 @@ namespace TMLGen.Generation
             }
         }
 
-        private static ComponentTrackMaterial GetNewSlotMaterialTrack(XElement slotSettings, Guid groupId)
+        private ComponentTrackMaterial GetNewSlotMaterialTrack(Guid actorId, XElement slotSettings, Guid groupId)
         {
             ComponentTrackMaterial newTrack = new() { Name = "Slot Material", TrackId = groupId, MaterialGroupId = groupId };
             XElement subSettings = slotSettings.XPathSelectElement("./children/node[@id='MapValue']/children/node[@id='strMaterialReference']");
+            Guid materialId = ExtractGuid(slotSettings.XPathSelectElement("./children/node[@id='MapValue']/attribute[@id='MaterialResourceID']")) ?? Guid.Empty;
             newTrack.Slot = ExtractInt(subSettings.XPathSelectElement("./attribute[@id='SlotIndex']")) ?? 0;
             newTrack.VisualResourceId = ExtractGuid(subSettings.XPathSelectElement("./attribute[@id='VisualResourceID']")) ?? newTrack.VisualResourceId;
+            newTrack.CharacterVisualResourceId = FindCharacterVisualId(actorId, materialId, newTrack.VisualResourceId);
             return newTrack;
         }
 
@@ -1436,6 +1441,56 @@ namespace TMLGen.Generation
                     materialTrack.Tracks.Add(newTrack);
                 }
                 materialTrack.subTrackTypes.Add(parameterName);
+            }
+        }
+
+        private Guid FindCharacterVisualId(Guid actorId, Guid materialId, Guid resourceId)
+        {
+            Dictionary<string, Guid> candidates = [];
+            foreach (XDocument visualDoc in PreparationHelper.visualFiles)
+            {
+                // RealMaterialOverrides
+                IEnumerable<XElement> overrideParents = visualDoc.XPathSelectElements("save/region[@id='CharacterVisualBank']/node[@id='CharacterVisualBank']/children/node[@id='Resource'][children[node[@id='RealMaterialOverrides'][children[node[@id='Object'][attribute[@id='MapValue'][@value='" + materialId + "']]]]]]");
+                GetVisualIdCandidates(overrideParents, candidates);
+                if (candidates.Count == 1) return candidates.Values.First();
+
+                // VisualResource
+                IEnumerable<XElement> resourceParents = visualDoc.XPathSelectElements("save/region[@id='CharacterVisualBank']/node[@id='CharacterVisualBank']/children/node[@id='Resource'][children[node[@id='Slots'][attribute[@id='VisualResource'][@value='" + resourceId + "']]]]");
+                GetVisualIdCandidates(resourceParents, candidates);
+                if (candidates.Count == 1) return candidates.Values.First();
+
+                // BodySetVisual
+                IEnumerable<XElement> setVisualResources = visualDoc.XPathSelectElements("save/region[@id='CharacterVisualBank']/node[@id='CharacterVisualBank']/children/node[@id='Resource'][attribute[@id='BodySetVisual'][@value='" + resourceId + "']]");
+                GetVisualIdCandidates(setVisualResources, candidates);
+                if (candidates.Count == 1) return candidates.Values.First();
+            }
+            if (candidates.Count > 1)
+            {
+                Guid actorAttempt = TryGetCharacterVisualIdWithActorId(actorId, candidates);
+                return actorAttempt == Guid.Empty ? (Guid)sender.Invoke(MainForm.selectionDelegate, candidates) : actorAttempt;
+                //return (Guid)sender.Invoke(MainForm.selectionDelegate, candidates, materialId, resourceId);
+            }
+            return Guid.Empty;
+        }
+
+        private Guid TryGetCharacterVisualIdWithActorId(Guid actorId, Dictionary<string, Guid> candidates)
+        {
+            foreach ((string name, Guid id) in candidates)
+            {
+                string guidSub = name[(name.LastIndexOf('_') + 1)..];
+                if (Guid.TryParse(guidSub, out Guid result))
+                    if (result == actorId) return id;
+            }
+            return Guid.Empty;
+        }
+
+        private static void GetVisualIdCandidates(IEnumerable<XElement> elements, Dictionary<string, Guid> candidates)
+        {
+            foreach (XElement ele in elements)
+            {
+                string name = ExtractString(ele.XPathSelectElement("./attribute[@id='Name']")) ?? string.Empty;
+                Guid id = ExtractGuid(ele.XPathSelectElement("./attribute[@id='ID']")) ?? Guid.Empty;
+                candidates.TryAdd(name, id);
             }
         }
 
