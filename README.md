@@ -33,7 +33,7 @@ The steps below detail how to link a generated .tml file to its dialog. The edit
 
 - The tool currently has only been tested on the "Generic NPC Dialog" category, which encompasses most dialogs. World/Behavior dialog is not yet supported.
 - Generation does not give actors descriptive names, relying instead on names like "Additional 2" or "Initiator 1." You can find their actual names by referencing the dialog's speaker list or by hovering over the actor's track.
-- The timeline's initial location is not set by the tool and must be set by hand.
+- The timeline's initial location is inferred. If it is incorrect, you can set it by hand in the editor.
 - Slot materials might not work correctly as is. To overcome this, try the following steps:
   1. Select the actor that owns the slot material.
   2. Locate the Visual Resource ID property in the sidebar and copy the associated GUID.

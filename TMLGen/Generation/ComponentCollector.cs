@@ -20,6 +20,8 @@ namespace TMLGen.Generation
     public class ComponentCollector : CollectorBase
     {
         private readonly XElement dbNodes;
+        private readonly List<Guid> dbRootNodes = [];
+        private readonly List<Guid> rootLocations = [];
         private readonly Dictionary<int, List<TrackBase>> globalTrackMapping = [];
         private readonly Dictionary<(Guid, Guid), List<ComponentTrackMaterial>> otherMaterialTracks = [];
         private readonly Dictionary<(Guid, Guid), List<ComponentTrackAnimation>> animationTracks = [];
@@ -27,11 +29,17 @@ namespace TMLGen.Generation
         private readonly List<ComponentTrackSoundEvent> globalSoundEventTracks = [];
         private readonly HashSet<string> foundUnsupportedComponentTypes = [];
         private static bool separateOverlappingAnimations;
-        private Form sender;
+        private readonly Form sender;
 
         public ComponentCollector(Form sender, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations) : base(doc, gdtDoc, timeline)
         {
             dbNodes = dbDoc.XPathSelectElement("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children");
+            IEnumerable<XElement> dbRootNodeElements = dbDoc.XPathSelectElements("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children/node[@id='RootNodes']");
+            foreach (XElement element in dbRootNodeElements)
+            {
+                Guid? rootId = ExtractGuid(element.XPathSelectElement("./attribute[@id='RootNodes']"));
+                if (rootId.HasValue) dbRootNodes.Add((Guid)rootId);
+            }
             separateOverlappingAnimations = separateAnimations;
             this.sender = sender;
         }
@@ -199,6 +207,7 @@ namespace TMLGen.Generation
                     throw;
                 }
             }
+            TrySetTimelineLocation();
         }
 
         // Sequence Initialization
@@ -911,6 +920,7 @@ namespace TMLGen.Generation
                 {
                     case (int)TrackEnum.TLSwitchLocation:
                         HandleTLSwitchLocation(keyData, keyValue as SwitchLocationKeyData);
+                        TryAddRootLocation(key as SwitchLocationKey, keyValue as SwitchLocationKeyData, seq);
                         break;
                     case (int)TrackEnum.TLSwitchStage:
                         HandleTLSwitchStage(keyData, keyValue as SwitchStageKeyData);
@@ -1467,8 +1477,7 @@ namespace TMLGen.Generation
             if (candidates.Count > 1)
             {
                 Guid actorAttempt = TryGetCharacterVisualIdWithActorId(actorId, candidates);
-                return actorAttempt == Guid.Empty ? (Guid)sender.Invoke(MainForm.selectionDelegate, candidates) : actorAttempt;
-                //return (Guid)sender.Invoke(MainForm.selectionDelegate, candidates, materialId, resourceId);
+                return actorAttempt == Guid.Empty ? (Guid)sender.Invoke(MainForm.materialSelectionDelegate, candidates) : actorAttempt;
             }
             return Guid.Empty;
         }
@@ -1724,6 +1733,35 @@ namespace TMLGen.Generation
         {
             keyValue.Event = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='SwitchLocationEventID']")) ?? keyValue.Event;
             keyValue.LevelTemplateId = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='s_LevelTemplateID']")) ?? keyValue.LevelTemplateId;
+        }
+
+        private void TryAddRootLocation(SwitchLocationKey key, SwitchLocationKeyData keyValue, Sequence seq)
+        {
+            if (dbRootNodes.Contains(seq.DialogNodeReference.First().DialogNodeId) && key.Time == 0)
+            {
+                rootLocations.Add(keyValue.Event);
+            }
+        }
+
+        private void TrySetTimelineLocation()
+        {
+            int locations = rootLocations.Count;
+            if (locations == 1)
+            {
+                timeline.TimelinePosition.BoundSceneId = rootLocations[0];
+            }
+            else if (locations > 1)
+            {
+                if (!rootLocations.Any(o => o != rootLocations[0]))
+                {
+                    timeline.TimelinePosition.BoundSceneId = rootLocations[0];
+                }
+                else
+                {
+                    Guid selected = (Guid)sender.Invoke(MainForm.locationSelectionDelegate, rootLocations);
+                    timeline.TimelinePosition.BoundSceneId = selected;
+                }
+            }
         }
 
         // TLSwitchStageEvent

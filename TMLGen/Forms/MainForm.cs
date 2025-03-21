@@ -16,25 +16,41 @@ namespace TMLGen
         public delegate void UpdateLog();
         public static UpdateLog logDelegate;
         public delegate Guid ShowMaterialSelection(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId);
-        public static ShowMaterialSelection selectionDelegate;
-
-        public void UpdateLogMethod()
-        {
-            formConsole.Rtf = LoggingHelper.GetOutput();
-        }
+        public static ShowMaterialSelection materialSelectionDelegate;
+        public delegate Guid ShowLocationSelection(List<Guid> candidates);
+        public static ShowLocationSelection locationSelectionDelegate;
 
         public MainForm()
         {
             InitializeComponent();
             LoggingHelper.Set(new(100u), formConsole, this);
             logDelegate = new UpdateLog(UpdateLogMethod);
-            selectionDelegate = new ShowMaterialSelection(SelectionMethod);
+            materialSelectionDelegate = new ShowMaterialSelection(MaterialSelectionMethod);
+            locationSelectionDelegate = new ShowLocationSelection(LocationSelectionMethod);
         }
 
-        public Guid SelectionMethod(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId)
+        public void UpdateLogMethod()
+        {
+            formConsole.Rtf = LoggingHelper.GetOutput();
+        }
+
+        public Guid MaterialSelectionMethod(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId)
         {
             Guid selectionRes = Guid.Empty;
             SlotMaterialSelection selection = new(candidates, materialId, resourceId);
+            DialogResult diaRes = selection.ShowDialog();
+            if (diaRes == DialogResult.OK)
+            {
+                selectionRes = selection.selected;
+            }
+            selection.Dispose();
+            return selectionRes;
+        }
+
+        public Guid LocationSelectionMethod(List<Guid> candidates)
+        {
+            Guid selectionRes = Guid.Empty;
+            LocationSelection selection = new(candidates);
             DialogResult diaRes = selection.ShowDialog();
             if (diaRes == DialogResult.OK)
             {
