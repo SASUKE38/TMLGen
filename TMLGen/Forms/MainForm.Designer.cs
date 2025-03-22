@@ -198,7 +198,7 @@
             // checkBoxManual
             // 
             checkBoxManual.AutoSize = true;
-            checkBoxManual.Location = new System.Drawing.Point(12, 280);
+            checkBoxManual.Location = new System.Drawing.Point(12, 297);
             checkBoxManual.Name = "checkBoxManual";
             checkBoxManual.Size = new System.Drawing.Size(306, 19);
             checkBoxManual.TabIndex = 9;
@@ -283,12 +283,12 @@
             checkBoxSeparateAnimations.AutoSize = true;
             checkBoxSeparateAnimations.Checked = true;
             checkBoxSeparateAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkBoxSeparateAnimations.Location = new System.Drawing.Point(12, 304);
+            checkBoxSeparateAnimations.Location = new System.Drawing.Point(387, 297);
             checkBoxSeparateAnimations.Name = "checkBoxSeparateAnimations";
             checkBoxSeparateAnimations.Size = new System.Drawing.Size(305, 19);
             checkBoxSeparateAnimations.TabIndex = 18;
             checkBoxSeparateAnimations.Text = "Separate overlapping animations into different tracks";
-            toolTip.SetToolTip(checkBoxSeparateAnimations, "Animations will be moved to their own track if they overlap.\r\nThis can reduce crashes in the editor, but could significantly\r\nincrease the track count.");
+            toolTip.SetToolTip(checkBoxSeparateAnimations, "Animations will be moved to their own track if they overlap.\r\nThis can reduce crashes in the editor.");
             checkBoxSeparateAnimations.UseVisualStyleBackColor = true;
             // 
             // formConsole

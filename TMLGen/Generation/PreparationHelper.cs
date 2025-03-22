@@ -70,7 +70,9 @@ namespace TMLGen.Generation
                         if (File.Exists(mergedPath))
                         {
                             string mergedTempFile = SaveToLsxFile(mergedPath);
-                            return GetGDTElementFromMerged(mergedTempFile, Path.GetFileNameWithoutExtension(sourceName));
+                            string element = GetGDTElementFromMerged(mergedTempFile, Path.GetFileNameWithoutExtension(sourceName));
+                            if (element != null)
+                                return element;
                         }
                     }
                     catch (Exception)
