@@ -65,3 +65,4 @@ The steps below describe how to link a generated .tml file to its dialog. The ed
 ## Credits
 
 - Thank you to [magnetuning](https://next.nexusmods.com/profile/magnetuning?gameId=3474) for research into the BG3 dialog system. This would not be possible without his [dialog guide](https://wiki.bg3.community/en/Tutorials/new-voice-lines) and [sample mod](https://www.nexusmods.com/baldursgate3/mods/10086).
+- Thank you to Plouton for testing.
