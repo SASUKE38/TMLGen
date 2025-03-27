@@ -58,10 +58,6 @@ The steps below describe how to link a generated .tml file to its dialog. The ed
    8. Use the Find feature (CTRL + F) to search for the name of the actor.
    9. Replace the ParentTemplateId with the one you copied. If no such attribute is present, add it with the form ParentTemplateId="00000000-0000-0000-0000-000000000000"
 
-## Known Issues
-
-- Only the first of grouped cinematic nodes appears in the Playlists tab. This can be fixed by opening the dialog and selecting Tools > Timeline > Generate > Refresh.
-
 ## Credits
 
 - Thank you to [magnetuning](https://next.nexusmods.com/profile/magnetuning?gameId=3474) for research into the BG3 dialog system. This would not be possible without his [dialog guide](https://wiki.bg3.community/en/Tutorials/new-voice-lines) and [sample mod](https://www.nexusmods.com/baldursgate3/mods/10086).

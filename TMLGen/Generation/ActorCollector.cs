@@ -132,7 +132,16 @@ namespace TMLGen.Generation
                     res.IsPeanut = ExtractBool(dbSpeakerData.XPathSelectElement("./attribute[@id='IsPeanutSpeaker']")) ?? res.IsPeanut;
                     res.SceneActorType = Enum.GetName(typeof(SceneActorType), int.Parse(data.XPathSelectElement("./attribute[@id='SceneActorType']").Attribute("value").Value));
                     res.SpeakerMappingId = ExtractGuid(dbSpeakerData.XPathSelectElement("./attribute[@id='SpeakerMappingId']")) ?? res.SpeakerMappingId;
-                    res.ActorId = ExtractGuid(dbSpeakerData.XPathSelectElement("./attribute[@id='list']")) ?? res.ActorId;
+                    string actorIdList = ExtractString(dbSpeakerData.XPathSelectElement("./attribute[@id='list']"));
+                    if (actorIdList != null)
+                    {
+                        int delimiterIndex = actorIdList.IndexOf(';');
+                        res.ActorId = delimiterIndex == -1 ? Guid.Parse(actorIdList) :  Guid.Parse(actorIdList.Substring(0, delimiterIndex));
+                    }
+                    else
+                    {
+                        res.ActorId = Guid.Empty;
+                    }
 
                     if (res.SceneActorType == "Initiator") res.Name = "Initiator " + (1 + initiatorCount++);
                     else res.Name = "Additional " + (1 + additionalCount++);

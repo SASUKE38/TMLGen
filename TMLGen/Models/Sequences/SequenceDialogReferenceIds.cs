@@ -28,12 +28,12 @@ namespace TMLGen.Models.Sequences
 
         public static bool operator ==(SequenceDialogReferenceIds a, SequenceDialogReferenceIds b)
         {
-            return (a.DialogNodeId == b.DialogNodeId) && (a.ReferenceId == b.ReferenceId);
+            return (a.DialogNodeId == b.DialogNodeId);
         }
 
         public static bool operator !=(SequenceDialogReferenceIds a, SequenceDialogReferenceIds b)
         {
-            return (a.DialogNodeId != b.DialogNodeId) || (a.ReferenceId != b.ReferenceId);
+            return (a.DialogNodeId != b.DialogNodeId);
         }
     }
 }

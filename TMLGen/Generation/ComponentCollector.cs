@@ -48,10 +48,9 @@ namespace TMLGen.Generation
         {
             int currentPhase = 0;
             XElement componentCollection = doc.XPathSelectElement("save/region[@id='TimelineContent']/node[@id='TimelineContent']/children/node[@id='Effect']/children/node[@id='EffectComponents']/children");
-            XElement phases = doc.XPathSelectElement("/save/region[@id='TimelineContent']/node[@id='TimelineContent']/children/node[@id='Effect']/children/node/children");
-            XElement timelinePhases = doc.XPathSelectElement("/save/region[@id='TimelineContent']/node[@id='TimelineContent']/children/node[@id='TimelinePhases']");
+            XElement phases = doc.XPathSelectElement("/save/region[@id='TimelineContent']/node[@id='TimelineContent']/children/node[@id='Effect']/children/node[@id='Phases']/children");
 
-            if (componentCollection == null || phases == null || timelinePhases == null)
+            if (componentCollection == null || phases == null)
             {
                 LoggingHelper.Write("Source file missing component information!", 2);
                 return;
@@ -64,7 +63,7 @@ namespace TMLGen.Generation
                     componentCollection.XPathSelectElements("./node[@id='EffectComponent'][attribute[@id='PhaseIndex'][@value='" + currentPhase + "']]");
                 if (!components.Any()) break;
 
-                Sequence seq = SequenceInit(currentPhase, phases, timelinePhases, components);
+                Sequence seq = SequenceInit(currentPhase, phases, components);
 
                 try
                 {
@@ -212,38 +211,19 @@ namespace TMLGen.Generation
 
         // Sequence Initialization
 
-        private Sequence SequenceInit(int currentPhase, XElement phases, XElement timelinePhases, IEnumerable<XElement> components)
+        private Sequence SequenceInit(int currentPhase, XElement phases, IEnumerable<XElement> components)
         {
             Sequence seq = new();
 
-            IEnumerable<XElement> dialogNodeData = timelinePhases.XPathSelectElements("./children/node/children/node[attribute[@id='MapValue'][@value='" + currentPhase + "']]");
-            XElement phaseData = null;
-            Guid? curId = null;
-            foreach (XElement ele in dialogNodeData)
-            {
-                curId = ExtractGuid(ele.XPathSelectElement("./attribute[@id='MapKey']"));
-                if (curId.HasValue)
-                {
-                    phaseData = phases.XPathSelectElement("./node[attribute[@id='DialogNodeId'][@value='" + curId + "']]");
-                    if (phaseData != null) break;
-                }
-            }
-            if (phaseData != null)
+            XElement phaseData = phases.XPathSelectElement("./node[" + (currentPhase + 1) + "]"); ;
+            Guid? curId = ExtractGuid(phaseData.XPathSelectElement("./attribute[@id='DialogNodeId']"));
+            if (phaseData != null && curId != null)
             {
                 seq.Name = "Phase " + currentPhase;
                 seq.TimeDuration = ExtractFloat(phaseData.XPathSelectElement("./attribute[@id='Duration']")) ?? seq.TimeDuration;
-                SequenceDialogReferenceIds refId = new SequenceDialogReferenceIds();
-                refId.DialogNodeId = refId.ReferenceId = (Guid)ExtractGuid(phaseData.XPathSelectElement("./attribute[@id='DialogNodeId']"));
-                seq.DialogNodeReference.Add(refId);
 
-                string nodeType = ExtractString(dbNodes.XPathSelectElement("./node[attribute[@id='UUID'][@value='" + curId + "']]/attribute[@id='constructor']"));
-                bool? isEnd = ExtractBool(dbNodes.XPathSelectElement("./node[attribute[@id='UUID'][@value='" + curId + "']]/attribute[@id='endnode']"));
-                if (isEnd.HasValue && (bool)isEnd) nodeType = "End";
-                if (Enum.TryParse(nodeType, out DialogNodeColors colorType))
-                {
-                    uint color = (uint)Enum.Parse(typeof(DialogNodeColors), nodeType);
-                    seq.DialogNodeColor = "#" + color.ToString("X");
-                }
+                GetInitialDialogReferenceIds((Guid)curId, seq);
+
                 XElement questionHoldData = phaseData.XPathSelectElement("./children/node[@id='QuestionHoldAutomation']");
                 seq.QuestionHoldAutomationOverrideTimelineSettings = ExtractBool(phaseData.XPathSelectElement("./attribute[@id='IsOverridingTimelineQuestionHoldAutomationSettings']")) ?? seq.QuestionHoldAutomationOverrideTimelineSettings;
                 seq.IsQuestionHoldAutomationEnabled = ExtractBool(questionHoldData.XPathSelectElement("./attribute[@id='IsEnabled']")) ?? seq.IsQuestionHoldAutomationEnabled;
@@ -267,6 +247,84 @@ namespace TMLGen.Generation
                 }
             }
             return seq;
+        }
+
+        private void GetInitialDialogReferenceIds(Guid groupId, Sequence seq)
+        {
+            IEnumerable<XElement> groupNodes = dbNodes.XPathSelectElements("./node[attribute[@id='GroupID'][@value='" + groupId + "']]");
+            if (groupNodes.Any())
+            {
+                bool isGreeting = false;
+                bool hasCinematic = false;
+                bool isEnd = false;
+                SortedDictionary<int, Guid> nodeDict = [];
+                foreach (XElement node in groupNodes)
+                {
+                    int groupIndex = ExtractInt(node.XPathSelectElement("./attribute[@id='GroupIndex']")) ?? 0;
+                    Guid nodeId = ExtractGuid(node.XPathSelectElement("./attribute[@id='UUID']")) ?? Guid.Empty;
+                    nodeDict.Add(groupIndex, nodeId);
+
+                    if (dbRootNodes.Contains(nodeId)) isGreeting = true;
+                    string nodeType = ExtractString(node.XPathSelectElement("./attribute[@id='constructor']"));
+                    isEnd = ExtractBool(node.XPathSelectElement("./attribute[@id='endnode']")) ?? false;
+                    if (nodeType == "TagCinematic")
+                    {
+                        hasCinematic = true;
+                    }
+                }
+                foreach (Guid val in nodeDict.Values)
+                {
+                    SequenceDialogReferenceIds refId = new()
+                    {
+                        ReferenceId = val,
+                        DialogNodeId = val
+                    };
+                    seq.DialogNodeReference.Add(refId);
+                }
+                SetGroupedPhaseColor(seq, isGreeting, hasCinematic, isEnd);
+            }
+            else
+            {
+                SequenceDialogReferenceIds refId = new()
+                {
+                    ReferenceId = groupId,
+                    DialogNodeId = groupId
+                };
+                seq.DialogNodeReference.Add(refId);
+                SetPhaseColor(groupId, seq);
+            }
+        }
+
+        private void SetGroupedPhaseColor(Sequence seq, bool isGreeting, bool hasCinematic, bool isEnd)
+        {
+            if (isEnd)
+            {
+                seq.DialogNodeColor = "#" + DialogNodeColors.End.ToString("X");
+            }
+            else if (hasCinematic)
+            {
+                seq.DialogNodeColor = "#" + DialogNodeColors.TagCinematic.ToString("X");
+            }
+            else if (isGreeting)
+            {
+                seq.DialogNodeColor = "#" + DialogNodeColors.TagGreeting.ToString("X");
+            }
+            else
+            {
+                seq.DialogNodeColor = "#" + DialogNodeColors.TagAnswer.ToString("X");
+            }
+        }
+
+        private void SetPhaseColor(Guid nodeId, Sequence seq)
+        {
+            string nodeType = ExtractString(dbNodes.XPathSelectElement("./node[attribute[@id='UUID'][@value='" + nodeId + "']]/attribute[@id='constructor']"));
+            bool? isEnd = ExtractBool(dbNodes.XPathSelectElement("./node[attribute[@id='UUID'][@value='" + nodeId + "']]/attribute[@id='endnode']"));
+            if (isEnd.HasValue && (bool)isEnd) nodeType = "End";
+            if (Enum.TryParse(nodeType, out DialogNodeColors colorType))
+            {
+                uint color = (uint)Enum.Parse(typeof(DialogNodeColors), nodeType);
+                seq.DialogNodeColor = "#" + color.ToString("X");
+            }
         }
 
         private List<GlobalSoundEvent> CollectPhaseSoundEvents(string evType, int currentPhase)
@@ -1882,7 +1940,7 @@ namespace TMLGen.Generation
 
         // TLVoice
 
-        private static void HandleTLVoice(XElement componentData, Sequence seq)
+        private void HandleTLVoice(XElement componentData, Sequence seq)
         {
             Guid? actorId = GetComponentActor(componentData);
             if (actorId.HasValue)
@@ -1923,14 +1981,17 @@ namespace TMLGen.Generation
             }
         }
 
-        private static void CheckDialogRefPair(SequenceDialogReferenceIds refIds, Sequence seq)
+        private void CheckDialogRefPair(SequenceDialogReferenceIds refIds, Sequence seq)
         {
             foreach (SequenceDialogReferenceIds idPair in seq.DialogNodeReference)
             {
                 if (idPair == refIds)
                 {
                     if (idPair.ReferenceId != refIds.ReferenceId)
+                    {
                         idPair.ReferenceId = refIds.ReferenceId;
+                        seq.Source = Enum.GetName(typeof(SequnceSourceEnum), SequnceSourceEnum.SOURCE_DialogLine);
+                    }
                     return;
                 }
             }

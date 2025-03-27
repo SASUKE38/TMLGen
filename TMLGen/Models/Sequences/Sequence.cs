@@ -28,6 +28,8 @@ namespace TMLGen.Models.Sequences
         public float QuestionHoldAutomationStartOffset;
         [XmlAttribute]
         public float QuestionHoldAutomationStartOffsetDeviation;
+        [XmlAttribute]
+        public string Source;
 
         [XmlElement]
         public List<SequenceDialogReferenceIds> DialogNodeReference;
@@ -68,6 +70,7 @@ namespace TMLGen.Models.Sequences
             usedMaterialTimings = [];
             usedAnimationTimings = [];
             discoveredSoundEvents = [];
+            Source = Enum.GetName(typeof(SequnceSourceEnum), SequnceSourceEnum.SOURCE_DialogNode);
         }
 
         public void ConvertDictToSerializableList()
