@@ -12,7 +12,7 @@ namespace TMLGen.Generation
 {
     public static class GenerationDriver
     {
-        public static int DoGeneration(Form sender, string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string templatePath, string outputPath, bool extraPathsGiven, bool separateAnimations)
+        public static int DoGeneration(Form sender, string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string templatePath, string outputPath, string rawSourcePath, bool extraPathsGiven, bool separateAnimations, bool doCopy)
         {
             LoggingHelper.Write("Starting generation...");
             if (!extraPathsGiven)
@@ -45,7 +45,11 @@ namespace TMLGen.Generation
             }
 
             PreparationHelper.FindCharacterVisualsFiles(dataPath, []);
-
+            if (doCopy)
+            {
+                PreparationHelper.CopyTimelineFiles(rawSourcePath, Path.GetFileNameWithoutExtension(sourceName));
+            }
+            
             Root root = new();
             XmlSerializer serializer = new(typeof(Root));
             XmlSerializerNamespaces namespaces = new();
@@ -63,6 +67,7 @@ namespace TMLGen.Generation
                 dataPath,
                 Path.GetFileNameWithoutExtension(sourceName),
                 templatePath,
+                doCopy,
                 XDocument.Load(sourcePath),
                 XDocument.Load(gdtPath),
                 XDocument.Load(dbPath),

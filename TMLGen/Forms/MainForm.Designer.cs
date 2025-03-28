@@ -58,14 +58,17 @@
             textBoxOutput = new System.Windows.Forms.TextBox();
             toolTip = new System.Windows.Forms.ToolTip(components);
             checkBoxSeparateAnimations = new System.Windows.Forms.CheckBox();
+            checkBoxCopy = new System.Windows.Forms.CheckBox();
             formConsole = new System.Windows.Forms.RichTextBox();
             labelConsole = new System.Windows.Forms.Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // buttonGenerate
             // 
-            buttonGenerate.Location = new System.Drawing.Point(12, 341);
+            buttonGenerate.Location = new System.Drawing.Point(12, 357);
             buttonGenerate.Name = "buttonGenerate";
             buttonGenerate.Size = new System.Drawing.Size(679, 40);
             buttonGenerate.TabIndex = 0;
@@ -198,14 +201,14 @@
             // checkBoxManual
             // 
             checkBoxManual.AutoSize = true;
-            checkBoxManual.Location = new System.Drawing.Point(12, 297);
+            checkBoxManual.Location = new System.Drawing.Point(6, 22);
             checkBoxManual.Name = "checkBoxManual";
             checkBoxManual.Size = new System.Drawing.Size(306, 19);
             checkBoxManual.TabIndex = 9;
             checkBoxManual.Text = "Manually select GDT file, DB file, and templates folder";
             toolTip.SetToolTip(checkBoxManual, "Select which timeline data files to use manually.");
             checkBoxManual.UseVisualStyleBackColor = true;
-            checkBoxManual.CheckedChanged += checkBox1_CheckedChanged;
+            checkBoxManual.CheckedChanged += checkBoxManual_CheckedChanged;
             // 
             // labelData
             // 
@@ -283,7 +286,7 @@
             checkBoxSeparateAnimations.AutoSize = true;
             checkBoxSeparateAnimations.Checked = true;
             checkBoxSeparateAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkBoxSeparateAnimations.Location = new System.Drawing.Point(387, 297);
+            checkBoxSeparateAnimations.Location = new System.Drawing.Point(368, 22);
             checkBoxSeparateAnimations.Name = "checkBoxSeparateAnimations";
             checkBoxSeparateAnimations.Size = new System.Drawing.Size(305, 19);
             checkBoxSeparateAnimations.TabIndex = 18;
@@ -291,10 +294,23 @@
             toolTip.SetToolTip(checkBoxSeparateAnimations, "Animations will be moved to their own track if they overlap.\r\nThis can reduce crashes in the editor.");
             checkBoxSeparateAnimations.UseVisualStyleBackColor = true;
             // 
+            // checkBoxCopy
+            // 
+            checkBoxCopy.AutoSize = true;
+            checkBoxCopy.Checked = true;
+            checkBoxCopy.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxCopy.Location = new System.Drawing.Point(6, 47);
+            checkBoxCopy.Name = "checkBoxCopy";
+            checkBoxCopy.Size = new System.Drawing.Size(225, 19);
+            checkBoxCopy.TabIndex = 19;
+            checkBoxCopy.Text = "Create copies of files to be overridden";
+            toolTip.SetToolTip(checkBoxCopy, "Will create copies of the source, scene, and template files so they are easily located for overriding.");
+            checkBoxCopy.UseVisualStyleBackColor = true;
+            // 
             // formConsole
             // 
             formConsole.BackColor = System.Drawing.SystemColors.InfoText;
-            formConsole.Location = new System.Drawing.Point(12, 402);
+            formConsole.Location = new System.Drawing.Point(12, 418);
             formConsole.Name = "formConsole";
             formConsole.ReadOnly = true;
             formConsole.Size = new System.Drawing.Size(679, 153);
@@ -305,7 +321,7 @@
             // labelConsole
             // 
             labelConsole.AutoSize = true;
-            labelConsole.Location = new System.Drawing.Point(12, 384);
+            labelConsole.Location = new System.Drawing.Point(12, 400);
             labelConsole.Name = "labelConsole";
             labelConsole.Size = new System.Drawing.Size(30, 15);
             labelConsole.TabIndex = 17;
@@ -317,12 +333,24 @@
             backgroundWorker1.DoWork += backgroundWorker1_DoWork;
             backgroundWorker1.RunWorkerCompleted += backgroundWorker1_RunWorkerCompleted;
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(checkBoxCopy);
+            groupBox1.Controls.Add(checkBoxManual);
+            groupBox1.Controls.Add(checkBoxSeparateAnimations);
+            groupBox1.Location = new System.Drawing.Point(12, 280);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(679, 71);
+            groupBox1.TabIndex = 19;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Settings";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(704, 566);
-            Controls.Add(checkBoxSeparateAnimations);
+            ClientSize = new System.Drawing.Size(704, 584);
+            Controls.Add(groupBox1);
             Controls.Add(labelConsole);
             Controls.Add(formConsole);
             Controls.Add(label6);
@@ -331,7 +359,6 @@
             Controls.Add(labelData);
             Controls.Add(buttonDataBrowse);
             Controls.Add(textBoxData);
-            Controls.Add(checkBoxManual);
             Controls.Add(labelTT);
             Controls.Add(textBoxTT);
             Controls.Add(buttonGenerate);
@@ -347,12 +374,14 @@
             Controls.Add(textBoxGDT);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
-            MaximumSize = new System.Drawing.Size(720, 605);
+            MaximumSize = new System.Drawing.Size(720, 623);
             MinimumSize = new System.Drawing.Size(720, 605);
             Name = "MainForm";
             Text = "TMLGen";
             FormClosed += MainForm_FormClosed;
             Load += MainForm_Load;
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -390,6 +419,8 @@
         public System.Windows.Forms.RichTextBox formConsole;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.CheckBox checkBoxSeparateAnimations;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox checkBoxCopy;
     }
 }
 

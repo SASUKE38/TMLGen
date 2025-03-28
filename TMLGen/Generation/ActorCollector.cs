@@ -33,14 +33,17 @@ namespace TMLGen.Generation
         private int additionalCount;
         private string templatePath;
         private bool didTemplatesCopy;
+        private bool doCopy;
         private string sourceName;
+        private Guid timelineId;
 
-        public ActorCollector(string dataDirectory, string sourceName, string templateDirectory, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
+        public ActorCollector(string dataDirectory, string sourceName, string templateDirectory, bool doCopy, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
         {
             if (templateDirectory == null)
             {
                 Guid timelineId = (Guid)ExtractGuid(gdtDoc.XPathSelectElement("save/region[@id='TimelineBank']/node[@id='TimelineBank']/children/node[@id='Resource']/attribute[@id='ID']"));
-                templatePath = PreparationHelper.FindTemplatesFolder(dataDirectory, timelineId);
+                this.timelineId = timelineId;
+                templatePath = PreparationHelper.FindTemplatesFolder(dataDirectory, this.timelineId);
                 templatePath ??= string.Empty;
             }
             else
@@ -48,6 +51,7 @@ namespace TMLGen.Generation
                 templatePath = templateDirectory;
             }
             this.sourceName = sourceName;
+            this.doCopy = doCopy;
             peanutMapping = [];
             speakerTrackMapping = [];
             peanutContainer = new PeanutFolderTrack();
@@ -262,7 +266,7 @@ namespace TMLGen.Generation
             string templateFilePath = Path.Join(templatePath, actorId.ToString());
             templateFilePath = Path.ChangeExtension(templateFilePath, ".lsf");
             res.IsTemplate = File.Exists(templateFilePath);
-            res.Name = res.IsTemplate ? "TimelineTemplate_" + res.ActorId : "Extra Actor " + (extraActorsContainer.Tracks.Count() + 1);
+            res.Name = res.IsTemplate ? "TimelineTemplate_" + res.ActorId : "Extra Actor " + (extraActorsContainer.Tracks.Count + 1);
             res.AlwaysInclude = ExtractBool(data.XPathSelectElement("./attribute[@id='AlwaysInclude']")) ?? res.AlwaysInclude;
 
             // if not template, check for parent template?
@@ -270,32 +274,10 @@ namespace TMLGen.Generation
             trackMapping.Add(actorId, res);
             extraActorsContainer.Tracks.Add(res);
 
-            if (!didTemplatesCopy && res.IsTemplate)
-            {
-                DoTemplatesCopy();
-            }
-        }
-
-        private void DoTemplatesCopy()
-        {
-            try
+            if (doCopy && !didTemplatesCopy && res.IsTemplate)
             {
                 didTemplatesCopy = true;
-                string directoryName = "Timeline Templates";
-                Directory.CreateDirectory(directoryName);
-                string copiedTemplatePath = Path.Join(directoryName, sourceName);
-                Directory.CreateDirectory(copiedTemplatePath);
-                foreach (string file in Directory.GetFiles(templatePath))
-                {
-                    if (Path.GetExtension(file) == ".lsf")
-                        File.Copy(file, Path.Join(copiedTemplatePath, Path.GetFileName(file)), true);
-                }
-                LoggingHelper.Write("This timeline has templates. The directory in Timeline Templates containing their copies should be renamed to the timeline's GUID (after overriding) and be moved to your mod's TimelineTemplates directory.", 2);
-            }
-            catch (Exception)
-            {
-                LoggingHelper.Write("The timeline's templates could not be copied. Without these copies, changes to templates might not be reflected correctly.", 2);
-                return;
+                PreparationHelper.CopyTemplates(sourceName, templatePath, timelineId);
             }
         }
 

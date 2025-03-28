@@ -10,6 +10,7 @@
         public string outputPath;
         public bool manual;
         public bool separateAnimations;
+        public bool doCopy;
 
         public Cache()
         {
@@ -21,9 +22,10 @@
             outputPath = string.Empty;
             manual = false;
             separateAnimations = true;
+            doCopy = true;
         }
 
-        public Cache(string sourcePath, string gdtPath, string dbPath, string dataPath, string templatePath, string outputPath, bool manual, bool separateAnimations)
+        public Cache(string sourcePath, string gdtPath, string dbPath, string dataPath, string templatePath, string outputPath, bool manual, bool separateAnimations, bool doCopy)
         {
             this.sourcePath = sourcePath;
             this.gdtPath = gdtPath;
@@ -33,6 +35,7 @@
             this.outputPath = outputPath;
             this.manual = manual;
             this.separateAnimations = separateAnimations;
+            this.doCopy = doCopy;
         }
     }
 }

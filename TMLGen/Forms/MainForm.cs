@@ -19,6 +19,7 @@ namespace TMLGen
         public static ShowMaterialSelection materialSelectionDelegate;
         public delegate Guid ShowLocationSelection(List<Guid> candidates);
         public static ShowLocationSelection locationSelectionDelegate;
+        private uint settings;
 
         public MainForm()
         {
@@ -69,11 +70,13 @@ namespace TMLGen
             public string dbFile;
             public string templateDirectory;
             public string outputPath;
+            public string rawSourcePath;
             public bool manual;
             public bool separateAnimations;
+            public bool doCopy;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkBoxManual_CheckedChanged(object sender, EventArgs e)
         {
             labelGDT.Enabled = !labelGDT.Enabled;
             buttonGDTBrowse.Enabled = !buttonGDTBrowse.Enabled;
@@ -171,8 +174,10 @@ namespace TMLGen
                     dbFile = dbFile,
                     templateDirectory = templateDirectory,
                     outputPath = textBoxOutput.Text,
+                    rawSourcePath = textBoxSource.Text,
                     manual = checkBoxManual.Checked,
-                    separateAnimations = checkBoxSeparateAnimations.Checked
+                    separateAnimations = checkBoxSeparateAnimations.Checked,
+                    doCopy = checkBoxCopy.Checked
                 };
                 buttonGenerate.Enabled = false;
                 WriteSettingsToCache();
@@ -261,13 +266,13 @@ namespace TMLGen
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             GenerationArgs args = (GenerationArgs)e.Argument;
-            e.Result = GenerationDriver.DoGeneration(this, args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.templateDirectory, args.outputPath, args.manual, args.separateAnimations);
+            e.Result = GenerationDriver.DoGeneration(this, args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.templateDirectory, args.outputPath, args.rawSourcePath, args.manual, args.separateAnimations, args.doCopy);
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null || (int)e.Result > 0)
-                LoggingHelper.Write("Generation failed.", 3);
+                LoggingHelper.Write("An error occurred during generation.", 3);
             else
                 LoggingHelper.Write("Generation finished.", 1);
             buttonGenerate.Enabled = true;
@@ -296,6 +301,7 @@ namespace TMLGen
                     textBoxOutput.Text = cache.outputPath;
                     checkBoxManual.Checked = cache.manual;
                     checkBoxSeparateAnimations.Checked = cache.separateAnimations;
+                    checkBoxCopy.Checked = cache.doCopy;
                 }
             }
         }
@@ -307,7 +313,7 @@ namespace TMLGen
 
         private void WriteSettingsToCache()
         {
-            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxData.Text, textBoxTT.Text, textBoxOutput.Text, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked));
+            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxData.Text, textBoxTT.Text, textBoxOutput.Text, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked, checkBoxCopy.Checked));
         }
     }
 }
