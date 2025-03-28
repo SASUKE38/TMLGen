@@ -61,6 +61,7 @@ namespace TMLGen.Generation
 
             ActorCollector a = new(
                 dataPath,
+                Path.GetFileNameWithoutExtension(sourceName),
                 templatePath,
                 XDocument.Load(sourcePath),
                 XDocument.Load(gdtPath),
@@ -73,9 +74,8 @@ namespace TMLGen.Generation
                 XDocument.Load(dbPath),
                 t,
                 separateAnimations);
-            LoggingHelper.Write("Collecting timeline settings...");
+            LoggingHelper.Write("Collecting timeline settings and actor data...");
             ts.Collect();
-            LoggingHelper.Write("Collecting actor data...");
             a.Collect();
             LoggingHelper.Write("Collecting components...");
             c.Collect();
@@ -85,7 +85,6 @@ namespace TMLGen.Generation
             serializer.Serialize(writer, root, namespaces);
             writer.Close();
 
-            LoggingHelper.Write("Cleaning up...");
             XDocument processed = new(CleanupHelper.DoPostProcess(XDocument.Load(outputPath).XPathSelectElement("Root")));
             processed.Save(outputPath);
 

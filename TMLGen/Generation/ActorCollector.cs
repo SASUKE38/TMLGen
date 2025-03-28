@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using TMLGen.Forms.Logging;
 using TMLGen.Models.Core;
 using TMLGen.Models.Global;
 using TMLGen.Models.Track;
@@ -31,8 +32,10 @@ namespace TMLGen.Generation
         private int initiatorCount;
         private int additionalCount;
         private string templatePath;
+        private bool didTemplatesCopy;
+        private string sourceName;
 
-        public ActorCollector(string dataDirectory, string templateDirectory, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
+        public ActorCollector(string dataDirectory, string sourceName, string templateDirectory, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
         {
             if (templateDirectory == null)
             {
@@ -44,7 +47,7 @@ namespace TMLGen.Generation
             {
                 templatePath = templateDirectory;
             }
-
+            this.sourceName = sourceName;
             peanutMapping = [];
             speakerTrackMapping = [];
             peanutContainer = new PeanutFolderTrack();
@@ -266,6 +269,34 @@ namespace TMLGen.Generation
             actorTrackMapping.Add(actorId, res.TrackId);
             trackMapping.Add(actorId, res);
             extraActorsContainer.Tracks.Add(res);
+
+            if (!didTemplatesCopy && res.IsTemplate)
+            {
+                DoTemplatesCopy();
+            }
+        }
+
+        private void DoTemplatesCopy()
+        {
+            try
+            {
+                didTemplatesCopy = true;
+                string directoryName = "Timeline Templates";
+                Directory.CreateDirectory(directoryName);
+                string copiedTemplatePath = Path.Join(directoryName, sourceName);
+                Directory.CreateDirectory(copiedTemplatePath);
+                foreach (string file in Directory.GetFiles(templatePath))
+                {
+                    if (Path.GetExtension(file) == ".lsf")
+                        File.Copy(file, Path.Join(copiedTemplatePath, Path.GetFileName(file)), true);
+                }
+                LoggingHelper.Write("This timeline has templates. The directory in Timeline Templates containing their copies should be renamed to the timeline's GUID (after overriding) and be moved to your mod's TimelineTemplates directory.", 2);
+            }
+            catch (Exception)
+            {
+                LoggingHelper.Write("The timeline's templates could not be copied. Without these copies, changes to templates might not be reflected correctly.", 2);
+                return;
+            }
         }
 
         private void SetExtraActorTransform(XElement transformData, ActorTrackDefault actor)
