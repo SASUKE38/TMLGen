@@ -94,20 +94,29 @@ namespace TMLGen.Generation
             }
         }
 
-        public static void CopyGDTFile(string gdtPath, string sourceName, string gameDataPath, string modName)
+        public static void CopyGDTFile(string gdtPath, string sourceName, string gameDataPath, string modName, bool doModCopy)
         {
             try
             {
+                string outputPath;
+                if (doModCopy)
+                {
+                    outputPath = Path.Join(gameDataPath, "Public", modName, "Content", "Generated", "[PAK]_GeneratedDialogTimelines", sourceName + ".lsx");
+                }
+                else
+                {
+                    outputPath = Path.Join(copiedDataDirectoryName, sourceName, sourceName + "_GDT.lsx");
+                }
+
                 XDocument doc = XDocument.Load(gdtPath);
                 var xmlSource = doc.XPathSelectElement("//attribute[@id='SourceFile']");
                 xmlSource.Attribute("value").Value = "Public/" + modName + "/Timeline/Generated/" + sourceName + ".lsf";
                 var xmlEditorSource = doc.XPathSelectElement("//attribute[@id='EditorSourceFile']");
                 xmlEditorSource.Attribute("value").Value = "Editor/Mods/" + modName + "/Timeline/Generated/" + sourceName + ".tml";
-                string outputPath = Path.Join(gameDataPath, "Public", modName, "Content", "Generated", "[PAK]_GeneratedDialogTimelines", sourceName + ".lsx");
                 doc.Save(outputPath);
 
                 Resource resource = ResourceUtils.LoadResource(outputPath, ResourceLoadParameters.FromGameVersion(Game.BaldursGate3));
-                ResourceUtils.SaveResource(resource, Path.ChangeExtension(outputPath, ".lsf"), ResourceConversionParameters.FromGameVersion(Game.BaldursGate3));
+                ResourceUtils.SaveResource(resource, Path.ChangeExtension(Path.GetFullPath(outputPath), ".lsf"), ResourceConversionParameters.FromGameVersion(Game.BaldursGate3));
                 File.Delete(outputPath);
             }
             catch (Exception)

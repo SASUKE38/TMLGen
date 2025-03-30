@@ -25,7 +25,6 @@ namespace TMLGen.Generation
         private readonly SceneLightsFolderTrack lightsContainer;
         private readonly XElement dbSpeakerList;
         
-        private static readonly Guid narratorSpeakerMappingId = Guid.Parse("a346318f-15b3-49ad-ab97-ddf8283dc339");
         private static readonly Guid narratorActorId = Guid.Parse("bbb9c649-e86d-43a1-b171-d0a8006e8b5e");
         private static readonly int narratorSpeakerId = -666;
 
@@ -99,7 +98,7 @@ namespace TMLGen.Generation
 
                 if (speakerSlot.HasValue)
                 {
-                    HandleSpeaker(data, (int) speakerSlot, actorType);
+                    HandleSpeaker(data, (int) speakerSlot, actorType, (Guid) idAtt);
                 }
                 else if (actorType == "peanut")
                 {
@@ -131,7 +130,7 @@ namespace TMLGen.Generation
             timeline.Tracks.Add(lightsContainer);
         }
 
-        private void HandleSpeaker(XElement data, int speakerSlot, string ActorType)
+        private void HandleSpeaker(XElement data, int speakerSlot, string ActorType, Guid narratorMappingId)
         {
             ActorTrackSpeaker res = new();
             XElement dbSpeakerData = dbSpeakerList.XPathSelectElement("./node/attribute[@id='index' and @value='" + speakerSlot + "']/..");
@@ -160,7 +159,7 @@ namespace TMLGen.Generation
                 else
                 {
                     res.Name = "Narrator";
-                    res.SpeakerMappingId = narratorSpeakerMappingId;
+                    res.SpeakerMappingId = narratorMappingId;
                     res.ActorId = narratorActorId;
                 }
 

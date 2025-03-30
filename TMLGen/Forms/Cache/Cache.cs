@@ -9,7 +9,7 @@ namespace TMLGen.Forms.Cache
         public string dbPath;
         public string dataPath;
         public string templatePath;
-        public string outputPath;
+        public string gameDataPath;
         public bool manual;
         public bool separateAnimations;
         public bool doCopy;
@@ -23,7 +23,7 @@ namespace TMLGen.Forms.Cache
             dbPath = string.Empty;
             dataPath = string.Empty;
             templatePath = string.Empty;
-            outputPath = string.Empty;
+            gameDataPath = string.Empty;
             manual = false;
             separateAnimations = true;
             doCopy = true;
@@ -31,14 +31,14 @@ namespace TMLGen.Forms.Cache
             modIndex = 0;
         }
 
-        public Cache(string sourcePath, string gdtPath, string dbPath, string dataPath, string templatePath, string outputPath, List<string> mods, int modIndex, bool manual, bool separateAnimations, bool doCopy)
+        public Cache(string sourcePath, string gdtPath, string dbPath, string dataPath, string templatePath, string gameDataPath, List<string> mods, int modIndex, bool manual, bool separateAnimations, bool doCopy)
         {
             this.sourcePath = sourcePath;
             this.gdtPath = gdtPath;
             this.dbPath = dbPath;
             this.dataPath = dataPath;
             this.templatePath = templatePath;
-            this.outputPath = outputPath;
+            this.gameDataPath = gameDataPath;
             this.manual = manual;
             this.separateAnimations = separateAnimations;
             this.doCopy = doCopy;

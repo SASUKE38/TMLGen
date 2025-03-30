@@ -46,7 +46,7 @@ namespace TMLGen.Generation
 
             PreparationHelper.FindCharacterVisualsFiles(dataPath, []);
             CopyHelper.CopyTimelineFiles(rawSourcePath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
-            if (doCopy) CopyHelper.CopyGDTFile(gdtPath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName);
+            CopyHelper.CopyGDTFile(gdtPath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
 
             Root root = new();
             XmlSerializer serializer = new(typeof(Root));

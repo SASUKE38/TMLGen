@@ -235,7 +235,7 @@ namespace TMLGen
                 LoggingHelper.Write("Failed to locate unpacked data directory.", 2);
                 checkSuccess = false;
             }
-            if (!Directory.Exists(textBoxGameData.Text))
+            if (checkBoxCopy.Checked && !Directory.Exists(textBoxGameData.Text))
             {
                 LoggingHelper.Write("Failed to locate game data directory.", 2);
                 checkSuccess = false;
@@ -300,7 +300,7 @@ namespace TMLGen
                     textBoxDB.Text = cache.dbPath;
                     textBoxData.Text = cache.dataPath;
                     textBoxTT.Text = cache.templatePath;
-                    textBoxGameData.Text = cache.outputPath;
+                    textBoxGameData.Text = cache.gameDataPath;
                     checkBoxManual.Checked = cache.manual;
                     checkBoxSeparateAnimations.Checked = cache.separateAnimations;
                     checkBoxCopy.Checked = cache.doCopy;
@@ -334,7 +334,14 @@ namespace TMLGen
             DialogResult diaRes = selection.ShowDialog();
             if (diaRes == DialogResult.OK && selection.modName != string.Empty)
             {
-                listBoxMods.Items.Add(selection.modName);
+                if (!listBoxMods.Items.Contains(selection.modName))
+                {
+                    listBoxMods.Items.Add(selection.modName);
+                }
+                else
+                {
+                    LoggingHelper.Write("This mod already exists in the mod list.", 2);
+                }
             }
             selection.Dispose();
         }
