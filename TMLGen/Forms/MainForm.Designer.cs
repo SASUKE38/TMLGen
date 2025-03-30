@@ -52,10 +52,9 @@
             openFileDialogDB = new System.Windows.Forms.OpenFileDialog();
             folderBrowserDialogData = new System.Windows.Forms.FolderBrowserDialog();
             folderBrowserDialogTemplates = new System.Windows.Forms.FolderBrowserDialog();
-            saveFileDialogOutput = new System.Windows.Forms.SaveFileDialog();
-            label6 = new System.Windows.Forms.Label();
-            buttonOutputBrowse = new System.Windows.Forms.Button();
-            textBoxOutput = new System.Windows.Forms.TextBox();
+            labelGameData = new System.Windows.Forms.Label();
+            buttonGameDataBrowse = new System.Windows.Forms.Button();
+            textBoxGameData = new System.Windows.Forms.TextBox();
             toolTip = new System.Windows.Forms.ToolTip(components);
             checkBoxSeparateAnimations = new System.Windows.Forms.CheckBox();
             checkBoxCopy = new System.Windows.Forms.CheckBox();
@@ -63,12 +62,17 @@
             labelConsole = new System.Windows.Forms.Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             groupBox1 = new System.Windows.Forms.GroupBox();
+            listBoxMods = new System.Windows.Forms.ListBox();
+            buttonModsAdd = new System.Windows.Forms.Button();
+            buttonModsRemove = new System.Windows.Forms.Button();
+            label1 = new System.Windows.Forms.Label();
+            folderBrowserDialogGameData = new System.Windows.Forms.FolderBrowserDialog();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // buttonGenerate
             // 
-            buttonGenerate.Location = new System.Drawing.Point(12, 357);
+            buttonGenerate.Location = new System.Drawing.Point(330, 402);
             buttonGenerate.Name = "buttonGenerate";
             buttonGenerate.Size = new System.Drawing.Size(679, 40);
             buttonGenerate.TabIndex = 0;
@@ -83,7 +87,7 @@
             // 
             // buttonSourceBrowse
             // 
-            buttonSourceBrowse.Location = new System.Drawing.Point(616, 71);
+            buttonSourceBrowse.Location = new System.Drawing.Point(934, 115);
             buttonSourceBrowse.Name = "buttonSourceBrowse";
             buttonSourceBrowse.Size = new System.Drawing.Size(75, 23);
             buttonSourceBrowse.TabIndex = 0;
@@ -93,16 +97,16 @@
             // 
             // textBoxSource
             // 
-            textBoxSource.Location = new System.Drawing.Point(12, 71);
+            textBoxSource.Location = new System.Drawing.Point(12, 115);
             textBoxSource.Name = "textBoxSource";
-            textBoxSource.Size = new System.Drawing.Size(598, 23);
+            textBoxSource.Size = new System.Drawing.Size(916, 23);
             textBoxSource.TabIndex = 1;
             toolTip.SetToolTip(textBoxSource, resources.GetString("textBoxSource.ToolTip"));
             // 
             // labelSource
             // 
             labelSource.AutoSize = true;
-            labelSource.Location = new System.Drawing.Point(12, 53);
+            labelSource.Location = new System.Drawing.Point(12, 97);
             labelSource.Name = "labelSource";
             labelSource.Size = new System.Drawing.Size(67, 15);
             labelSource.TabIndex = 2;
@@ -111,7 +115,7 @@
             // buttonGDTBrowse
             // 
             buttonGDTBrowse.Enabled = false;
-            buttonGDTBrowse.Location = new System.Drawing.Point(616, 118);
+            buttonGDTBrowse.Location = new System.Drawing.Point(934, 162);
             buttonGDTBrowse.Name = "buttonGDTBrowse";
             buttonGDTBrowse.Size = new System.Drawing.Size(75, 23);
             buttonGDTBrowse.TabIndex = 3;
@@ -122,9 +126,9 @@
             // textBoxGDT
             // 
             textBoxGDT.Enabled = false;
-            textBoxGDT.Location = new System.Drawing.Point(12, 118);
+            textBoxGDT.Location = new System.Drawing.Point(12, 162);
             textBoxGDT.Name = "textBoxGDT";
-            textBoxGDT.Size = new System.Drawing.Size(598, 23);
+            textBoxGDT.Size = new System.Drawing.Size(916, 23);
             textBoxGDT.TabIndex = 4;
             toolTip.SetToolTip(textBoxGDT, resources.GetString("textBoxGDT.ToolTip"));
             // 
@@ -132,7 +136,7 @@
             // 
             labelGDT.AutoSize = true;
             labelGDT.Enabled = false;
-            labelGDT.Location = new System.Drawing.Point(12, 100);
+            labelGDT.Location = new System.Drawing.Point(12, 144);
             labelGDT.Name = "labelGDT";
             labelGDT.Size = new System.Drawing.Size(175, 15);
             labelGDT.TabIndex = 5;
@@ -141,7 +145,7 @@
             // buttonDBBrowse
             // 
             buttonDBBrowse.Enabled = false;
-            buttonDBBrowse.Location = new System.Drawing.Point(616, 163);
+            buttonDBBrowse.Location = new System.Drawing.Point(934, 207);
             buttonDBBrowse.Name = "buttonDBBrowse";
             buttonDBBrowse.Size = new System.Drawing.Size(75, 23);
             buttonDBBrowse.TabIndex = 6;
@@ -152,16 +156,16 @@
             // textBoxDB
             // 
             textBoxDB.Enabled = false;
-            textBoxDB.Location = new System.Drawing.Point(12, 163);
+            textBoxDB.Location = new System.Drawing.Point(12, 207);
             textBoxDB.Name = "textBoxDB";
-            textBoxDB.Size = new System.Drawing.Size(598, 23);
+            textBoxDB.Size = new System.Drawing.Size(916, 23);
             textBoxDB.TabIndex = 7;
             toolTip.SetToolTip(textBoxDB, resources.GetString("textBoxDB.ToolTip"));
             // 
             // buttonTTBrowse
             // 
             buttonTTBrowse.Enabled = false;
-            buttonTTBrowse.Location = new System.Drawing.Point(616, 207);
+            buttonTTBrowse.Location = new System.Drawing.Point(934, 251);
             buttonTTBrowse.Name = "buttonTTBrowse";
             buttonTTBrowse.Size = new System.Drawing.Size(75, 23);
             buttonTTBrowse.TabIndex = 6;
@@ -173,7 +177,7 @@
             // 
             labelDB.AutoSize = true;
             labelDB.Enabled = false;
-            labelDB.Location = new System.Drawing.Point(12, 145);
+            labelDB.Location = new System.Drawing.Point(12, 189);
             labelDB.Name = "labelDB";
             labelDB.Size = new System.Drawing.Size(106, 15);
             labelDB.TabIndex = 8;
@@ -182,9 +186,9 @@
             // textBoxTT
             // 
             textBoxTT.Enabled = false;
-            textBoxTT.Location = new System.Drawing.Point(12, 207);
+            textBoxTT.Location = new System.Drawing.Point(12, 251);
             textBoxTT.Name = "textBoxTT";
-            textBoxTT.Size = new System.Drawing.Size(598, 23);
+            textBoxTT.Size = new System.Drawing.Size(916, 23);
             textBoxTT.TabIndex = 7;
             toolTip.SetToolTip(textBoxTT, resources.GetString("textBoxTT.ToolTip"));
             // 
@@ -192,7 +196,7 @@
             // 
             labelTT.AutoSize = true;
             labelTT.Enabled = false;
-            labelTT.Location = new System.Drawing.Point(12, 189);
+            labelTT.Location = new System.Drawing.Point(12, 233);
             labelTT.Name = "labelTT";
             labelTT.Size = new System.Drawing.Size(162, 15);
             labelTT.TabIndex = 8;
@@ -221,7 +225,7 @@
             // 
             // buttonDataBrowse
             // 
-            buttonDataBrowse.Location = new System.Drawing.Point(616, 27);
+            buttonDataBrowse.Location = new System.Drawing.Point(934, 27);
             buttonDataBrowse.Name = "buttonDataBrowse";
             buttonDataBrowse.Size = new System.Drawing.Size(75, 23);
             buttonDataBrowse.TabIndex = 10;
@@ -233,7 +237,7 @@
             // 
             textBoxData.Location = new System.Drawing.Point(12, 27);
             textBoxData.Name = "textBoxData";
-            textBoxData.Size = new System.Drawing.Size(598, 23);
+            textBoxData.Size = new System.Drawing.Size(916, 23);
             textBoxData.TabIndex = 11;
             toolTip.SetToolTip(textBoxData, "The path to the top level of your unpacked data, such as that extracted by the BG3 Modder's Multitool.\r\nExample: F:\\BG3Multitool\\UnpackedData");
             // 
@@ -245,35 +249,31 @@
             // 
             openFileDialogDB.Filter = "Dialogs Binary Files|*.lsf";
             // 
-            // saveFileDialogOutput
+            // labelGameData
             // 
-            saveFileDialogOutput.Filter = "Timeline Editor Source Files|*.tml";
+            labelGameData.AutoSize = true;
+            labelGameData.Location = new System.Drawing.Point(12, 53);
+            labelGameData.Name = "labelGameData";
+            labelGameData.Size = new System.Drawing.Size(119, 15);
+            labelGameData.TabIndex = 15;
+            labelGameData.Text = "Game Data Directory:";
             // 
-            // label6
+            // buttonGameDataBrowse
             // 
-            label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(12, 233);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(69, 15);
-            label6.TabIndex = 15;
-            label6.Text = "Output File:";
+            buttonGameDataBrowse.Location = new System.Drawing.Point(934, 71);
+            buttonGameDataBrowse.Name = "buttonGameDataBrowse";
+            buttonGameDataBrowse.Size = new System.Drawing.Size(75, 23);
+            buttonGameDataBrowse.TabIndex = 13;
+            buttonGameDataBrowse.Text = "Browse";
+            buttonGameDataBrowse.UseVisualStyleBackColor = true;
+            buttonGameDataBrowse.Click += buttonGameDataBrowse_Click;
             // 
-            // buttonOutputBrowse
+            // textBoxGameData
             // 
-            buttonOutputBrowse.Location = new System.Drawing.Point(616, 251);
-            buttonOutputBrowse.Name = "buttonOutputBrowse";
-            buttonOutputBrowse.Size = new System.Drawing.Size(75, 23);
-            buttonOutputBrowse.TabIndex = 13;
-            buttonOutputBrowse.Text = "Browse";
-            buttonOutputBrowse.UseVisualStyleBackColor = true;
-            buttonOutputBrowse.Click += buttonOutputBrowse_Click;
-            // 
-            // textBoxOutput
-            // 
-            textBoxOutput.Location = new System.Drawing.Point(12, 251);
-            textBoxOutput.Name = "textBoxOutput";
-            textBoxOutput.Size = new System.Drawing.Size(598, 23);
-            textBoxOutput.TabIndex = 14;
+            textBoxGameData.Location = new System.Drawing.Point(12, 71);
+            textBoxGameData.Name = "textBoxGameData";
+            textBoxGameData.Size = new System.Drawing.Size(916, 23);
+            textBoxGameData.TabIndex = 14;
             // 
             // toolTip
             // 
@@ -297,20 +297,18 @@
             // checkBoxCopy
             // 
             checkBoxCopy.AutoSize = true;
-            checkBoxCopy.Checked = true;
-            checkBoxCopy.CheckState = System.Windows.Forms.CheckState.Checked;
             checkBoxCopy.Location = new System.Drawing.Point(6, 47);
             checkBoxCopy.Name = "checkBoxCopy";
-            checkBoxCopy.Size = new System.Drawing.Size(225, 19);
+            checkBoxCopy.Size = new System.Drawing.Size(204, 19);
             checkBoxCopy.TabIndex = 19;
-            checkBoxCopy.Text = "Create copies of files to be overridden";
-            toolTip.SetToolTip(checkBoxCopy, "Will create copies of the source, scene, and template files so they are easily located for overriding.");
+            checkBoxCopy.Text = "Override timeline in selected mod";
+            toolTip.SetToolTip(checkBoxCopy, "Will copy the timeline's data files to the selected mod instead of to the Timeline Data directory.");
             checkBoxCopy.UseVisualStyleBackColor = true;
             // 
             // formConsole
             // 
             formConsole.BackColor = System.Drawing.SystemColors.InfoText;
-            formConsole.Location = new System.Drawing.Point(12, 418);
+            formConsole.Location = new System.Drawing.Point(330, 463);
             formConsole.Name = "formConsole";
             formConsole.ReadOnly = true;
             formConsole.Size = new System.Drawing.Size(679, 153);
@@ -321,7 +319,7 @@
             // labelConsole
             // 
             labelConsole.AutoSize = true;
-            labelConsole.Location = new System.Drawing.Point(12, 400);
+            labelConsole.Location = new System.Drawing.Point(330, 445);
             labelConsole.Name = "labelConsole";
             labelConsole.Size = new System.Drawing.Size(30, 15);
             labelConsole.TabIndex = 17;
@@ -338,24 +336,72 @@
             groupBox1.Controls.Add(checkBoxCopy);
             groupBox1.Controls.Add(checkBoxManual);
             groupBox1.Controls.Add(checkBoxSeparateAnimations);
-            groupBox1.Location = new System.Drawing.Point(12, 280);
+            groupBox1.Location = new System.Drawing.Point(330, 324);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(679, 71);
+            groupBox1.Size = new System.Drawing.Size(679, 72);
             groupBox1.TabIndex = 19;
             groupBox1.TabStop = false;
             groupBox1.Text = "Settings";
+            // 
+            // listBoxMods
+            // 
+            listBoxMods.FormattingEnabled = true;
+            listBoxMods.ItemHeight = 15;
+            listBoxMods.Location = new System.Drawing.Point(12, 339);
+            listBoxMods.Name = "listBoxMods";
+            listBoxMods.Size = new System.Drawing.Size(312, 244);
+            listBoxMods.TabIndex = 20;
+            listBoxMods.SelectedIndexChanged += listBoxMods_SelectedIndexChanged;
+            // 
+            // buttonModsAdd
+            // 
+            buttonModsAdd.Location = new System.Drawing.Point(207, 593);
+            buttonModsAdd.Name = "buttonModsAdd";
+            buttonModsAdd.Size = new System.Drawing.Size(117, 23);
+            buttonModsAdd.TabIndex = 24;
+            buttonModsAdd.Text = "Add Mod";
+            buttonModsAdd.UseVisualStyleBackColor = true;
+            buttonModsAdd.Click += buttonModsAdd_Click;
+            // 
+            // buttonModsRemove
+            // 
+            buttonModsRemove.Location = new System.Drawing.Point(12, 593);
+            buttonModsRemove.Name = "buttonModsRemove";
+            buttonModsRemove.Size = new System.Drawing.Size(117, 23);
+            buttonModsRemove.TabIndex = 25;
+            buttonModsRemove.Text = "Remove Mod";
+            buttonModsRemove.UseVisualStyleBackColor = true;
+            buttonModsRemove.Click += buttonModsRemove_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(12, 321);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(40, 15);
+            label1.TabIndex = 26;
+            label1.Text = "Mods:";
+            // 
+            // folderBrowserDialogGameData
+            // 
+            folderBrowserDialogGameData.Description = "Select Game Data Directory";
+            folderBrowserDialogGameData.UseDescriptionForTitle = true;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(704, 584);
+            ClientSize = new System.Drawing.Size(1022, 629);
+            Controls.Add(label1);
+            Controls.Add(buttonModsRemove);
+            Controls.Add(buttonModsAdd);
+            Controls.Add(listBoxMods);
             Controls.Add(groupBox1);
             Controls.Add(labelConsole);
             Controls.Add(formConsole);
-            Controls.Add(label6);
-            Controls.Add(buttonOutputBrowse);
-            Controls.Add(textBoxOutput);
+            Controls.Add(labelGameData);
+            Controls.Add(buttonGameDataBrowse);
+            Controls.Add(textBoxGameData);
             Controls.Add(labelData);
             Controls.Add(buttonDataBrowse);
             Controls.Add(textBoxData);
@@ -374,7 +420,6 @@
             Controls.Add(textBoxGDT);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
-            MaximumSize = new System.Drawing.Size(720, 623);
             MinimumSize = new System.Drawing.Size(720, 605);
             Name = "MainForm";
             Text = "TMLGen";
@@ -410,10 +455,8 @@
         private System.Windows.Forms.OpenFileDialog openFileDialogDB;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogData;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogTemplates;
-        private System.Windows.Forms.SaveFileDialog saveFileDialogOutput;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button buttonOutputBrowse;
-        private System.Windows.Forms.TextBox textBoxOutput;
+        private System.Windows.Forms.Label labelGameData;
+        private System.Windows.Forms.Button buttonGameDataBrowse;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Label labelConsole;
         public System.Windows.Forms.RichTextBox formConsole;
@@ -421,6 +464,12 @@
         private System.Windows.Forms.CheckBox checkBoxSeparateAnimations;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox checkBoxCopy;
+        private System.Windows.Forms.ListBox listBoxMods;
+        private System.Windows.Forms.TextBox textBoxGameData;
+        private System.Windows.Forms.Button buttonModsAdd;
+        private System.Windows.Forms.Button buttonModsRemove;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogGameData;
     }
 }
 

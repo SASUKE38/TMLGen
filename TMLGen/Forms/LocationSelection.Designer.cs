@@ -111,8 +111,11 @@
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             Name = "LocationSelection";
+            ShowIcon = false;
+            ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Location Selection";
+            TopMost = true;
             ResumeLayout(false);
             PerformLayout();
         }

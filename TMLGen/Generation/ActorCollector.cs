@@ -36,8 +36,10 @@ namespace TMLGen.Generation
         private bool doCopy;
         private string sourceName;
         private Guid timelineId;
+        private string modName;
+        private string gameDataPath;
 
-        public ActorCollector(string dataDirectory, string sourceName, string templateDirectory, bool doCopy, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
+        public ActorCollector(string dataDirectory, string sourceName, string templateDirectory, string gameDataPath, string modName, bool doCopy, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
         {
             if (templateDirectory == null)
             {
@@ -52,6 +54,8 @@ namespace TMLGen.Generation
             }
             this.sourceName = sourceName;
             this.doCopy = doCopy;
+            this.modName = modName;
+            this.gameDataPath = gameDataPath;
             peanutMapping = [];
             speakerTrackMapping = [];
             peanutContainer = new PeanutFolderTrack();
@@ -274,10 +278,10 @@ namespace TMLGen.Generation
             trackMapping.Add(actorId, res);
             extraActorsContainer.Tracks.Add(res);
 
-            if (doCopy && !didTemplatesCopy && res.IsTemplate)
+            if (!didTemplatesCopy && res.IsTemplate)
             {
                 didTemplatesCopy = true;
-                PreparationHelper.CopyTemplates(sourceName, templatePath, timelineId);
+                CopyHelper.CopyTemplates(sourceName, templatePath, timelineId, gameDataPath, modName, doCopy);
             }
         }
 

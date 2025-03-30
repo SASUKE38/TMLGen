@@ -15,7 +15,6 @@ namespace TMLGen.Generation
     {
         public static List<XDocument> visualFiles = [];
         public static string[] visualPaths = [];
-        private static readonly string copiedDataDirectoryName = "Timeline Data";
 
         public static string SaveToLsxFile(string path)
         {
@@ -212,49 +211,6 @@ namespace TMLGen.Generation
         {
             string filePath = Path.Join([dataDirectory, packagePrefix, "Public", package, "Content", "[PAK]_CharacterVisuals", "_merged.lsf"]);
             SaveToLsxFile(filePath, Path.GetFullPath(cachePath));
-        }
-
-        public static void CopyTimelineFiles(string sourcePath, string sourceName)
-        {
-            try
-            {
-                Directory.CreateDirectory(copiedDataDirectoryName);
-                string copyDest = Path.Join(copiedDataDirectoryName, sourceName);
-                Directory.CreateDirectory(copyDest);
-
-                File.Copy(sourcePath, Path.Join(copyDest, Path.GetFileName(sourcePath)), true);
-                string sceneName = sourceName + "_Scene.lsx";
-                string scenePath = Path.Join(Path.GetDirectoryName(sourcePath), sceneName);
-                string prefetchName = sourceName + "_Prefetch.lsf";
-                string prefetchPath = Path.Join(Path.GetDirectoryName(sourcePath), prefetchName);
-                if (File.Exists(scenePath))
-                    File.Copy(scenePath, Path.Join(copyDest, sceneName), true);
-                if (File.Exists(prefetchPath))
-                    File.Copy(prefetchPath, Path.Join(copyDest, prefetchName), true);
-            }
-            catch (Exception)
-            {
-                LoggingHelper.Write("An error occurred when copying the timeline's files.", 2);
-            }
-        }
-
-        public static void CopyTemplates(string sourceName, string templatePath, Guid timelineId)
-        {
-            try
-            {
-                string copyDest = Path.Join(copiedDataDirectoryName, sourceName, timelineId.ToString());
-                Directory.CreateDirectory(copyDest);
-                foreach (string file in Directory.GetFiles(templatePath))
-                {
-                    if (Path.GetExtension(file) == ".lsf")
-                        File.Copy(file, Path.Join(copyDest, Path.GetFileName(file)), true);
-                }
-            }
-            catch (Exception)
-            {
-                LoggingHelper.Write("An error occurred when copying the timeline's templates.", 2);
-                return;
-            }
         }
     }
 }

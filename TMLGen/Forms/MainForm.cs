@@ -19,7 +19,7 @@ namespace TMLGen
         public static ShowMaterialSelection materialSelectionDelegate;
         public delegate Guid ShowLocationSelection(List<Guid> candidates);
         public static ShowLocationSelection locationSelectionDelegate;
-        private uint settings;
+        private string modName = string.Empty;
 
         public MainForm()
         {
@@ -71,6 +71,7 @@ namespace TMLGen
             public string templateDirectory;
             public string outputPath;
             public string rawSourcePath;
+            public string modName;
             public bool manual;
             public bool separateAnimations;
             public bool doCopy;
@@ -134,12 +135,12 @@ namespace TMLGen
             }
         }
 
-        private void buttonOutputBrowse_Click(object sender, EventArgs e)
+        private void buttonGameDataBrowse_Click(object sender, EventArgs e)
         {
-            DialogResult result = saveFileDialogOutput.ShowDialog();
+            DialogResult result = folderBrowserDialogGameData.ShowDialog();
             if (result == DialogResult.OK)
             {
-                textBoxOutput.Text = saveFileDialogOutput.FileName;
+                textBoxGameData.Text = folderBrowserDialogGameData.SelectedPath;
             }
         }
 
@@ -173,9 +174,10 @@ namespace TMLGen
                     gdtFile = gdtFile,
                     dbFile = dbFile,
                     templateDirectory = templateDirectory,
-                    outputPath = textBoxOutput.Text,
+                    outputPath = textBoxGameData.Text,
                     rawSourcePath = textBoxSource.Text,
                     manual = checkBoxManual.Checked,
+                    modName = modName,
                     separateAnimations = checkBoxSeparateAnimations.Checked,
                     doCopy = checkBoxCopy.Checked
                 };
@@ -203,11 +205,6 @@ namespace TMLGen
                 LoggingHelper.Write("Source file must have a .lsf file extension.", 2);
                 checkSuccess = false;
             }
-            if (Path.GetExtension(textBoxOutput.Text) != ".tml")
-            {
-                LoggingHelper.Write("Output file must have a .tml file extension.", 2);
-                checkSuccess = false;
-            }
             if (checkBoxManual.Checked)
             {
                 if (Path.GetExtension(textBoxGDT.Text) != ".lsf")
@@ -233,14 +230,19 @@ namespace TMLGen
                 LoggingHelper.Write("Failed to locate source file.", 2);
                 checkSuccess = false;
             }
-            if (textBoxOutput.Text.Length == 0)
-            {
-                LoggingHelper.Write("No output destination provided.", 2);
-                checkSuccess = false;
-            }
             if (!Directory.Exists(textBoxData.Text))
             {
                 LoggingHelper.Write("Failed to locate unpacked data directory.", 2);
+                checkSuccess = false;
+            }
+            if (!Directory.Exists(textBoxGameData.Text))
+            {
+                LoggingHelper.Write("Failed to locate game data directory.", 2);
+                checkSuccess = false;
+            }
+            if (checkBoxCopy.Checked && listBoxMods.SelectedIndex == -1)
+            {
+                LoggingHelper.Write("No mod selected.", 2);
                 checkSuccess = false;
             }
             if (checkBoxManual.Checked)
@@ -266,7 +268,7 @@ namespace TMLGen
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             GenerationArgs args = (GenerationArgs)e.Argument;
-            e.Result = GenerationDriver.DoGeneration(this, args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.templateDirectory, args.outputPath, args.rawSourcePath, args.manual, args.separateAnimations, args.doCopy);
+            e.Result = GenerationDriver.DoGeneration(this, args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.templateDirectory, args.outputPath, args.rawSourcePath, args.modName, args.manual, args.separateAnimations, args.doCopy);
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -298,10 +300,15 @@ namespace TMLGen
                     textBoxDB.Text = cache.dbPath;
                     textBoxData.Text = cache.dataPath;
                     textBoxTT.Text = cache.templatePath;
-                    textBoxOutput.Text = cache.outputPath;
+                    textBoxGameData.Text = cache.outputPath;
                     checkBoxManual.Checked = cache.manual;
                     checkBoxSeparateAnimations.Checked = cache.separateAnimations;
                     checkBoxCopy.Checked = cache.doCopy;
+                    foreach (string mod in cache.mods)
+                    {
+                        listBoxMods.Items.Add(mod);
+                    }
+                    listBoxMods.SelectedIndex = cache.modIndex;
                 }
             }
         }
@@ -313,7 +320,38 @@ namespace TMLGen
 
         private void WriteSettingsToCache()
         {
-            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxData.Text, textBoxTT.Text, textBoxOutput.Text, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked, checkBoxCopy.Checked));
+            List<string> modList = [];
+            foreach (object mod in listBoxMods.Items)
+            {
+                modList.Add(mod.ToString());
+            }
+            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxData.Text, textBoxTT.Text, textBoxGameData.Text, modList, listBoxMods.SelectedIndex, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked, checkBoxCopy.Checked));
+        }
+
+        private void buttonModsAdd_Click(object sender, EventArgs e)
+        {
+            ModSelection selection = new();
+            DialogResult diaRes = selection.ShowDialog();
+            if (diaRes == DialogResult.OK && selection.modName != string.Empty)
+            {
+                listBoxMods.Items.Add(selection.modName);
+            }
+            selection.Dispose();
+        }
+
+        private void buttonModsRemove_Click(object sender, EventArgs e)
+        {
+            string item = (string)listBoxMods.SelectedItem;
+            if (item != null)
+            {
+                listBoxMods.Items.Remove(item);
+            }
+        }
+
+        private void listBoxMods_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selected = (string)listBoxMods.SelectedItem;
+            if (selected != null) modName = selected;
         }
     }
 }

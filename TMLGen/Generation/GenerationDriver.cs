@@ -12,7 +12,7 @@ namespace TMLGen.Generation
 {
     public static class GenerationDriver
     {
-        public static int DoGeneration(Form sender, string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string templatePath, string outputPath, string rawSourcePath, bool extraPathsGiven, bool separateAnimations, bool doCopy)
+        public static int DoGeneration(Form sender, string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string templatePath, string gameDataPath, string rawSourcePath, string modName, bool extraPathsGiven, bool separateAnimations, bool doCopy)
         {
             LoggingHelper.Write("Starting generation...");
             if (!extraPathsGiven)
@@ -45,11 +45,9 @@ namespace TMLGen.Generation
             }
 
             PreparationHelper.FindCharacterVisualsFiles(dataPath, []);
-            if (doCopy)
-            {
-                PreparationHelper.CopyTimelineFiles(rawSourcePath, Path.GetFileNameWithoutExtension(sourceName));
-            }
-            
+            CopyHelper.CopyTimelineFiles(rawSourcePath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
+            if (doCopy) CopyHelper.CopyGDTFile(gdtPath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName);
+
             Root root = new();
             XmlSerializer serializer = new(typeof(Root));
             XmlSerializerNamespaces namespaces = new();
@@ -67,6 +65,8 @@ namespace TMLGen.Generation
                 dataPath,
                 Path.GetFileNameWithoutExtension(sourceName),
                 templatePath,
+                gameDataPath,
+                modName,
                 doCopy,
                 XDocument.Load(sourcePath),
                 XDocument.Load(gdtPath),
@@ -86,6 +86,8 @@ namespace TMLGen.Generation
             c.Collect();
 
             LoggingHelper.Write("Serializing result...");
+
+            string outputPath = CopyHelper.GetOutputPath(Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
             StreamWriter writer = new(outputPath);
             serializer.Serialize(writer, root, namespaces);
             writer.Close();
