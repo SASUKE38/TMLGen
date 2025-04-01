@@ -121,7 +121,7 @@
     <value>17, 17</value>
   </metadata>
   <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1081, 24</value>
+    <value>179, 67</value>
   </metadata>
   <data name="textBoxSource.ToolTip" xml:space="preserve">
     <value>The source file of the timeline whose TML you want to generate. It is likely located in a package's Timeline\Generated directory.
@@ -147,16 +147,23 @@ Example: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\TimelineTemplates\
     <value>340, 17</value>
   </metadata>
   <metadata name="folderBrowserDialogData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>488, 17</value>
+    <value>624, 15</value>
   </metadata>
   <metadata name="folderBrowserDialogTemplates.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>662, 18</value>
+    <value>803, 16</value>
   </metadata>
+  <data name="textBoxD.ToolTip" xml:space="preserve">
+    <value>The raw dialog file for the timeline. It is likely located in a package's Story\Dialogs folder.
+Example: F:\BG3Multitool\UnpackedData\Gustav\Mods\GustavDev\Story\Dialogs\Camp\Campfire_Moments\CAMP_DaisyAcknowledgement_AvD_ROM.lsj</value>
+  </data>
   <metadata name="backgroundWorker1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>18, 54</value>
+    <value>19, 60</value>
   </metadata>
   <metadata name="folderBrowserDialogGameData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>868, 23</value>
+    <value>1005, 20</value>
+  </metadata>
+  <metadata name="openFileDialogD.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>480, 16</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>140</value>

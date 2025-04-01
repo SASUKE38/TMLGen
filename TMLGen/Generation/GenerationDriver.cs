@@ -12,13 +12,14 @@ namespace TMLGen.Generation
 {
     public static class GenerationDriver
     {
-        public static int DoGeneration(Form sender, string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string templatePath, string gameDataPath, string rawSourcePath, string modName, bool extraPathsGiven, bool separateAnimations, bool doCopy)
+        public static int DoGeneration(Form sender, string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string dPath, string templatePath, string gameDataPath, string rawSourcePath, string modName, bool extraPathsGiven, bool separateAnimations, bool doCopy)
         {
             LoggingHelper.Write("Starting generation...");
             if (!extraPathsGiven)
             {
                 dbPath = PreparationHelper.FindDialogsBinaryFile(dataPath, sourceName);
                 gdtPath = PreparationHelper.FindGeneratedDialogTimelinesFile(dataPath, sourceName);
+                dPath = PreparationHelper.FindDialogsFile(dataPath, sourceName);
             }
             else
             {
@@ -45,6 +46,8 @@ namespace TMLGen.Generation
             }
 
             PreparationHelper.FindCharacterVisualsFiles(dataPath, []);
+            string localizationPath = PreparationHelper.FindLocalizationFile(dataPath, "English");
+
             CopyHelper.CopyTimelineFiles(rawSourcePath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
             CopyHelper.CopyGDTFile(gdtPath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
 
@@ -86,9 +89,15 @@ namespace TMLGen.Generation
             c.Collect();
 
             LoggingHelper.Write("Serializing result...");
-
             string outputPath = CopyHelper.GetOutputPath(Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
             StreamWriter writer = new(outputPath);
+
+            if (localizationPath != null)
+            {
+                ReferenceCollector referenceCollector = new(dataPath, dPath, outputPath, localizationPath);
+                referenceCollector.Collect();
+            }
+
             serializer.Serialize(writer, root, namespaces);
             writer.Close();
 

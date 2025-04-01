@@ -7,6 +7,7 @@ namespace TMLGen.Forms.Cache
         public string sourcePath;
         public string gdtPath;
         public string dbPath;
+        public string dPath;
         public string dataPath;
         public string templatePath;
         public string gameDataPath;
@@ -21,6 +22,7 @@ namespace TMLGen.Forms.Cache
             sourcePath = string.Empty;
             gdtPath = string.Empty;
             dbPath = string.Empty;
+            dPath = string.Empty;
             dataPath = string.Empty;
             templatePath = string.Empty;
             gameDataPath = string.Empty;
@@ -31,11 +33,12 @@ namespace TMLGen.Forms.Cache
             modIndex = -1;
         }
 
-        public Cache(string sourcePath, string gdtPath, string dbPath, string dataPath, string templatePath, string gameDataPath, List<string> mods, int modIndex, bool manual, bool separateAnimations, bool doCopy)
+        public Cache(string sourcePath, string gdtPath, string dbPath, string dPath, string dataPath, string templatePath, string gameDataPath, List<string> mods, int modIndex, bool manual, bool separateAnimations, bool doCopy)
         {
             this.sourcePath = sourcePath;
             this.gdtPath = gdtPath;
             this.dbPath = dbPath;
+            this.dPath = dPath;
             this.dataPath = dataPath;
             this.templatePath = templatePath;
             this.gameDataPath = gameDataPath;

@@ -35,11 +35,11 @@ namespace TMLGen.Generation
             public Dictionary<Guid, string> Lines { get; } = linesDict;
         }
 
-        public ReferenceCollector(string dataDirectory, string dialogDoc, string outputPath, XDocument localizationDoc)
+        public ReferenceCollector(string dataDirectory, string dialogDoc, string outputPath, string localizationDoc)
         {
             rootNode = JsonNode.Parse(new StreamReader(dialogDoc).BaseStream);
-            this.localizationDoc = localizationDoc;
-            this.outputPath = outputPath;
+            this.localizationDoc = XDocument.Load(localizationDoc);
+            this.outputPath = GetReferenceName(outputPath);
             flagPaths =
             [
                 Path.Join([dataDirectory, "Gustav", "Public", "GustavDev", "Flags"]),
@@ -64,6 +64,13 @@ namespace TMLGen.Generation
             [
                 Path.Join([dataDirectory, "Gustav", "Mods","GustavDev", "Story", "Journal", "quest_prototypes.lsx"])
             ];
+        }
+
+        private string GetReferenceName(string outputPath)
+        {
+            string directoryName = Path.GetDirectoryName(outputPath);
+            string fileName = Path.GetFileNameWithoutExtension(outputPath);
+            return Path.Join(directoryName, fileName + "_ref.json");
         }
 
         public void Collect()

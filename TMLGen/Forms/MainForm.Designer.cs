@@ -58,6 +58,7 @@
             toolTip = new System.Windows.Forms.ToolTip(components);
             checkBoxSeparateAnimations = new System.Windows.Forms.CheckBox();
             checkBoxCopy = new System.Windows.Forms.CheckBox();
+            textBoxD = new System.Windows.Forms.TextBox();
             formConsole = new System.Windows.Forms.RichTextBox();
             labelConsole = new System.Windows.Forms.Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -67,6 +68,9 @@
             buttonModsRemove = new System.Windows.Forms.Button();
             label1 = new System.Windows.Forms.Label();
             folderBrowserDialogGameData = new System.Windows.Forms.FolderBrowserDialog();
+            labelD = new System.Windows.Forms.Label();
+            buttonDBrowse = new System.Windows.Forms.Button();
+            openFileDialogD = new System.Windows.Forms.OpenFileDialog();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
@@ -84,10 +88,11 @@
             // 
             openFileDialogSource.DefaultExt = "lsf";
             openFileDialogSource.Filter = "Timeline Source Files|*.lsf";
+            openFileDialogSource.Title = "Choose Source File";
             // 
             // buttonSourceBrowse
             // 
-            buttonSourceBrowse.Location = new System.Drawing.Point(934, 115);
+            buttonSourceBrowse.Location = new System.Drawing.Point(934, 71);
             buttonSourceBrowse.Name = "buttonSourceBrowse";
             buttonSourceBrowse.Size = new System.Drawing.Size(75, 23);
             buttonSourceBrowse.TabIndex = 0;
@@ -97,7 +102,7 @@
             // 
             // textBoxSource
             // 
-            textBoxSource.Location = new System.Drawing.Point(12, 115);
+            textBoxSource.Location = new System.Drawing.Point(12, 71);
             textBoxSource.Name = "textBoxSource";
             textBoxSource.Size = new System.Drawing.Size(916, 23);
             textBoxSource.TabIndex = 1;
@@ -106,7 +111,7 @@
             // labelSource
             // 
             labelSource.AutoSize = true;
-            labelSource.Location = new System.Drawing.Point(12, 97);
+            labelSource.Location = new System.Drawing.Point(12, 53);
             labelSource.Name = "labelSource";
             labelSource.Size = new System.Drawing.Size(67, 15);
             labelSource.TabIndex = 2;
@@ -165,7 +170,7 @@
             // buttonTTBrowse
             // 
             buttonTTBrowse.Enabled = false;
-            buttonTTBrowse.Location = new System.Drawing.Point(934, 251);
+            buttonTTBrowse.Location = new System.Drawing.Point(934, 295);
             buttonTTBrowse.Name = "buttonTTBrowse";
             buttonTTBrowse.Size = new System.Drawing.Size(75, 23);
             buttonTTBrowse.TabIndex = 6;
@@ -186,7 +191,7 @@
             // textBoxTT
             // 
             textBoxTT.Enabled = false;
-            textBoxTT.Location = new System.Drawing.Point(12, 251);
+            textBoxTT.Location = new System.Drawing.Point(12, 295);
             textBoxTT.Name = "textBoxTT";
             textBoxTT.Size = new System.Drawing.Size(916, 23);
             textBoxTT.TabIndex = 7;
@@ -196,7 +201,7 @@
             // 
             labelTT.AutoSize = true;
             labelTT.Enabled = false;
-            labelTT.Location = new System.Drawing.Point(12, 233);
+            labelTT.Location = new System.Drawing.Point(12, 277);
             labelTT.Name = "labelTT";
             labelTT.Size = new System.Drawing.Size(162, 15);
             labelTT.TabIndex = 8;
@@ -207,9 +212,9 @@
             checkBoxManual.AutoSize = true;
             checkBoxManual.Location = new System.Drawing.Point(6, 22);
             checkBoxManual.Name = "checkBoxManual";
-            checkBoxManual.Size = new System.Drawing.Size(306, 19);
+            checkBoxManual.Size = new System.Drawing.Size(204, 19);
             checkBoxManual.TabIndex = 9;
-            checkBoxManual.Text = "Manually select GDT file, DB file, and templates folder";
+            checkBoxManual.Text = "Manually select timeline data files";
             toolTip.SetToolTip(checkBoxManual, "Select which timeline data files to use manually.");
             checkBoxManual.UseVisualStyleBackColor = true;
             checkBoxManual.CheckedChanged += checkBoxManual_CheckedChanged;
@@ -244,15 +249,28 @@
             // openFileDialogGDT
             // 
             openFileDialogGDT.Filter = "Generated Dialog Timelines Files|*.lsf";
+            openFileDialogGDT.Title = "Choose Generated Dialog Timelines File";
             // 
             // openFileDialogDB
             // 
             openFileDialogDB.Filter = "Dialogs Binary Files|*.lsf";
+            openFileDialogDB.Title = "Choose Dialogs Binary File";
+            // 
+            // folderBrowserDialogData
+            // 
+            folderBrowserDialogData.Description = "Choose Unpacked Data Directory";
+            folderBrowserDialogData.UseDescriptionForTitle = true;
+            // 
+            // folderBrowserDialogTemplates
+            // 
+            folderBrowserDialogTemplates.Description = "Choose Timeline Templates Folder";
+            folderBrowserDialogTemplates.UseDescriptionForTitle = true;
             // 
             // labelGameData
             // 
             labelGameData.AutoSize = true;
-            labelGameData.Location = new System.Drawing.Point(12, 53);
+            labelGameData.Enabled = false;
+            labelGameData.Location = new System.Drawing.Point(12, 97);
             labelGameData.Name = "labelGameData";
             labelGameData.Size = new System.Drawing.Size(119, 15);
             labelGameData.TabIndex = 15;
@@ -260,7 +278,8 @@
             // 
             // buttonGameDataBrowse
             // 
-            buttonGameDataBrowse.Location = new System.Drawing.Point(934, 71);
+            buttonGameDataBrowse.Enabled = false;
+            buttonGameDataBrowse.Location = new System.Drawing.Point(934, 115);
             buttonGameDataBrowse.Name = "buttonGameDataBrowse";
             buttonGameDataBrowse.Size = new System.Drawing.Size(75, 23);
             buttonGameDataBrowse.TabIndex = 13;
@@ -270,10 +289,12 @@
             // 
             // textBoxGameData
             // 
-            textBoxGameData.Location = new System.Drawing.Point(12, 71);
+            textBoxGameData.Enabled = false;
+            textBoxGameData.Location = new System.Drawing.Point(12, 115);
             textBoxGameData.Name = "textBoxGameData";
             textBoxGameData.Size = new System.Drawing.Size(916, 23);
             textBoxGameData.TabIndex = 14;
+            toolTip.SetToolTip(textBoxGameData, "The path to the directory that contains the game's .pak files. Likely ends with Baldurs Gate 3\\Data.\r\nExample: F:\\SteamLibrary\\steamapps\\common\\Baldurs Gate 3\\Data");
             // 
             // toolTip
             // 
@@ -304,6 +325,16 @@
             checkBoxCopy.Text = "Override timeline in selected mod";
             toolTip.SetToolTip(checkBoxCopy, "Will copy the timeline's data files to the selected mod instead of to the Timeline Data directory.");
             checkBoxCopy.UseVisualStyleBackColor = true;
+            checkBoxCopy.CheckedChanged += checkBoxCopy_CheckedChanged;
+            // 
+            // textBoxD
+            // 
+            textBoxD.Enabled = false;
+            textBoxD.Location = new System.Drawing.Point(12, 251);
+            textBoxD.Name = "textBoxD";
+            textBoxD.Size = new System.Drawing.Size(916, 23);
+            textBoxD.TabIndex = 28;
+            toolTip.SetToolTip(textBoxD, resources.GetString("textBoxD.ToolTip"));
             // 
             // formConsole
             // 
@@ -387,11 +418,40 @@
             folderBrowserDialogGameData.Description = "Select Game Data Directory";
             folderBrowserDialogGameData.UseDescriptionForTitle = true;
             // 
+            // labelD
+            // 
+            labelD.AutoSize = true;
+            labelD.Enabled = false;
+            labelD.Location = new System.Drawing.Point(12, 233);
+            labelD.Name = "labelD";
+            labelD.Size = new System.Drawing.Size(70, 15);
+            labelD.TabIndex = 29;
+            labelD.Text = "Dialogs File:";
+            // 
+            // buttonDBrowse
+            // 
+            buttonDBrowse.Enabled = false;
+            buttonDBrowse.Location = new System.Drawing.Point(934, 251);
+            buttonDBrowse.Name = "buttonDBrowse";
+            buttonDBrowse.Size = new System.Drawing.Size(75, 23);
+            buttonDBrowse.TabIndex = 27;
+            buttonDBrowse.Text = "Browse";
+            buttonDBrowse.UseVisualStyleBackColor = true;
+            buttonDBrowse.Click += buttonDBrowse_Click;
+            // 
+            // openFileDialogD
+            // 
+            openFileDialogD.Filter = "Dialogs Files|*.lsj";
+            openFileDialogD.Title = "Choose Dialogs File";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1022, 629);
+            Controls.Add(labelD);
+            Controls.Add(textBoxD);
+            Controls.Add(buttonDBrowse);
             Controls.Add(label1);
             Controls.Add(buttonModsRemove);
             Controls.Add(buttonModsAdd);
@@ -470,6 +530,10 @@
         private System.Windows.Forms.Button buttonModsRemove;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogGameData;
+        private System.Windows.Forms.Label labelD;
+        private System.Windows.Forms.TextBox textBoxD;
+        private System.Windows.Forms.Button buttonDBrowse;
+        private System.Windows.Forms.OpenFileDialog openFileDialogD;
     }
 }
 

@@ -68,6 +68,7 @@ namespace TMLGen
             public string sourceFile;
             public string gdtFile;
             public string dbFile;
+            public string dFile;
             public string templateDirectory;
             public string outputPath;
             public string rawSourcePath;
@@ -85,9 +86,19 @@ namespace TMLGen
             labelDB.Enabled = !labelDB.Enabled;
             buttonDBBrowse.Enabled = !buttonDBBrowse.Enabled;
             textBoxDB.Enabled = !textBoxDB.Enabled;
+            labelD.Enabled = !labelD.Enabled;
+            buttonDBrowse.Enabled = !buttonDBrowse.Enabled;
+            textBoxD.Enabled = !textBoxD.Enabled;
             labelTT.Enabled = !labelTT.Enabled;
             buttonTTBrowse.Enabled = !buttonTTBrowse.Enabled;
             textBoxTT.Enabled = !textBoxTT.Enabled;
+        }
+
+        private void checkBoxCopy_CheckedChanged(object sender, EventArgs e)
+        {
+            labelGameData.Enabled = !labelGameData.Enabled;
+            buttonGameDataBrowse.Enabled = !buttonGameDataBrowse.Enabled;
+            textBoxGameData.Enabled = !textBoxGameData.Enabled;
         }
 
         private void buttonSourceBrowse_Click(object sender, EventArgs e)
@@ -114,6 +125,15 @@ namespace TMLGen
             if (result == DialogResult.OK)
             {
                 textBoxDB.Text = openFileDialogDB.FileName;
+            }
+        }
+
+        private void buttonDBrowse_Click(object sender, EventArgs e)
+        {
+            DialogResult result = openFileDialogD.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxD.Text = openFileDialogD.FileName;
             }
         }
 
@@ -157,11 +177,13 @@ namespace TMLGen
                 }
                 string gdtFile = null;
                 string dbFile = null;
+                string dFile = null;
                 string templateDirectory = null;
                 string dataDirectory = textBoxData.Text;
                 if (checkBoxManual.Checked)
                 {
                     dbFile = textBoxDB.Text;
+                    dFile = textBoxD.Text;
                     gdtFile = textBoxGDT.Text;
                     templateDirectory = textBoxTT.Text;
                 }
@@ -173,6 +195,7 @@ namespace TMLGen
                     sourceFile = sourceFile,
                     gdtFile = gdtFile,
                     dbFile = dbFile,
+                    dFile = dFile,
                     templateDirectory = templateDirectory,
                     outputPath = textBoxGameData.Text,
                     rawSourcePath = textBoxSource.Text,
@@ -217,6 +240,11 @@ namespace TMLGen
                     LoggingHelper.Write("Dialogs binary file must have a .lsf file extension.", 2);
                     checkSuccess = false;
                 }
+                if (Path.GetExtension(textBoxD.Text) != ".lsj")
+                {
+                    LoggingHelper.Write("Dialogs file must have a .lsj file extension.", 2);
+                    checkSuccess = false;
+                }
             }
 
             return checkSuccess;
@@ -257,6 +285,11 @@ namespace TMLGen
                     LoggingHelper.Write("Failed to locate dialogs binary file.", 2);
                     checkSuccess = false;
                 }
+                if (!File.Exists(textBoxD.Text))
+                {
+                    LoggingHelper.Write("Failed to locate dialogs file.", 2);
+                    checkSuccess = false;
+                }
                 if (!Directory.Exists(textBoxTT.Text))
                 {
                     LoggingHelper.Write("Failed to locate timeline templates directory. This failure should be ignored if the timeline does not have templates.", 2);
@@ -268,7 +301,7 @@ namespace TMLGen
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             GenerationArgs args = (GenerationArgs)e.Argument;
-            e.Result = GenerationDriver.DoGeneration(this, args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.templateDirectory, args.outputPath, args.rawSourcePath, args.modName, args.manual, args.separateAnimations, args.doCopy);
+            e.Result = GenerationDriver.DoGeneration(this, args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.dFile, args.templateDirectory, args.outputPath, args.rawSourcePath, args.modName, args.manual, args.separateAnimations, args.doCopy);
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -298,6 +331,7 @@ namespace TMLGen
                     textBoxSource.Text = cache.sourcePath;
                     textBoxGDT.Text = cache.gdtPath;
                     textBoxDB.Text = cache.dbPath;
+                    textBoxD.Text = cache.dPath;
                     textBoxData.Text = cache.dataPath;
                     textBoxTT.Text = cache.templatePath;
                     textBoxGameData.Text = cache.gameDataPath;
@@ -325,7 +359,7 @@ namespace TMLGen
             {
                 modList.Add(mod.ToString());
             }
-            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxData.Text, textBoxTT.Text, textBoxGameData.Text, modList, listBoxMods.SelectedIndex, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked, checkBoxCopy.Checked));
+            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxD.Text, textBoxData.Text, textBoxTT.Text, textBoxGameData.Text, modList, listBoxMods.SelectedIndex, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked, checkBoxCopy.Checked));
         }
 
         private void buttonModsAdd_Click(object sender, EventArgs e)

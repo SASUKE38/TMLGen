@@ -125,6 +125,48 @@ namespace TMLGen.Generation
             return null;
         }
 
+        public static string FindDialogsFile(string dataDirectory, string sourceName)
+        {
+            if (dataDirectory != null)
+            {
+                string[] pathsToTry =
+                [
+                    Path.Join([dataDirectory, "Gustav", "Mods", "GustavDev", "Story", "Dialogs"]),
+                    Path.Join([dataDirectory, "Gustav", "Mods", "Gustav", "Story", "Dialogs"]),
+                    Path.Join([dataDirectory, "Shared", "Mods", "SharedDev", "Story", "Dialogs"]),
+                    Path.Join([dataDirectory, "Shared", "Mods", "Shared", "Story", "Dialogs"])
+                ];
+
+                for (int i = 0; i < pathsToTry.Length; i++)
+                {
+                    try
+                    {
+                        string sourceLsj = Path.ChangeExtension(sourceName, ".lsj");
+                        foreach (string file in Directory.EnumerateFiles(pathsToTry[i], "*.lsj", SearchOption.AllDirectories))
+                        {
+                            if (Path.GetFileName(file) == sourceLsj) return file;
+                        }
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        LoggingHelper.Write("Unpacked data directory missing dialogs content.", 2);
+                        return null;
+                    }
+                    catch (Exception ex) when (ex is IOException || ex is SecurityException || ex is UnauthorizedAccessException)
+                    {
+                        LoggingHelper.Write("Unpacked data directory could not be accessed.", 2);
+                        return null;
+                    }
+                    catch (PathTooLongException)
+                    {
+                        LoggingHelper.Write("Dialogs file search path is too long.", 2);
+                        return null;
+                    }
+                }
+            }
+            return null;
+        }
+
         public static string FindTemplatesFolder(string dataDirectory, Guid timelineId)
         {
             if (dataDirectory != null)
@@ -174,7 +216,15 @@ namespace TMLGen.Generation
         {
             string directoryName = "TmlVisualFilesCache";
             List<(string prefix, string package)> packageNames = [("Gustav", "GustavDev"), ("Gustav", "Gustav"), ("Shared", "SharedDev"), ("Shared", "Shared")];
-            Directory.CreateDirectory(directoryName);
+            try
+            {
+                Directory.CreateDirectory(directoryName);
+            }
+            catch (Exception)
+            {
+                LoggingHelper.Write("The visual files cache could not be created.", 2);
+                return;
+            }
             foreach ((string prefix, string package) in packageNames)
             {
                 try
@@ -189,6 +239,10 @@ namespace TMLGen.Generation
                 catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
                 {
                     LoggingHelper.Write("Couldn't find character visuals file for " + package + ".", 2);
+                }
+                catch (Exception)
+                {
+                    LoggingHelper.Write("An error occurred creating the visual files cache.");
                 }
             }
 
@@ -211,6 +265,34 @@ namespace TMLGen.Generation
         {
             string filePath = Path.Join([dataDirectory, packagePrefix, "Public", package, "Content", "[PAK]_CharacterVisuals", "_merged.lsf"]);
             SaveToLsxFile(filePath, Path.GetFullPath(cachePath));
+        }
+
+        public static string FindLocalizationFile(string dataDirectory, string language)
+        {
+            try
+            {
+                string directoryName = "TmlLocalizationCache";
+                Directory.CreateDirectory(directoryName);
+
+                string cachePath = Path.Join(directoryName, language + ".xml");
+                if (!File.Exists(cachePath))
+                {
+                    CreateCachedLocalizationFile(dataDirectory, cachePath, language);
+                }
+                return cachePath;
+            }
+            catch (Exception)
+            {
+                LoggingHelper.Write("An error occurred creating the localization cache. The reference file can not be generated.");
+                return null;
+            }
+        }
+
+        private static void CreateCachedLocalizationFile(string dataDirectory, string cachePath, string language)
+        {
+            string localizationPath = Path.Join(dataDirectory, language, "Localization", language, language.ToLower() + ".loca");
+            LocaResource resource = LocaUtils.Load(localizationPath, LocaFormat.Loca);
+            LocaUtils.Save(resource, Path.GetFullPath(cachePath), LocaFormat.Xml);
         }
     }
 }
