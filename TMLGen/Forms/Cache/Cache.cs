@@ -28,7 +28,7 @@ namespace TMLGen.Forms.Cache
             separateAnimations = true;
             doCopy = true;
             mods = [];
-            modIndex = 0;
+            modIndex = -1;
         }
 
         public Cache(string sourcePath, string gdtPath, string dbPath, string dataPath, string templatePath, string gameDataPath, List<string> mods, int modIndex, bool manual, bool separateAnimations, bool doCopy)
