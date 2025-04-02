@@ -215,7 +215,7 @@ namespace TMLGen.Generation
             }
             catch (KeyNotFoundException)
             {
-                Console.WriteLine("Could not find camera target");
+                
             }
 
             actorTrackMapping.Add(cameraId, res.TrackId);

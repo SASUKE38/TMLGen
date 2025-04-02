@@ -7,7 +7,6 @@ namespace TMLGen.Forms.Logging
     public static class LoggingHelper
     {
         private static Logger log;
-        private static int quantity;
         private static Form form;
 
         private static readonly Dictionary<int, Color> typeDict = new()
@@ -20,7 +19,6 @@ namespace TMLGen.Forms.Logging
 
         public static void Set(Logger logToUse, RichTextBox consoleToUse, Form formToUse)
         {
-            quantity = 0;
             log = logToUse;
             form = formToUse;
         }
@@ -41,12 +39,7 @@ namespace TMLGen.Forms.Logging
         {
             if (log != null)
             {
-                int count = log.GetLogCount();
-                if (count != quantity)
-                {
-                    quantity = count;
-                    return log.GetLogAsRichText(false);
-                }
+                return log.GetLogAsRichText(false);
             }
             return null;
         }

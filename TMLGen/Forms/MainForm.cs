@@ -21,10 +21,12 @@ namespace TMLGen
         public static ShowLocationSelection locationSelectionDelegate;
         private string modName = string.Empty;
 
+        private static readonly uint logMax = 100u;
+
         public MainForm()
         {
             InitializeComponent();
-            LoggingHelper.Set(new(100u), formConsole, this);
+            LoggingHelper.Set(new(logMax), formConsole, this);
             logDelegate = new UpdateLog(UpdateLogMethod);
             materialSelectionDelegate = new ShowMaterialSelection(MaterialSelectionMethod);
             locationSelectionDelegate = new ShowLocationSelection(LocationSelectionMethod);
