@@ -7,6 +7,7 @@ using TMLGen.Forms;
 using TMLGen.Forms.Cache;
 using TMLGen.Forms.Logging;
 using TMLGen.Generation;
+using TMLGen.Generation.Helpers;
 
 #pragma warning disable CA1416
 namespace TMLGen
@@ -26,7 +27,11 @@ namespace TMLGen
         public MainForm()
         {
             InitializeComponent();
+
+            Text += " v" + VersionHelper.GetVersion();
+
             LoggingHelper.Set(new(logMax), formConsole, this);
+
             logDelegate = new UpdateLog(UpdateLogMethod);
             materialSelectionDelegate = new ShowMaterialSelection(MaterialSelectionMethod);
             locationSelectionDelegate = new ShowLocationSelection(LocationSelectionMethod);

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
+using TMLGen.Generation.Helpers;
 using TMLGen.Models.Component;
 using TMLGen.Models.Core;
 using TMLGen.Models.Global;
@@ -15,7 +16,7 @@ using TMLGen.Models.Track.Actor;
 using TMLGen.Models.Track.Component;
 using TMLGen.Models.Track.Key;
 
-namespace TMLGen.Generation
+namespace TMLGen.Generation.Collectors
 {
     public class ComponentCollector : CollectorBase
     {
@@ -1185,7 +1186,7 @@ namespace TMLGen.Generation
                     Channel newChannel = new() { Name = channelName };
                     foreach (XElement keyData in GetKeyDataCollection(channel))
                     {
-                        GetImmutableKey<AtmosphereKey, AtmosphereKeyData>(keyData, seq, out AtmosphereKey key, out AtmosphereKeyData keyValue);
+                        GetImmutableKey(keyData, seq, out AtmosphereKey key, out AtmosphereKeyData keyValue);
                         keyValue.Id = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='id']")) ?? keyValue.Id;
                         keyValue.FadeTime = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='fadeTime']")) ?? keyValue.FadeTime;
                         BindKeyDataToKeyAndChannel(key, keyValue, newChannel);

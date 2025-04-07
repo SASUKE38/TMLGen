@@ -5,6 +5,8 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
+using TMLGen.Generation.Collectors;
+using TMLGen.Generation.Helpers;
 using TMLGen.Models;
 using TMLGen.Models.Global;
 
@@ -25,7 +27,6 @@ namespace TMLGen.Generation
             {
                 gdtPath = PreparationHelper.SaveToLsxFile(gdtPath);
                 gdtPath = PreparationHelper.GetGDTElementFromMerged(gdtPath, Path.GetFileNameWithoutExtension(sourceName));
-
             }
             dbPath = PreparationHelper.SaveToLsxFile(dbPath);
 
@@ -56,37 +57,41 @@ namespace TMLGen.Generation
             XmlSerializerNamespaces namespaces = new();
             namespaces.Add("", "");
 
-            Timeline t = new();
-            root.Timeline = t;
+            Timeline timeline = new();
+            root.Timeline = timeline;
 
-            TimelineSettingsCollector ts = new(
-                XDocument.Load(sourcePath),
-                XDocument.Load(gdtPath),
-                t);
+            XDocument sourceDoc = XDocument.Load(sourcePath);
+            XDocument gdtDoc = XDocument.Load(gdtPath);
+            XDocument dbDoc = XDocument.Load(dbPath);
 
-            ActorCollector a = new(
+            TimelineSettingsCollector timelineSettingsCollector = new(
+                sourceDoc,
+                gdtDoc,
+                timeline);
+            ActorCollector actorCollector = new(
                 dataPath,
                 Path.GetFileNameWithoutExtension(sourceName),
                 templatePath,
                 gameDataPath,
                 modName,
                 doCopy,
-                XDocument.Load(sourcePath),
-                XDocument.Load(gdtPath),
-                XDocument.Load(dbPath),
-                t);
-            ComponentCollector c = new(
+                sourceDoc,
+                gdtDoc,
+                dbDoc,
+                timeline);
+            ComponentCollector componentCollector = new(
                 sender,
-                XDocument.Load(sourcePath),
-                XDocument.Load(gdtPath),
-                XDocument.Load(dbPath),
-                t,
+                sourceDoc,
+                gdtDoc,
+                dbDoc,
+                timeline,
                 separateAnimations);
+
             LoggingHelper.Write("Collecting timeline settings and actor data...");
-            ts.Collect();
-            a.Collect();
+            timelineSettingsCollector.Collect();
+            actorCollector.Collect();
             LoggingHelper.Write("Collecting components...");
-            c.Collect();
+            componentCollector.Collect();
 
             LoggingHelper.Write("Serializing result...");
             string outputPath = CopyHelper.GetOutputPath(Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);

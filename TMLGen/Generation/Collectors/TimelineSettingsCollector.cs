@@ -6,7 +6,7 @@ using System.Xml.XPath;
 using TMLGen.Forms.Logging;
 using TMLGen.Models.Global;
 
-namespace TMLGen.Generation
+namespace TMLGen.Generation.Collectors
 {
     public class TimelineSettingsCollector : CollectorBase
     {

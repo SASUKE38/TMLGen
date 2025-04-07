@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
 
-namespace TMLGen.Generation
+namespace TMLGen.Generation.Helpers
 {
     public static class PreparationHelper
     {

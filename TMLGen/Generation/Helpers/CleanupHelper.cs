@@ -3,8 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using TMLGen.Forms.Logging;
+using TMLGen.Generation.Collectors;
 
-namespace TMLGen.Generation
+namespace TMLGen.Generation.Helpers
 {
     public static class CleanupHelper
     {

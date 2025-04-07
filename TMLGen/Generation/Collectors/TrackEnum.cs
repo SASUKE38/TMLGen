@@ -1,4 +1,4 @@
-﻿namespace TMLGen.Generation
+﻿namespace TMLGen.Generation.Collectors
 {
     public enum TrackEnum
     {

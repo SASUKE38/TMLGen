@@ -6,7 +6,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
 
-namespace TMLGen.Generation
+namespace TMLGen.Generation.Helpers
 {
     public static class CopyHelper
     {
@@ -85,7 +85,7 @@ namespace TMLGen.Generation
                 }
                 Directory.CreateDirectory(copyDest);
 
-                return Path.Join(copyDest, (sourceName + ".tml"));
+                return Path.Join(copyDest, sourceName + ".tml");
             }
             catch (Exception)
             {

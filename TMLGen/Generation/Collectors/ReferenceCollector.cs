@@ -6,8 +6,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using TMLGen.Generation.Helpers;
 
-namespace TMLGen.Generation
+namespace TMLGen.Generation.Collectors
 {
     public class ReferenceCollector
     {

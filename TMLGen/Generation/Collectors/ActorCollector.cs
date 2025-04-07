@@ -5,13 +5,14 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
+using TMLGen.Generation.Helpers;
 using TMLGen.Models.Core;
 using TMLGen.Models.Global;
 using TMLGen.Models.Track;
 using TMLGen.Models.Track.Actor;
 using TMLGen.Models.Track.Component;
 
-namespace TMLGen.Generation
+namespace TMLGen.Generation.Collectors
 {
     public class ActorCollector : CollectorBase
     {

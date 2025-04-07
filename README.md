@@ -6,17 +6,20 @@
 
 The tool requires the path to your unpacked game directory (as unpacked by the [Baldur's Gate 3 Modder's Multitool](https://github.com/ShinyHobo/BG3-Modders-Multitool)) along with the source file of the timeline you wish to edit.
 Additionally, you may select the timeline data to use manually. The definitions below detail the data the tool uses.
-- Unpacked Data Directory: Top level of unpacked game data.
-- Source File: .lsf source file of the timeline you wish to edit. Likely located in a Timeline\Generated directory.
+
+- Unpacked Data Directory: Top level of unpacked game data as unpacked by the Baldur's Gate 3 Modder's Multitool. Likely called UnpackedData.
+- Source File: .lsf source file of the timeline you wish to edit. Likely located in a Public\\<mod name\>\Timeline\Generated directory.
 
 The following directory is only used when setting the tool to override timelines.
-- Game Data Directory: Contains the .pak files the game uses. Likely ends with Baldurs Gate 3\Data.
+
+- Game Data Directory: Contains the .pak files the game uses. The path likely ends with Baldurs Gate 3\Data.
 
 The following files are used only for manual selection and can be ignored for automatic generation.
-- Generated Dialog Timelines File: .lsf file that contains information linking the timeline and dialog. Likely located in a Content\Generated\\[PAK]_GeneratedDialogTimelines directory.
-- Dialogs Binary File: .lsf file that contains the compiled dialog data. Likely located in a Story\DialogsBinary directory.
-- Dialogs File: .lsj file that contains the raw dialog data. Likely located in a Story\Dialogs directory.
-- Timeline Templates Directory: Not required (will not be present for timelines with no templates). Contains the templates a timeline uses.
+
+- Generated Dialog Timelines File: .lsf file that contains information linking the timeline and dialog. Likely located in a Public\\<mod name\>\Content\Generated\\[PAK]_GeneratedDialogTimelines directory.
+- Dialogs Binary File: .lsf file that contains the compiled dialog data. Likely located in a subdirectory of the Mods\\<mod name\>\Story\DialogsBinary directory.
+- Dialogs File: .lsj file that contains the raw dialog data. Likely located in a subdirectory of the Mods\\<mod name\>\Story\Dialogs directory.
+- Timeline Templates Directory: Not required (will not be present for timelines with no templates). Contains the templates a timeline uses. Likely located in a Public\\<mod name\>\TimelineTemplates folder and will be named with the timeline's GUID.
 
 ### Overriding a Timeline
 
@@ -29,10 +32,10 @@ The tool supports overriding timelines if a mod name and game data path are prov
 If you want to override a timeline manually, you can do so with the steps below.
 
 1. Locate the timeline files in the Timeline Data\\<timeline name\> folder created by the tool.
-2. Place the source and scene files in your mod's Public\\<mod name\>\Timeline\Generated.
+2. Place the source and scene files in your mod's Public\\<mod name\>\Timeline\Generated folder.
 3. Place the templates folder (whose name will be the timeline's GUID - if no such folder exists, skip this step) in your mod's Public\\<mod name\>\TimelineTemplates folder.
 4. Place the .tml and _ref.json files in your mod's Editor\Mods\\<mod name\>\Timeline\Generated folder.
-5. Place the Generated Dialog Timelines file (.lsf ending with _GDT) in your mod's Public\\<mod name\>\Content\Generated\\[PAK]_GeneratedDialogTimelines folder.
+5. Place the Generated Dialog Timelines file (.lsf file whose name ends with _GDT) in your mod's Public\\<mod name\>\Content\Generated\\[PAK]_GeneratedDialogTimelines folder.
 6. Restart the editor if it is open.
 
 ## Known Limitations and Workarounds
@@ -53,16 +56,16 @@ If you want to override a timeline manually, you can do so with the steps below.
   9. Locate the slot material you added as you did above.
   10. Copy this slot material's CharacterVisualResourceId and replace the slot material of the one you want to get working.
   11. Note that some actors support different versions of the same slot material; it might be unclear which to use for this process, so multiple tries with this method might be necessary.
- - Actors taken from the world might not work correctly as is. To overcome this, try the following steps.
-   1. Make a backup of the .tml file.
-   2. Note the name of the actor when you hover over it.
-   3. Delete the actor and re-add it.
-   4. Select the actor in the sidebar.
-   5. If the Parent Template ID is not null (all zeros), copy it.
-   6. Undo the changes or restore the backup of the .tml file.
-   7. Open the .tml file in a text editor.
-   8. Use the Find feature (CTRL + F) to search for the name of the actor.
-   9. Replace the ParentTemplateId with the one you copied. If no such attribute is present, add it with the form ParentTemplateId="00000000-0000-0000-0000-000000000000"
+- Actors taken from the world might not work correctly as is. To overcome this, try the following steps:
+  1. Make a backup of the .tml file.
+  2. Note the name of the actor when you hover over it.
+  3. Delete the actor and re-add it.
+  4. Select the actor in the sidebar.
+  5. If the Parent Template ID is not null (all zeros), copy it.
+  6. Undo the changes or restore the backup of the .tml file.
+  7. Open the .tml file in a text editor.
+  8. Use the Find feature (CTRL + F) to search for the name of the actor.
+  9. Replace the ParentTemplateId with the one you copied. If no such attribute is present, add it with the form ParentTemplateId="00000000-0000-0000-0000-000000000000"
 
 ## Credits
 

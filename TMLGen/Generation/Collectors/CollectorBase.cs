@@ -6,7 +6,7 @@ using TMLGen.Models.Core;
 using TMLGen.Models.Global;
 using TMLGen.Models.Track.Actor;
 
-namespace TMLGen.Generation
+namespace TMLGen.Generation.Collectors
 {
     public abstract class CollectorBase
     {
@@ -68,7 +68,7 @@ namespace TMLGen.Generation
         {
             if (element != null)
             {
-                bool.TryParse((element.Attribute("value").Value).ToLower(), out bool res);
+                bool.TryParse(element.Attribute("value").Value.ToLower(), out bool res);
                 return res;
             }
 
