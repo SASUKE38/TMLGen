@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using TMLGen.Forms.Logging;
 using TMLGen.Generation.Helpers;
 using TMLGen.Models.Core;
 using TMLGen.Models.Global;
@@ -25,6 +24,7 @@ namespace TMLGen.Generation.Collectors
         private readonly FolderTrack extraActorsContainer;
         private readonly SceneLightsFolderTrack lightsContainer;
         private readonly XElement dbSpeakerList;
+        private readonly XElement worldTimelineData;
         
         private static readonly Guid narratorActorId = Guid.Parse("bbb9c649-e86d-43a1-b171-d0a8006e8b5e");
         private static readonly int narratorSpeakerId = -666;
@@ -38,6 +38,7 @@ namespace TMLGen.Generation.Collectors
         private Guid timelineId;
         private string modName;
         private string gameDataPath;
+        private List<(ActorTrackBase, Guid)> behaviourSpeakerTargets;
 
         public ActorCollector(string dataDirectory, string sourceName, string templateDirectory, string gameDataPath, string modName, bool doCopy, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
         {
@@ -65,6 +66,8 @@ namespace TMLGen.Generation.Collectors
             extraActorsContainer = new FolderTrack { Name = "Extra Actors" };
             lightsContainer = new SceneLightsFolderTrack();
             dbSpeakerList = dbDoc.XPathSelectElement("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='speakerlist']/children");
+            worldTimelineData = doc.XPathSelectElement("/save/region[@id='TimelineContent']/node[@id='TimelineContent']/children/node[@id='WorldTimeline']");
+            behaviourSpeakerTargets = [];
         }
 
         public override void Collect()
@@ -97,31 +100,39 @@ namespace TMLGen.Generation.Collectors
                 int? speakerSlot = ExtractInt(data.XPathSelectElement("./attribute[@id='Speaker']"));
                 string actorType = ExtractString(data.XPathSelectElement("./attribute[@id='ActorTypeId']"));
 
+                ActorTrackBase actorTrack = null;
+
                 if (speakerSlot.HasValue)
                 {
-                    HandleSpeaker(data, (int) speakerSlot, actorType, (Guid) idAtt);
+                    actorTrack = HandleSpeaker(data, (int) speakerSlot, actorType, (Guid) idAtt);
                 }
                 else if (actorType == "peanut")
                 {
-                    HandlePeanut(data, (Guid) idAtt);
+                    actorTrack = HandlePeanut(data, (Guid) idAtt);
                 }
                 else if (actorType == "scenecam")
                 {
-                    HandleScenecam(data, (Guid) idAtt);
+                    actorTrack = HandleScenecam(data, (Guid) idAtt);
                 }
                 else if (actorType == "scenelight")
                 {
-                    HandleScenelight(data, (Guid) idAtt);
+                    actorTrack = HandleScenelight(data, (Guid) idAtt);
                 }
                 else if (actorType == "effect")
                 {
-                    HandleEffect(data, (Guid) idAtt);
+                    actorTrack = HandleEffect(data, (Guid) idAtt);
                 }
                 else
                 {
-                    if (actorType != "timeline") HandleOther(data, (Guid)idAtt, actorType);
+                    if (actorType != "timeline") actorTrack = HandleOther(data, (Guid)idAtt, actorType);
                 }
+
+                SetBehaviourConditions((Guid) idAtt, actorTrack);
+                SetActorIdleOverride((Guid)idAtt, actorTrack);
+                SetWorldActorEndState((Guid)idAtt, actorTrack);
             }
+
+            SetBehaviourSpeakerInteractions();
 
             timeline.Tracks.Add(speakerContainer);
             timeline.Tracks.Add(peanutContainer);
@@ -131,7 +142,7 @@ namespace TMLGen.Generation.Collectors
             timeline.Tracks.Add(lightsContainer);
         }
 
-        private void HandleSpeaker(XElement data, int speakerSlot, string ActorType, Guid narratorMappingId)
+        private ActorTrackSpeaker HandleSpeaker(XElement data, int speakerSlot, string ActorType, Guid narratorMappingId)
         {
             ActorTrackSpeaker res = new();
             XElement dbSpeakerData = dbSpeakerList.XPathSelectElement("./node/attribute[@id='index' and @value='" + speakerSlot + "']/..");
@@ -147,7 +158,7 @@ namespace TMLGen.Generation.Collectors
                     if (actorIdList != null)
                     {
                         int delimiterIndex = actorIdList.IndexOf(';');
-                        res.ActorId = delimiterIndex == -1 ? Guid.Parse(actorIdList) :  Guid.Parse(actorIdList.Substring(0, delimiterIndex));
+                        res.ActorId = delimiterIndex == -1 ? Guid.Parse(actorIdList) : Guid.Parse(actorIdList.Substring(0, delimiterIndex));
                     }
                     else
                     {
@@ -178,10 +189,13 @@ namespace TMLGen.Generation.Collectors
 
                 trackMapping.Add(res.SpeakerMappingId, res);
                 speakerContainer.Tracks.Add(res);
+
+                return res;
             }
+            return null;
         }
 
-        private void HandlePeanut(XElement data, Guid peanutId)
+        private PeanutTrack HandlePeanut(XElement data, Guid peanutId)
         {
             int slot = peanutMapping[peanutId];
             PeanutTrack res = new()
@@ -196,9 +210,11 @@ namespace TMLGen.Generation.Collectors
             actorTrackMapping.Add(peanutId, peanutId);
             trackMapping.Add(res.ActorId, res);
             peanutContainer.Tracks.Add(res);
+
+            return res;
         }
 
-        private void HandleScenecam(XElement data, Guid cameraId)
+        private ActorTrackSceneCamera HandleScenecam(XElement data, Guid cameraId)
         {
             ActorTrackSceneCamera res = new()
             {
@@ -222,9 +238,11 @@ namespace TMLGen.Generation.Collectors
             actorTrackMapping.Add(cameraId, res.TrackId);
             trackMapping.Add(cameraId, res);
             cameraContainer.Tracks.Add(res);
+
+            return res;
         }
 
-        private void HandleScenelight(XElement data, Guid actorId)
+        private ActorTrackSceneLight HandleScenelight(XElement data, Guid actorId)
         {
             ActorTrackSceneLight res = new()
             {
@@ -236,9 +254,11 @@ namespace TMLGen.Generation.Collectors
             actorTrackMapping.Add(actorId, res.TrackId);
             trackMapping.Add(actorId, res);
             lightsContainer.Tracks.Add(res);
+
+            return res;
         }
 
-        private void HandleEffect(XElement data, Guid effectId)
+        private ActorTrackDefault HandleEffect(XElement data, Guid effectId)
         {
             ActorTrackDefault res = new()
             {
@@ -254,9 +274,11 @@ namespace TMLGen.Generation.Collectors
             actorTrackMapping.Add(effectId, res.TrackId);
             trackMapping.Add(effectId, res);
             effectContainer.Tracks.Add(res);
+
+            return res;
         }
 
-        private void HandleOther(XElement data, Guid actorId, string actorType)
+        private ActorTrackDefault HandleOther(XElement data, Guid actorId, string actorType)
         {
             ActorTrackDefault res = new()
             {
@@ -283,6 +305,8 @@ namespace TMLGen.Generation.Collectors
                 didTemplatesCopy = true;
                 CopyHelper.CopyTemplates(sourceName, templatePath, timelineId, gameDataPath, modName, doCopy);
             }
+
+            return res;
         }
 
         private void SetExtraActorTransform(XElement transformData, ActorTrackDefault actor)
@@ -316,6 +340,88 @@ namespace TMLGen.Generation.Collectors
                 actor.Tracks.Add(newTrack);
                 actor.actorChildTracks.Add((int) TrackEnum.TLLookAtEvent, [newTrack]);
             }
+        }
+
+        private void SetBehaviourConditions(Guid actorId, ActorTrackBase actor)
+        {
+            XElement behaviourData = worldTimelineData.XPathSelectElement("./children/node[@id='BehaviourActorStartConditions']/children/node[@id='BehaviourActorStartCondition']/children/node[@id='Object'][attribute[@id='MapKey'][@value='" + actorId + "']]/children/node");
+            if (behaviourData != null && actor != null)
+            {
+                int? interactionType = ExtractInt(behaviourData.XPathSelectElement("./attribute[@id='BehaviourInteractionTargetType']"));
+                if (interactionType.HasValue)
+                {
+                    actor.BehaviourActorStartCondition.BehaviourInteractionTargetType = Enum.GetName(typeof(BehaviourInteractionTargetTypeEnum), interactionType);
+                }
+                actor.BehaviourActorStartCondition.ItemInteractId = ExtractGuid(behaviourData.XPathSelectElement("./attribute[@id='ItemInteractId']")) ?? actor.BehaviourActorStartCondition.ItemInteractId;
+                
+                Guid behaviourSpeakerTarget = ExtractGuid(behaviourData.XPathSelectElement("./attribute[@id='SpeakerInteractId']")) ?? Guid.Empty;
+                if (behaviourSpeakerTarget != Guid.Empty)
+                {
+                    behaviourSpeakerTargets.Add((actor, behaviourSpeakerTarget));
+                }
+                actor.BehaviourActorStartCondition.UseTransformation = ExtractBool(behaviourData.XPathSelectElement("./attribute[@id='UseTransformation']")) ?? actor.BehaviourActorStartCondition.UseTransformation;
+                Vector3 positionVec = ExtractVector3(behaviourData.XPathSelectElement("./children/node[@id='WorldTransform']/attribute[@id='Position']"));
+                if (positionVec != null)
+                {
+                    actor.BehaviourActorStartCondition.Position = positionVec.ToString();
+                }
+                Quat rotationQuat = ExtractQuat(behaviourData.XPathSelectElement("./children/node[@id='WorldTransform']/attribute[@id='RotationQuat']"));
+                if (rotationQuat != null)
+                {
+                    actor.BehaviourActorStartCondition.Rotation = GetRotationDegreesString(rotationQuat);
+                }
+            }
+        }
+
+        private void SetBehaviourSpeakerInteractions()
+        {
+            foreach ((ActorTrackBase actor, Guid searchTarget) in behaviourSpeakerTargets)
+            {
+                if (actorTrackMapping.TryGetValue(searchTarget, out Guid behaviourSpeaker))
+                {
+                    actor.BehaviourActorStartCondition.SpeakerInteractId = behaviourSpeaker;
+                }
+            }
+        }
+
+        private void SetActorIdleOverride(Guid actorId, ActorTrackBase actor)
+        {
+            XElement actorIdleData = worldTimelineData.XPathSelectElement("./children/node[@id='ActorIdleOverrides']/children/node[@id='ActorIdleOverride']/children/node[@id='Object'][attribute[@id='MapKey'][@value='" + actorId + "']]/children/node");
+            if (actorIdleData != null && actor != null)
+            {
+                actor.ActorIdleOverrideData.ActorIdleOverride = ExtractGuid(actorIdleData.XPathSelectElement("./attribute[@id='ActorIdleOverride']")) ?? actor.ActorIdleOverrideData.ActorIdleOverride;
+            }
+        }
+
+        private void SetWorldActorEndState(Guid actorId, ActorTrackBase actor)
+        {
+            XElement endStateData = worldTimelineData.XPathSelectElement("./children/node[@id='ActorEndStates']/children/node[@id='ActorEndState']/children/node[@id='Object'][attribute[@id='MapKey'][@value='" + actorId + "']]/children/node");
+            if (endStateData != null && actor != null)
+            {
+                actor.ActorEndState.NewTemplateId = ExtractGuid(endStateData.XPathSelectElement("./attribute[@id='NewTemplateId']")) ?? actor.ActorEndState.NewTemplateId;
+                actor.ActorEndState.Hide = ExtractBool(endStateData.XPathSelectElement("./attribute[@id='Hide']")) ?? actor.ActorEndState.Hide;
+                actor.ActorEndState.Show = ExtractBool(endStateData.XPathSelectElement("./attribute[@id='Show']")) ?? actor.ActorEndState.Show;
+                actor.ActorEndState.UseTransformation = ExtractBool(endStateData.XPathSelectElement("./attribute[@id='UseTransformation']")) ?? actor.ActorEndState.UseTransformation;
+                Vector3 positionVec = ExtractVector3(endStateData.XPathSelectElement("./children/node[@id='SceneTransform']/attribute[@id='Position']"));
+                if (positionVec != null)
+                {
+                    actor.ActorEndState.ScenePosition = positionVec.ToString();
+                }
+                Quat rotationQuat = ExtractQuat(endStateData.XPathSelectElement("./children/node[@id='SceneTransform']/attribute[@id='RotationQuat']"));
+                if (rotationQuat != null)
+                {
+                    actor.ActorEndState.SceneRotation = GetRotationDegreesString(rotationQuat);
+                }
+            }
+        }
+
+        private static string GetRotationDegreesString(Quat rotationQuat)
+        {
+            Vector3 vec = Quat.ToEulerAngles(rotationQuat);
+            vec.x = (float)(vec.x * (180 / Math.PI));
+            vec.y = (float)(vec.y * (180 / Math.PI));
+            vec.z = (float)(vec.z * (180 / Math.PI));
+            return vec.ToString();
         }
     }
 }

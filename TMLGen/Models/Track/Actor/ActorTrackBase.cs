@@ -23,12 +23,12 @@ namespace TMLGen.Models.Track.Actor
         [XmlAttribute]
         public Guid VoiceOverrideId; // Not in lsf?
         [XmlAttribute]
-        public bool IsFromLevelTemplate; // Not in lsf? might have to be inferred from timeline templates
+        public bool IsFromLevelTemplate;
         [XmlAttribute]
-        public Guid ParentTemplateId; // What is this
+        public Guid ParentTemplateId;
 
         public CustomActorSoundData CustomActorData;
-        public WorldActorEndState WorldActorEndState;
+        public WorldActorEndState ActorEndState;
         public ActorIdleOverrideData ActorIdleOverrideData;
         public BehaviourActorStartCondition BehaviourActorStartCondition;
 
@@ -40,7 +40,7 @@ namespace TMLGen.Models.Track.Actor
         public ActorTrackBase()
         {
             CustomActorData = new CustomActorSoundData();
-            WorldActorEndState = new WorldActorEndState();
+            ActorEndState = new WorldActorEndState();
             ActorIdleOverrideData = new ActorIdleOverrideData();
             BehaviourActorStartCondition = new BehaviourActorStartCondition();
 

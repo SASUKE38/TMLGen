@@ -40,7 +40,7 @@ If you want to override a timeline manually, you can do so with the steps below.
 
 ## Known Limitations and Workarounds
 
-- The tool currently has only been tested on the "Generic NPC Dialog" category, which encompasses most dialogs. World/Behavior dialog is not yet supported.
+- The tool does not support Combat Timelines.
 - The tool currently only supports English for creating timeline reference (_ref.json) files.
 - Generation does not give actors descriptive names, relying instead on names like "Additional 2" or "Initiator 1." You can find their actual names by referencing the dialog's speaker list or by hovering over the actor's track.
 - The timeline's initial location is inferred. If it is incorrect, you can set it by hand in the editor.
@@ -70,5 +70,5 @@ If you want to override a timeline manually, you can do so with the steps below.
 ## Credits
 
 - Thank you to [magnetuning](https://next.nexusmods.com/profile/magnetuning?gameId=3474) for research into the BG3 dialog system. This would not be possible without his [dialog guide](https://wiki.bg3.community/en/Tutorials/new-voice-lines) and [sample mod](https://www.nexusmods.com/baldursgate3/mods/10086).
-- Thank you to Plouton for testing.
+- Thank you to Plouton, [Em](https://hellions-heart.tumblr.com), and Curious_Cactus for testing.
 - This tool uses [LSLib](https://github.com/Norbyte/lslib), which is created by Norbyte and licensed under the MIT License.
