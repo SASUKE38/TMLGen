@@ -101,6 +101,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(481, 339);
+            ControlBox = false;
             Controls.Add(labelVisualId);
             Controls.Add(labelMaterialId);
             Controls.Add(buttonSkip);

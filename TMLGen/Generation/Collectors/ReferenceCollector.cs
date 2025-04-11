@@ -30,6 +30,11 @@ namespace TMLGen.Generation.Collectors
             {"TagCinematic", "Cinematic"},
         };
 
+        /// <summary>
+        /// Represents the _ref.json file.
+        /// </summary>
+        /// <param name="flagDict"></param>
+        /// <param name="linesDict"></param>
         private class ReferenceFile(Dictionary<Guid, HashSet<string>> flagDict, Dictionary<Guid, string> linesDict)
         {
             public Dictionary<Guid, HashSet<string>> Flags { get; } = flagDict;

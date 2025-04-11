@@ -466,6 +466,8 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        // Animation Initialization
+
         // Combine this animation separation stuff with the material track logic
         private ComponentAnimation GetSeparatedAnimationComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer)
         {
@@ -559,6 +561,8 @@ namespace TMLGen.Generation.Collectors
                 return null;
             }
         }
+
+        // Material Initialization
 
         private ComponentMaterial GetMaterialComponent(Guid actorId, XElement componentData, Sequence seq, out ComponentTrackMaterial trackToUse, out Guid trackId, out ComponentContainer curContainer)
         {
@@ -719,6 +723,8 @@ namespace TMLGen.Generation.Collectors
             return newTrack;
         }
 
+        // Sound Event Initialization
+
         private ComponentSoundEvent GetSoundEventComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer)
         {
             bool shouldAddTrack = false;
@@ -778,6 +784,8 @@ namespace TMLGen.Generation.Collectors
             return GetComponentInternal<ComponentSoundEvent>(trackId, componentData, seq, out curContainer);
         }
 
+        // Springs Initialization
+
         private static ComponentSprings GetSpringsComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer, out string trackName)
         {
             try
@@ -805,6 +813,12 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Determines if a track is ina track list.
+        /// </summary>
+        /// <param name="trackId"></param>
+        /// <param name="trackList"></param>
+        /// <returns></returns>
         private static bool ActorHasChildTrack(Guid trackId, List<TrackBase> trackList)
         {
             foreach (TrackBase track in trackList)
@@ -814,6 +828,15 @@ namespace TMLGen.Generation.Collectors
             return false;
         }
 
+        /// <summary>
+        /// Gets an initialized component and its container.
+        /// </summary>
+        /// <typeparam name="ComponentType"></typeparam>
+        /// <param name="trackId"></param>
+        /// <param name="componentData"></param>
+        /// <param name="seq"></param>
+        /// <param name="curContainer"></param>
+        /// <returns></returns>
         private static ComponentType GetComponentInternal<ComponentType>(Guid trackId, XElement componentData, Sequence seq, out ComponentContainer curContainer)
             where ComponentType : ComponentBase, new()
         {
@@ -824,11 +847,22 @@ namespace TMLGen.Generation.Collectors
             return curComponent;
         }
 
+        /// <summary>
+        /// Gets the GUID of the component's actor.
+        /// </summary>
+        /// <param name="componentData"></param>
+        /// <returns></returns>
         private static Guid? GetComponentActor(XElement componentData)
         {
             return ExtractGuid(componentData.XPathSelectElement("./children/node[@id='Actor']/attribute[@id='UUID']"));
         }
 
+        /// <summary>
+        /// Initializes a component. Sets its ID, start time, and duration.
+        /// </summary>
+        /// <param name="componentData"></param>
+        /// <param name="seq"></param>
+        /// <param name="res"></param>
         private static void ComponentInit(XElement componentData, Sequence seq, ComponentBase res)
         {
             res.ComponentId = ExtractGuid(componentData.XPathSelectElement("./attribute[@id='ID']")) ?? Guid.NewGuid();
@@ -841,6 +875,12 @@ namespace TMLGen.Generation.Collectors
             //if (snappedToEnd.HasValue && (bool)snappedToEnd && (res.TimeDuration == seq.TimeDuration)) res.IsInfinite = true;
         }
 
+        /// <summary>
+        /// Gets an container for the given ID or creates one if none exists.
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <param name="trackId"></param>
+        /// <returns></returns>
         private static ComponentContainer GetContainer(Sequence seq, Guid trackId)
         {
             if (!seq.componentDict.TryGetValue(trackId, out ComponentContainer curContainer))
@@ -849,6 +889,18 @@ namespace TMLGen.Generation.Collectors
             return curContainer;
         }
 
+        /// <summary>
+        /// Handles exclusive mutable components. That is, handles components that have basic key types and have usual handling patterns.
+        /// Includes TLCameraFoV, TLEffectPhaseEvent, TLGenomeTextEvent, TLHandsIK, TLPhysics, TLPlayEffectEvent, and TLShowWeapon.
+        /// </summary>
+        /// <typeparam name="TrackType"></typeparam>
+        /// <typeparam name="ComponentType"></typeparam>
+        /// <typeparam name="KeyType"></typeparam>
+        /// <typeparam name="KeyDataType"></typeparam>
+        /// <param name="componentData"></param>
+        /// <param name="seq"></param>
+        /// <param name="trackKey"></param>
+        /// <param name="channelName"></param>
         private static void HandleExclusiveMutableComponent<TrackType, ComponentType, KeyType, KeyDataType>(XElement componentData, Sequence seq, int trackKey, string channelName)
             where TrackType : ComponentTrackBase, new()
             where ComponentType : ComponentBase, new()
@@ -893,6 +945,18 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Handles global exclusive mutable components. That is, handles components that have basic key types that cannot be owned by actors and have usual handling patterns.
+        /// Includes TLPlayRate and TLShowPeanuts.
+        /// </summary>
+        /// <typeparam name="TrackType"></typeparam>
+        /// <typeparam name="ComponentType"></typeparam>
+        /// <typeparam name="KeyType"></typeparam>
+        /// <typeparam name="KeyDataType"></typeparam>
+        /// <param name="componentData"></param>
+        /// <param name="seq"></param>
+        /// <param name="trackKey"></param>
+        /// <param name="channelName"></param>
         private void HandleGlobalExclusiveMutableComponent<TrackType, ComponentType, KeyType, KeyDataType>(XElement componentData, Sequence seq, int trackKey, string channelName)
             where TrackType : ComponentTrackBase, new()
             where ComponentType : ComponentBase, new()
@@ -920,6 +984,18 @@ namespace TMLGen.Generation.Collectors
             BindChannelAndComponent(newChannel, curComponent, curContainer, seq, trackId);
         }
 
+        /// <summary>
+        /// Handles exclusive immutable components. That is, handles components that have complex types and have usual handling patterns.
+        /// Includes TLAttitudeEvent, TLCameraLookAt, TLEmotionEvent, TLLookAtEvent, TLShapeshift.
+        /// </summary>
+        /// <typeparam name="TrackType"></typeparam>
+        /// <typeparam name="ComponentType"></typeparam>
+        /// <typeparam name="KeyType"></typeparam>
+        /// <typeparam name="KeyDataType"></typeparam>
+        /// <param name="componentData"></param>
+        /// <param name="seq"></param>
+        /// <param name="trackKey"></param>
+        /// <param name="channelName"></param>
         private static void HandleExclusiveImmutableComponent<TrackType, ComponentType, KeyType, KeyDataType>(XElement componentData, Sequence seq, int trackKey, string channelName)
             where TrackType : ComponentTrackBase, new()
             where ComponentType : ComponentBase, new()
@@ -961,6 +1037,18 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Handles global exclusive immutable components. That is, handles components that have complex key types that are not owned by an actor and have usual handling patterns.
+        /// Includes TLSwitchLocation and TLSwitchStage.
+        /// </summary>
+        /// <typeparam name="TrackType"></typeparam>
+        /// <typeparam name="ComponentType"></typeparam>
+        /// <typeparam name="KeyType"></typeparam>
+        /// <typeparam name="KeyDataType"></typeparam>
+        /// <param name="componentData"></param>
+        /// <param name="seq"></param>
+        /// <param name="trackKey"></param>
+        /// <param name="channelName"></param>
         private void HandleGlobalExclusiveImmutableComponent<TrackType, ComponentType, KeyType, KeyDataType>(XElement componentData, Sequence seq, int trackKey, string channelName)
             where TrackType : ComponentTrackBase, new()
             where ComponentType : ComponentBase, new()
@@ -991,7 +1079,7 @@ namespace TMLGen.Generation.Collectors
             BindChannelAndComponent(newChannel, curComponent, curContainer, seq, trackId);
         }
 
-        // TimelineActorPropertiesReflection
+        // TimelineActorPropertiesReflection; Unique Handling
 
         private static void HandleTimelineActorPropertiesReflection(XElement componentData, Sequence seq)
         {
@@ -1111,7 +1199,7 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLAnimation, TLAdditiveAnimation, TLLayeredAnimation
+        // TLAnimation, TLAdditiveAnimation, TLLayeredAnimation; Unique Handling
 
         private void HandleTLAnimation(XElement componentData, Sequence seq, object animType)
         {
@@ -1169,7 +1257,7 @@ namespace TMLGen.Generation.Collectors
             GetBooleanKeys(hideVfxChannel, animationComponent, "Value", lsfStartTime, ComponentAnimation.hideVfxPath, false);
         }
 
-        // TLAtmosphereAndLighting
+        // TLAtmosphereAndLighting; Unique Handling
 
         private void HandleTLAtmosphereAndLighting(XElement componentData, Sequence seq)
         {
@@ -1197,7 +1285,7 @@ namespace TMLGen.Generation.Collectors
             BindComponent(curComponent, curContainer, seq, trackId);
         }
 
-        // TLAttitudeEvent
+        // TLAttitudeEvent; Global Exclusive Mutable Component
 
         private static void HandleTLAttitudeEvent(XElement keyData, AttitudeKeyData keyValue)
         {
@@ -1205,7 +1293,7 @@ namespace TMLGen.Generation.Collectors
             keyValue.Transition = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='Transition']")) ?? keyValue.Transition;
         }
 
-        // TLCameraDoF
+        // TLCameraDoF; Unique Handling
 
         private static void HandleTLCameraDoF(XElement componentData, Sequence seq)
         {
@@ -1265,7 +1353,7 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLCameraExposure
+        // TLCameraExposure; Unique Handling
 
         private void HandleTLCameraExposure(XElement componentData, Sequence seq)
         {
@@ -1303,14 +1391,14 @@ namespace TMLGen.Generation.Collectors
             BindComponent(curComponent, curContainer, seq, trackId);
         }
 
-        // TLCameraFoV
+        // TLCameraFoV; Exclusive Mutable Component
 
         private static void HandleTLCameraFoV(XElement keyData, FloatKey key)
         {
             key.Value = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='FoV']")) ?? ComponentCameraFoV.defaultFov;
         }
 
-        // TLCameraLookAt
+        // TLCameraLookAt; Exclusive Immutable Component
 
         private static void HandleTLCameraLookAt(XElement keyData, CameraLookAtKeyData keyValue)
         {
@@ -1326,14 +1414,14 @@ namespace TMLGen.Generation.Collectors
             keyValue.SoftZoneRampTime = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='SoftZoneRampTime']")) ?? keyValue.SoftZoneRampTime;
         }
 
-        // TLEffectPhaseEvent
+        // TLEffectPhaseEvent; Exclusive Mutable Component
 
         private static void HandleTLEffectPhase(XElement keyData, EffectPhaseKey key)
         {
             key.Value = ExtractInt(keyData.XPathSelectElement("./attribute[@id='EffectPhase']")) ?? ComponentEffectPhase.phaseFallback;
         }
 
-        // TLEmotion
+        // TLEmotionEvent; Exclusive Immutable Component
 
         private static void HandleTLEmotionEvent(XElement keyData, EmotionKeyData keyValue)
         {
@@ -1347,21 +1435,21 @@ namespace TMLGen.Generation.Collectors
             keyValue.IsSustainedEmotion = ExtractBool(keyData.XPathSelectElement("./attribute[@id='IsSustainedEmotion']")) ?? keyValue.IsSustainedEmotion;
         }
 
-        // TLGenomeTextEvent
+        // TLGenomeTextEvent; Exclusive Mutable Component
 
         private static void HandleTLGenomeTextEvent(XElement keyData, StringKey key)
         {
             key.Value = ExtractString(keyData.XPathSelectElement("./attribute[@id='EventName']")) ?? string.Empty;
         }
 
-        // TLHandsIK, TLPhysics
+        // TLHandsIK, TLPhysics; Exclusive Mutable Components
 
         private static void HandleTLHandsIKOrTLPhysics(XElement keyData, BooleanKey key)
         {
             key.Value = ExtractBool(keyData.XPathSelectElement("./attribute[@id='InverseKinematics']")) ?? true;
         }
 
-        // TLLookAtEvent
+        // TLLookAtEvent; Exclusive Immutable Component
 
         private static void HandleTLLookAtEvent(XElement keyData, LookAtKeyData keyValue)
         {
@@ -1387,7 +1475,7 @@ namespace TMLGen.Generation.Collectors
             if (eyeOffset != null) keyValue.EyeOverrideOffset = eyeOffset.ToString();
         }
 
-        // TLMaterial
+        // TLMaterial; Unique Handling
 
         private void HandleTLMaterial(XElement componentData, Sequence seq)
         {
@@ -1513,6 +1601,13 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Tries to set the character visual ID of the slot material by searching the saved visual data. Queries the user for input if multiple candidates are found in the game data.
+        /// </summary>
+        /// <param name="actorId"></param>
+        /// <param name="materialId"></param>
+        /// <param name="resourceId"></param>
+        /// <returns></returns>
         private Guid FindCharacterVisualId(Guid actorId, Guid materialId, Guid resourceId)
         {
             Dictionary<string, Guid> candidates = [];
@@ -1562,28 +1657,28 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLPlayEffectEvent
+        // TLPlayEffectEvent; Exclusive Mutable Component
 
         private static void HandleTLPlayEffect(XElement keyData, BooleanKey key)
         {
             key.Value = ExtractBool(keyData.XPathSelectElement("./attribute[@id='PlayEffect']")) ?? true;
         }
 
-        // TLPlayRate
+        // TLPlayRate; Global Exclusive Mutable Component
 
         private static void HandleTLPlayRate(XElement keyData, FloatKey key)
         {
             key.Value = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='Speed']")) ?? ComponentPlayRate.defaultPlayRate;
         }
 
-        // TLShapeShift
+        // TLShapeShift; Exclusive Immutable Component
 
         private static void HandleTLShapeshift(XElement keyData, ShapeshiftKeyData keyValue)
         {
             keyValue.TemplateId = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='TemplateId']")) ?? keyValue.TemplateId;
         }
 
-        // TLShot
+        // TLShot; Unique Handling
 
         private void HandleTLShot(XElement componentData, Sequence seq)
         {
@@ -1634,7 +1729,7 @@ namespace TMLGen.Generation.Collectors
             return res;
         }
 
-        // TLShowArmor
+        // TLShowArmor; Unique Handling
 
         private static void HandleTLShowArmor(XElement componentData, Sequence seq)
         {
@@ -1658,14 +1753,14 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLShowPeanuts
+        // TLShowPeanuts; Global Exclusive Mutable Component
 
         private static void HandleTLShowPeanuts(XElement keyData, BooleanKey key)
         {
             key.Value = ExtractBool(keyData.XPathSelectElement("./attribute[@id='ShowPeanuts']")) ?? true;
         }
 
-        // TLShowVisual
+        // TLShowVisual; Unique Handling
 
         private static void HandleTLShowVisual(XElement componentData, Sequence seq)
         {
@@ -1681,14 +1776,14 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLShowWeapon
+        // TLShowWeapon; Exclusive Mutable Component
 
         private static void HandleTLShowWeapon(XElement keyData, BooleanKey key)
         {
             key.Value = ExtractBool(keyData.XPathSelectElement("./attribute[@id='ShowWeapon']")) ?? true;
         }
 
-        // TLSoundEvent
+        // TLSoundEvent; Unique Handling
 
         private void HandleTLSoundEvent(XElement componentData, Sequence seq)
         {
@@ -1720,7 +1815,7 @@ namespace TMLGen.Generation.Collectors
             BindChannelAndComponent(newChannel, curComponent, curContainer, seq, trackId);
         }
 
-        // TLSplatter
+        // TLSplatter; Unique Handling
 
         private static void HandleTLSplatter(XElement componentData, Sequence seq)
         {
@@ -1770,7 +1865,7 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLSprings
+        // TLSprings; Unique Handling
 
         private static void HandleTLSprings(XElement componentData, Sequence seq)
         {
@@ -1786,7 +1881,7 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLSwitchLocationEvent
+        // TLSwitchLocationEvent; Global Exclusive Immutable Component
 
         private static void HandleTLSwitchLocation(XElement keyData, SwitchLocationKeyData keyValue)
         {
@@ -1794,6 +1889,12 @@ namespace TMLGen.Generation.Collectors
             keyValue.LevelTemplateId = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='s_LevelTemplateID']")) ?? keyValue.LevelTemplateId;
         }
 
+        /// <summary>
+        /// Adds the location's GUID to the list of starting candidates if the given sequence is a root and the key is at time 0.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="keyValue"></param>
+        /// <param name="seq"></param>
         private void TryAddRootLocation(SwitchLocationKey key, SwitchLocationKeyData keyValue, Sequence seq)
         {
             if (dbRootNodes.Contains(seq.DialogNodeReference.First().DialogNodeId) && key.Time == 0)
@@ -1802,6 +1903,9 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Attempts to set the timeline's location based on locations found at time 0 of root nodes. If multiple candidates are present, asks for the user to choose one.
+        /// </summary>
         private void TrySetTimelineLocation()
         {
             int locations = rootLocations.Count;
@@ -1823,7 +1927,7 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLSwitchStageEvent
+        // TLSwitchStageEvent; Global Exclusive Immutable Component
 
         private static void HandleTLSwitchStage(XElement keyData, SwitchStageKeyData keyValue)
         {
@@ -1832,7 +1936,7 @@ namespace TMLGen.Generation.Collectors
             keyValue.ForceUpdateCameraBehavior = ExtractBool(keyData.XPathSelectElement("./attribute[@id='ForceUpdateCameraBehavior']")) ?? keyValue.ForceUpdateCameraBehavior;
         }
 
-        // TLTransform
+        // TLTransform; Unique Handling
 
         private static void HandleTLTransform(XElement componentData, Sequence seq)
         {
@@ -1939,7 +2043,7 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLVoice
+        // TLVoice; Unique Handling
 
         private void HandleTLVoice(XElement componentData, Sequence seq)
         {
@@ -1982,6 +2086,11 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Checks that the dialog reference pair appears in the sequence or not. If not, adds it. If so, corrects the reference ID if it is wrong.
+        /// </summary>
+        /// <param name="refIds"></param>
+        /// <param name="seq"></param>
         private void CheckDialogRefPair(SequenceDialogReferenceIds refIds, Sequence seq)
         {
             foreach (SequenceDialogReferenceIds idPair in seq.DialogNodeReference)
@@ -2001,18 +2110,36 @@ namespace TMLGen.Generation.Collectors
 
         // Key Helpers
 
+        /// <summary>
+        /// Extracts a Vector2 from the given data with the given attribute name. Returns the vector as a string if possible, otherwise null.
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <param name="attribute"></param>
+        /// <returns></returns>
         private static string SafeExtractVector2(XElement keyData, string attribute)
         {
             Vector2 res = ExtractVector2(keyData.XPathSelectElement("./attribute[@id='" + attribute + "']"));
             return res?.ToString();
         }
 
+        /// <summary>
+        /// Gets the target GUID for an immutable target key.
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <param name="keyValue"></param>
         private static void GetImmutableTargetKeyTarget(XElement keyData, ImmutableTargetKeyDataBase keyValue)
         {
             Guid? target = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='Target']"));
             if (target.HasValue) keyValue.TargetId = actorTrackMapping[(Guid)target];
         }
 
+        /// <summary>
+        /// Adds the component to the container and the container to the sequence.
+        /// </summary>
+        /// <param name="curComponent"></param>
+        /// <param name="curContainer"></param>
+        /// <param name="seq"></param>
+        /// <param name="trackId"></param>
         private static void BindComponent(ComponentBase curComponent, ComponentContainer curContainer, Sequence seq, Guid trackId)
         {
             curContainer.Component.Add(curComponent);
@@ -2054,6 +2181,14 @@ namespace TMLGen.Generation.Collectors
             newChannel.Key.Add(key);
         }
 
+        /// <summary>
+        /// Initializes a mutable key of the desired type.
+        /// </summary>
+        /// <typeparam name="KeyType"></typeparam>
+        /// <typeparam name="KeyDataType"></typeparam>
+        /// <param name="keyData"></param>
+        /// <param name="seq"></param>
+        /// <returns></returns>
         private static KeyType GetMutableKey<KeyType, KeyDataType>(XElement keyData, Sequence seq)
             where KeyType : MutableKeyBase<KeyDataType>, new()
         {
@@ -2062,6 +2197,15 @@ namespace TMLGen.Generation.Collectors
             return key;
         }
 
+        /// <summary>
+        /// Initializes an immutable key of the desired type.
+        /// </summary>
+        /// <typeparam name="KeyType"></typeparam>
+        /// <typeparam name="KeyDataType"></typeparam>
+        /// <param name="keyData"></param>
+        /// <param name="seq"></param>
+        /// <param name="key"></param>
+        /// <param name="keyValue"></param>
         private static void GetImmutableKey<KeyType, KeyDataType>(XElement keyData, Sequence seq, out KeyType key, out KeyDataType keyValue)
             where KeyType : KeyBase, new()
             where KeyDataType : new()
@@ -2071,6 +2215,12 @@ namespace TMLGen.Generation.Collectors
             GetKeyTimeAndInterpolation(keyData, key, seq.lsfStartTime);
         }
 
+        /// <summary>
+        /// Sets the time and interpolation type of a given key.
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <param name="key"></param>
+        /// <param name="lsfStartTime"></param>
         private static void GetKeyTimeAndInterpolation(XElement keyData, KeyBase key, float lsfStartTime)
         {
             key.Time = GetKeyTime(keyData, key, lsfStartTime);
@@ -2081,6 +2231,16 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Gets enum data represented as floats in an XML element.
+        /// </summary>
+        /// <param name="keyCollection"></param>
+        /// <param name="curComponent"></param>
+        /// <param name="attributeName"></param>
+        /// <param name="seq"></param>
+        /// <param name="channelName"></param>
+        /// <param name="fallback"></param>
+        /// <param name="enumType"></param>
         private static void GetEnumFloatKeys(XElement keyCollection, ComponentBase curComponent, string attributeName, Sequence seq, string channelName, string fallback, Type enumType)
         {
             if (keyCollection != null)
@@ -2096,6 +2256,14 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Sets a key's value to the name of a given float in the given XML element.
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <param name="key"></param>
+        /// <param name="attribute"></param>
+        /// <param name="fallback"></param>
+        /// <param name="enumType"></param>
         private static void GetEnumFloatKeyData(XElement keyData, StringKey key, string attribute, string fallback, Type enumType)
         {
             float? value = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='" + attribute + "']"));
@@ -2105,6 +2273,15 @@ namespace TMLGen.Generation.Collectors
                 key.Value = fallback;
         }
 
+        /// <summary>
+        /// Gets the float keys in the given key collection and adds them to a component.
+        /// </summary>
+        /// <param name="keyCollection"></param>
+        /// <param name="curComponent"></param>
+        /// <param name="attributeName"></param>
+        /// <param name="seq"></param>
+        /// <param name="channelName"></param>
+        /// <param name="fallback"></param>
         private static void GetFloatKeys(XElement keyCollection, ComponentBase curComponent, string attributeName, Sequence seq, string channelName, float fallback)
         {
             if (keyCollection != null)
@@ -2120,11 +2297,27 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Gets the float value of the given attribute in the given key data. Uses the fallback if none is present to get.
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <param name="key"></param>
+        /// <param name="attribute"></param>
+        /// <param name="fallback"></param>
         private static void GetFloatKeyData(XElement keyData, FloatKey key, string attribute, float fallback)
         {
             key.Value = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='" + attribute + "']")) ?? fallback;
         }
 
+        /// <summary>
+        /// Gets the boolean keys (represented as floats) in the given key collection and adds them to a component.
+        /// </summary>
+        /// <param name="keyCollection"></param>
+        /// <param name="curComponent"></param>
+        /// <param name="attributeName"></param>
+        /// <param name="seq"></param>
+        /// <param name="channelName"></param>
+        /// <param name="fallback"></param>
         private static void GetBooleanFloatKeys(XElement keyCollection, ComponentBase curComponent, string attributeName, Sequence seq, string channelName, bool fallback)
         {
             if (keyCollection != null)
@@ -2140,6 +2333,13 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Gets the boolean value (represented as a float) of the given attribute in the given key data. Uses the fallback if none is present to get.
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <param name="key"></param>
+        /// <param name="attribute"></param>
+        /// <param name="fallback"></param>
         private static void GetBooleanFloatKeyData(XElement keyData, BooleanKey key, string attribute, bool fallback)
         {
             float? value = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='" + attribute + "']"));
@@ -2149,6 +2349,15 @@ namespace TMLGen.Generation.Collectors
                 key.Value = fallback;
         }
 
+        /// <summary>
+        /// Gets the boolean keys in the given key collection and adds them to a component.
+        /// </summary>
+        /// <param name="keyCollection"></param>
+        /// <param name="curComponent"></param>
+        /// <param name="attributeName"></param>
+        /// <param name="lsfStartTime"></param>
+        /// <param name="channelName"></param>
+        /// <param name="fallback"></param>
         private static void GetBooleanKeys(XElement keyCollection, ComponentBase curComponent, string attributeName, float lsfStartTime, string channelName, bool fallback)
         {
             if (keyCollection != null)
@@ -2164,17 +2373,37 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
+        /// <summary>
+        /// Gets the boolean value of the given attribute in the given key data. Uses the fallback if none is present to get.
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <param name="key"></param>
+        /// <param name="lsfStartTime"></param>
+        /// <param name="attribute"></param>
+        /// <param name="fallback"></param>
         private static void GetBooleanKeyData(XElement keyData, BooleanKey key, float lsfStartTime, string attribute, bool fallback)
         {
             key.Time = GetKeyTime(keyData, key, lsfStartTime);
             key.Value = ExtractBool(keyData.XPathSelectElement("./attribute[@id='" + attribute + "']")) ?? fallback;
         }
 
+        /// <summary>
+        /// Sets a key's time.
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <param name="key"></param>
+        /// <param name="lsfStartTime"></param>
+        /// <returns></returns>
         private static float GetKeyTime(XElement keyData, KeyBase key, float lsfStartTime)
         {
             return ExtractFloat(keyData.XPathSelectElement("./attribute[@id='Time']")) - lsfStartTime ?? key.Time;
         }
 
+        /// <summary>
+        /// Gets the XElements that represent a collection of key data in the given channel.
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <returns></returns>
         private static IEnumerable<XElement> GetKeyDataCollection(XElement channel)
         {
             return channel.XPathSelectElements("./children/node[@id='Keys']/children/node[@id='Key']");

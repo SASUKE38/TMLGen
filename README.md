@@ -7,7 +7,7 @@
 The tool requires the path to your unpacked game directory (as unpacked by the [Baldur's Gate 3 Modder's Multitool](https://github.com/ShinyHobo/BG3-Modders-Multitool)) along with the source file of the timeline you wish to edit.
 Additionally, you may select the timeline data to use manually. The definitions below detail the data the tool uses.
 
-- Unpacked Data Directory: Top level of unpacked game data as unpacked by the Baldur's Gate 3 Modder's Multitool. Likely called UnpackedData.
+- Unpacked Data Directory: Top level of unpacked game data as unpacked by the Baldur's Gate 3 Modder's Multitool. Likely called UnpackedData. [This article](https://github.com/ShinyHobo/BG3-Modders-Multitool/wiki/Unpacking-Game-Files) offers more information on how to unpack the game files if you haven't done so already.
 - Source File: .lsf source file of the timeline you wish to edit. Likely located in a Public\\<mod name\>\Timeline\Generated directory.
 
 The following directory is only used when setting the tool to override timelines.
@@ -20,6 +20,18 @@ The following files are used only for manual selection and can be ignored for au
 - Dialogs Binary File: .lsf file that contains the compiled dialog data. Likely located in a subdirectory of the Mods\\<mod name\>\Story\DialogsBinary directory.
 - Dialogs File: .lsj file that contains the raw dialog data. Likely located in a subdirectory of the Mods\\<mod name\>\Story\Dialogs directory.
 - Timeline Templates Directory: Not required (will not be present for timelines with no templates). Contains the templates a timeline uses. Likely located in a Public\\<mod name\>\TimelineTemplates folder and will be named with the timeline's GUID.
+
+### Input Examples
+
+The following details an example set of paths one would use to generate the .tml file for the timeline CAMP_DaisyAcknowledgement_AvD_ROM. Other timelines will have similarly structured input paths.
+
+- Unpacked Data Directory: F:\BG3Multitool\UnpackedData
+- Source File: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Timeline\Generated\CAMP_DaisyAcknowledgement_AvD_ROM.lsf
+- Game Data Directory: F:\SteamLibrary\steamapps\common\Baldurs Gate 3\Data
+- Generated Dialog Timelines File: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Content\Generated\\[PAK]_GeneratedDialogTimelines\\_merged.lsf
+- Dialogs Binary File: F:\BG3Multitool\UnpackedData\Gustav\Mods\GustavDev\Story\DialogsBinary\Camp\Campfire_Moments\CAMP_DaisyAcknowledgement_AvD_ROM.lsf
+- Dialogs File: F:\BG3Multitool\UnpackedData\Gustav\Mods\GustavDev\Story\Dialogs\Camp\Campfire_Moments\CAMP_DaisyAcknowledgement_AvD_ROM.lsj
+- Timeline Templates Directory: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\TimelineTemplates\0e18fce2-99f6-75be-5404-1faee5d19471
 
 ### Overriding a Timeline
 

@@ -107,6 +107,7 @@ namespace TMLGen.Generation.Helpers
                 {
                     outputPath = Path.Join(copiedDataDirectoryName, sourceName, sourceName + "_GDT.lsx");
                 }
+                Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
 
                 XDocument doc = XDocument.Load(gdtPath);
                 var xmlSource = doc.XPathSelectElement("//attribute[@id='SourceFile']");

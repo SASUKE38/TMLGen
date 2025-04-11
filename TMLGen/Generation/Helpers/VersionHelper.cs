@@ -4,7 +4,7 @@
     {
         private static readonly int major = 0;
         private static readonly int minor = 3;
-        private static readonly int patch = 1;
+        private static readonly int patch = 2;
 
         public static string GetVersion()
         {

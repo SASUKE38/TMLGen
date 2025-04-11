@@ -373,7 +373,7 @@ namespace TMLGen
         {
             ModSelection selection = new();
             DialogResult diaRes = selection.ShowDialog();
-            if (diaRes == DialogResult.OK && selection.modName != string.Empty)
+            if (diaRes == DialogResult.OK && selection.modName != string.Empty && !string.IsNullOrWhiteSpace(selection.modName))
             {
                 if (!listBoxMods.Items.Contains(selection.modName))
                 {
