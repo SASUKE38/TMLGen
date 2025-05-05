@@ -41,7 +41,7 @@
             // 
             buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             buttonOK.Enabled = false;
-            buttonOK.Location = new System.Drawing.Point(392, 306);
+            buttonOK.Location = new System.Drawing.Point(311, 306);
             buttonOK.Name = "buttonOK";
             buttonOK.Size = new System.Drawing.Size(75, 23);
             buttonOK.TabIndex = 1;
@@ -71,7 +71,7 @@
             // buttonSkip
             // 
             buttonSkip.DialogResult = System.Windows.Forms.DialogResult.Ignore;
-            buttonSkip.Location = new System.Drawing.Point(311, 306);
+            buttonSkip.Location = new System.Drawing.Point(392, 306);
             buttonSkip.Name = "buttonSkip";
             buttonSkip.Size = new System.Drawing.Size(75, 23);
             buttonSkip.TabIndex = 4;

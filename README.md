@@ -66,7 +66,7 @@ If you want to override a timeline manually, you can do so with the steps below.
   7. If the slot material still does not work, try adding another version of the slot material.
   8. Open the .tml in a text editor once again.
   9. Locate the slot material you added as you did above.
-  10. Copy this slot material's CharacterVisualResourceId and replace the slot material of the one you want to get working.
+  10. Copy this new slot material's CharacterVisualResourceId to that of the slot material you want to get working.
   11. Note that some actors support different versions of the same slot material; it might be unclear which to use for this process, so multiple tries with this method might be necessary.
 - Actors taken from the world might not work correctly as is. To overcome this, try the following steps:
   1. Make a backup of the .tml file.
@@ -78,6 +78,19 @@ If you want to override a timeline manually, you can do so with the steps below.
   7. Open the .tml file in a text editor.
   8. Use the Find feature (CTRL + F) to search for the name of the actor.
   9. Replace the ParentTemplateId with the one you copied. If no such attribute is present, add it with the form ParentTemplateId="00000000-0000-0000-0000-000000000000"
+
+### Animations
+
+Many timelines use overlapping animations, but at the time of writing these cause crashes and/or errors in the toolkit. TMLGen separates them into different tracks by default, but this can occasionally cause inconsistencies between the generated file and the original.
+This often happens due to separated animations relying on one or the other for actor transform information; if you notice actors in incorrect positions or orientations due to animations, try modifying the Offset Type in the animation's properties (for example: changing Previous to Self Start and editing position and rotation).
+
+Similarly, many timelines use overlapping voice components that also crash the toolkit or cause errors. If you attempt to open a timeline sequence and the toolkit crashes, try the following:
+
+1. Override the associated dialog if it is not overridden already and open it.
+2. Click on the offending dialog node. An error message might appear, but the sequence should be opened (the preview could be unresponsive) in the timeline editor without crashing.
+3. Search the voice components for overlapping lines. Components overlapping by any duration can cause the crash.
+4. Edit the lines so they no longer overlap.
+5. Save the changes and reopen the timeline.
 
 ## Credits
 

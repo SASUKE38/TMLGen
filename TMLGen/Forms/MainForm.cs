@@ -28,7 +28,7 @@ namespace TMLGen
         {
             InitializeComponent();
 
-            Text += " v" + VersionHelper.GetVersion();
+            Text += " v" + Application.ProductVersion;
 
             LoggingHelper.Set(new(logMax), formConsole, this);
 

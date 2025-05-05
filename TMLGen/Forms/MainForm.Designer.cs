@@ -312,7 +312,7 @@
             checkBoxSeparateAnimations.Size = new System.Drawing.Size(305, 19);
             checkBoxSeparateAnimations.TabIndex = 18;
             checkBoxSeparateAnimations.Text = "Separate overlapping animations into different tracks";
-            toolTip.SetToolTip(checkBoxSeparateAnimations, "Animations will be moved to their own track if they overlap.\r\nThis can reduce crashes in the editor.");
+            toolTip.SetToolTip(checkBoxSeparateAnimations, "Animations will be moved to their own track if they overlap.\r\nThis reduces crashes in the editor but could also reduce the accuracy of the recreation.\r\nSee the README for more information.");
             checkBoxSeparateAnimations.UseVisualStyleBackColor = true;
             // 
             // checkBoxCopy
@@ -386,7 +386,7 @@
             // 
             // buttonModsAdd
             // 
-            buttonModsAdd.Location = new System.Drawing.Point(207, 593);
+            buttonModsAdd.Location = new System.Drawing.Point(12, 593);
             buttonModsAdd.Name = "buttonModsAdd";
             buttonModsAdd.Size = new System.Drawing.Size(117, 23);
             buttonModsAdd.TabIndex = 24;
@@ -396,7 +396,7 @@
             // 
             // buttonModsRemove
             // 
-            buttonModsRemove.Location = new System.Drawing.Point(12, 593);
+            buttonModsRemove.Location = new System.Drawing.Point(207, 593);
             buttonModsRemove.Name = "buttonModsRemove";
             buttonModsRemove.Size = new System.Drawing.Size(117, 23);
             buttonModsRemove.TabIndex = 25;
