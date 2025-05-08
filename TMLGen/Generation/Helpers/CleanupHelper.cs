@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -9,6 +10,22 @@ namespace TMLGen.Generation.Helpers
 {
     public static class CleanupHelper
     {
+        public static void WriteException(Exception e)
+        {
+            try
+            {
+                string exceptionDir = "ExceptionLogs";
+                Directory.CreateDirectory(exceptionDir);
+                DateTime time = DateTime.Now;
+                string timeString = time.Month + "-" + time.Day + "-" + time.Year + " " + time.Hour + "-" + time.Minute + "-" + time.Second;
+                File.WriteAllText(Path.Combine(exceptionDir, timeString + ".txt"), e.ToString());
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
         public static XElement DoPostProcess(XElement root)
         {
             List<XAttribute> remo = [];

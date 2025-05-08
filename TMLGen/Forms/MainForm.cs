@@ -314,7 +314,10 @@ namespace TMLGen
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null || (int)e.Result > 0)
+            {
                 LoggingHelper.Write("An error occurred during generation.", 3);
+                if (e.Error != null) CleanupHelper.WriteException(e.Error);
+            }
             else
                 LoggingHelper.Write("Generation finished.", 1);
             buttonGenerate.Enabled = true;
