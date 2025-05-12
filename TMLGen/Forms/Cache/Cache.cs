@@ -11,6 +11,8 @@ namespace TMLGen.Forms.Cache
         public string dataPath;
         public string templatePath;
         public string gameDataPath;
+        public string batchPath;
+        public int modeIndex;
         public bool manual;
         public bool separateAnimations;
         public bool doCopy;
@@ -26,6 +28,8 @@ namespace TMLGen.Forms.Cache
             dataPath = string.Empty;
             templatePath = string.Empty;
             gameDataPath = string.Empty;
+            batchPath = string.Empty;
+            modeIndex = 0;
             manual = false;
             separateAnimations = true;
             doCopy = true;
@@ -33,7 +37,7 @@ namespace TMLGen.Forms.Cache
             modIndex = -1;
         }
 
-        public Cache(string sourcePath, string gdtPath, string dbPath, string dPath, string dataPath, string templatePath, string gameDataPath, List<string> mods, int modIndex, bool manual, bool separateAnimations, bool doCopy)
+        public Cache(string sourcePath, string gdtPath, string dbPath, string dPath, string dataPath, string templatePath, string gameDataPath, string batchPath, int modeIndex, List<string> mods, int modIndex, bool manual, bool separateAnimations, bool doCopy)
         {
             this.sourcePath = sourcePath;
             this.gdtPath = gdtPath;
@@ -42,6 +46,8 @@ namespace TMLGen.Forms.Cache
             this.dataPath = dataPath;
             this.templatePath = templatePath;
             this.gameDataPath = gameDataPath;
+            this.batchPath = batchPath;
+            this.modeIndex = modeIndex;
             this.manual = manual;
             this.separateAnimations = separateAnimations;
             this.doCopy = doCopy;

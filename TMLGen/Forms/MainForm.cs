@@ -16,6 +16,8 @@ namespace TMLGen
     {
         public delegate void UpdateLog();
         public static UpdateLog logDelegate;
+        public delegate void UpdateCurrentBatchFile(string fileName);
+        public static UpdateCurrentBatchFile currentBatchFileDelegate;
         public delegate Guid ShowMaterialSelection(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId);
         public static ShowMaterialSelection materialSelectionDelegate;
         public delegate Guid ShowLocationSelection(List<Guid> candidates);
@@ -33,6 +35,7 @@ namespace TMLGen
             LoggingHelper.Set(new(logMax), formConsole, this);
 
             logDelegate = new UpdateLog(UpdateLogMethod);
+            currentBatchFileDelegate = new UpdateCurrentBatchFile(UpdateCurrentBatchFileMethod);
             materialSelectionDelegate = new ShowMaterialSelection(MaterialSelectionMethod);
             locationSelectionDelegate = new ShowLocationSelection(LocationSelectionMethod);
         }
@@ -40,6 +43,13 @@ namespace TMLGen
         public void UpdateLogMethod()
         {
             formConsole.Rtf = LoggingHelper.GetOutput();
+        }
+
+        public void UpdateCurrentBatchFileMethod(string fileName)
+        {
+            labelBatchCurrentName.Text = fileName;
+            labelBatchCurrent.Visible = true;
+            labelBatchCurrentName.Visible = true;
         }
 
         public Guid MaterialSelectionMethod(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId)
@@ -81,6 +91,16 @@ namespace TMLGen
             public string rawSourcePath;
             public string modName;
             public bool manual;
+            public bool separateAnimations;
+            public bool doCopy;
+        }
+
+        private struct BatchGenerationArgs
+        {
+            public string inputName;
+            public string dataDirectory;
+            public string outputPath;
+            public string modName;
             public bool separateAnimations;
             public bool doCopy;
         }
@@ -173,6 +193,27 @@ namespace TMLGen
 
         private void buttonGenerate_Click(object sender, EventArgs e)
         {
+            if (tabControlMode.SelectedIndex == 0)
+            {
+                SingleGeneration();
+            }
+            else
+            {
+                BatchGeneration();
+            }
+        }
+
+        private void buttonBatch_Click(object sender, EventArgs e)
+        {
+            DialogResult result = folderBrowserDialogBatchSource.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxBatch.Text = folderBrowserDialogBatchSource.SelectedPath;
+            }
+        }
+
+        private void SingleGeneration()
+        {
             if (CheckFiles())
             {
                 string sourceName = Path.GetFileName(textBoxSource.Text);
@@ -217,6 +258,31 @@ namespace TMLGen
             }
             else
             {
+                LoggingHelper.Write("Generation failed.", 3);
+            }
+        }
+
+        private void BatchGeneration()
+        {
+            if (Directory.Exists(textBoxBatch.Text))
+            {
+                BatchGenerationArgs args = new()
+                {
+                    inputName = textBoxBatch.Text,
+                    dataDirectory = textBoxData.Text,
+                    outputPath = textBoxGameData.Text,
+                    modName = modName,
+                    separateAnimations = checkBoxSeparateAnimations.Checked,
+                    doCopy = checkBoxCopy.Checked
+                };
+
+                buttonGenerate.Enabled = false;
+                WriteSettingsToCache();
+                backgroundWorker2.RunWorkerAsync(args);
+            }
+            else
+            {
+                LoggingHelper.Write("Could not find batch input directory.", 2);
                 LoggingHelper.Write("Generation failed.", 3);
             }
         }
@@ -313,6 +379,30 @@ namespace TMLGen
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            FinishGeneration(e);
+        }
+
+        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BatchGenerationArgs args = (BatchGenerationArgs)e.Argument;
+            e.Result = GenerationDriver.DoBatchGeneration(sender as BackgroundWorker, this, args.inputName, args.dataDirectory, args.outputPath, args.modName, args.separateAnimations, args.doCopy);
+        }
+
+        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            progressBarBatch.Value = 0;
+            labelBatchCurrentName.Visible = false;
+            labelBatchCurrent.Visible = false;
+            FinishGeneration(e);
+        }
+
+        private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBarBatch.Value = e.ProgressPercentage;
+        }
+
+        private void FinishGeneration(RunWorkerCompletedEventArgs e)
+        {
             if (e.Error != null || (int)e.Result > 0)
             {
                 LoggingHelper.Write("An error occurred during generation.", 3);
@@ -345,6 +435,8 @@ namespace TMLGen
                     textBoxData.Text = cache.dataPath;
                     textBoxTT.Text = cache.templatePath;
                     textBoxGameData.Text = cache.gameDataPath;
+                    textBoxBatch.Text = cache.batchPath;
+                    tabControlMode.SelectedIndex = cache.modeIndex;
                     checkBoxManual.Checked = cache.manual;
                     checkBoxSeparateAnimations.Checked = cache.separateAnimations;
                     checkBoxCopy.Checked = cache.doCopy;
@@ -369,7 +461,7 @@ namespace TMLGen
             {
                 modList.Add(mod.ToString());
             }
-            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxD.Text, textBoxData.Text, textBoxTT.Text, textBoxGameData.Text, modList, listBoxMods.SelectedIndex, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked, checkBoxCopy.Checked));
+            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxD.Text, textBoxData.Text, textBoxTT.Text, textBoxGameData.Text, textBoxBatch.Text, tabControlMode.SelectedIndex, modList, listBoxMods.SelectedIndex, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked, checkBoxCopy.Checked));
         }
 
         private void buttonModsAdd_Click(object sender, EventArgs e)
@@ -403,6 +495,11 @@ namespace TMLGen
         {
             string selected = (string)listBoxMods.SelectedItem;
             if (selected != null) modName = selected;
+        }
+
+        private void tabControlMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkBoxManual.Enabled = !checkBoxManual.Enabled;
         }
     }
 }
