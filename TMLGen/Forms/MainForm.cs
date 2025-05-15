@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using TMLGen.Forms;
-using TMLGen.Forms.Cache;
 using TMLGen.Forms.Logging;
 using TMLGen.Generation;
 using TMLGen.Generation.Helpers;
+using TMLGen.Properties;
 
 #pragma warning disable CA1416
 namespace TMLGen
@@ -220,7 +221,7 @@ namespace TMLGen
                 string sourceFile = PreparationHelper.SaveToLsxFile(textBoxSource.Text);
                 if (sourceFile == null)
                 {
-                    LoggingHelper.Write("Failed to prepare source file.", 2);
+                    LoggingHelper.Write(Resources.SourceFilePreparationFailure, 2);
                     return;
                 }
                 string gdtFile = null;
@@ -253,37 +254,44 @@ namespace TMLGen
                     doCopy = checkBoxCopy.Checked
                 };
                 buttonGenerate.Enabled = false;
-                WriteSettingsToCache();
+                WriteSettings();
                 backgroundWorker1.RunWorkerAsync(args);
             }
             else
             {
-                LoggingHelper.Write("Generation failed.", 3);
+                LoggingHelper.Write(Resources.GenerationFailed, 3);
             }
         }
 
         private void BatchGeneration()
         {
-            if (Directory.Exists(textBoxBatch.Text))
+            if (CheckExistenceCopy())
             {
-                BatchGenerationArgs args = new()
+                if (Directory.Exists(textBoxBatch.Text))
                 {
-                    inputName = textBoxBatch.Text,
-                    dataDirectory = textBoxData.Text,
-                    outputPath = textBoxGameData.Text,
-                    modName = modName,
-                    separateAnimations = checkBoxSeparateAnimations.Checked,
-                    doCopy = checkBoxCopy.Checked
-                };
+                    BatchGenerationArgs args = new()
+                    {
+                        inputName = textBoxBatch.Text,
+                        dataDirectory = textBoxData.Text,
+                        outputPath = textBoxGameData.Text,
+                        modName = modName,
+                        separateAnimations = checkBoxSeparateAnimations.Checked,
+                        doCopy = checkBoxCopy.Checked
+                    };
 
-                buttonGenerate.Enabled = false;
-                WriteSettingsToCache();
-                backgroundWorker2.RunWorkerAsync(args);
+                    buttonGenerate.Enabled = false;
+                    WriteSettings();
+                    backgroundWorker2.RunWorkerAsync(args);
+                }
+                else
+                {
+                    LoggingHelper.Write(Resources.BatchInputDoesNotExist, 2);
+                    LoggingHelper.Write(Resources.GenerationFailed, 3);
+                }
             }
             else
             {
-                LoggingHelper.Write("Could not find batch input directory.", 2);
-                LoggingHelper.Write("Generation failed.", 3);
+                LoggingHelper.Write(Resources.GenerationFailed, 3);
             }
         }
 
@@ -298,24 +306,24 @@ namespace TMLGen
 
             if (Path.GetExtension(textBoxSource.Text) != ".lsf")
             {
-                LoggingHelper.Write("Source file must have a .lsf file extension.", 2);
+                LoggingHelper.Write(Resources.WrongSourceExtension, 2);
                 checkSuccess = false;
             }
             if (checkBoxManual.Checked)
             {
                 if (Path.GetExtension(textBoxGDT.Text) != ".lsf")
                 {
-                    LoggingHelper.Write("Generated dialog timelines file must have a .lsf file extension.", 2);
+                    LoggingHelper.Write(Resources.WrongGDTExtension, 2);
                     checkSuccess = false;
                 }
                 if (Path.GetExtension(textBoxDB.Text) != ".lsf")
                 {
-                    LoggingHelper.Write("Dialogs binary file must have a .lsf file extension.", 2);
+                    LoggingHelper.Write(Resources.WrongDBExtension, 2);
                     checkSuccess = false;
                 }
                 if (Path.GetExtension(textBoxD.Text) != ".lsj")
                 {
-                    LoggingHelper.Write("Dialogs file must have a .lsj file extension.", 2);
+                    LoggingHelper.Write(Resources.WrongDExtension, 2);
                     checkSuccess = false;
                 }
             }
@@ -328,44 +336,59 @@ namespace TMLGen
             bool checkSuccess = true;
             if (!File.Exists(textBoxSource.Text))
             {
-                LoggingHelper.Write("Failed to locate source file.", 2);
+                LoggingHelper.Write(Resources.SourceFileDoesNotExist, 2);
                 checkSuccess = false;
             }
             if (!Directory.Exists(textBoxData.Text))
             {
-                LoggingHelper.Write("Failed to locate unpacked data directory.", 2);
+                LoggingHelper.Write(Resources.UnpackedDataInputDoesNotExist, 2);
                 checkSuccess = false;
             }
-            if (checkBoxCopy.Checked && !Directory.Exists(textBoxGameData.Text))
-            {
-                LoggingHelper.Write("Failed to locate game data directory.", 2);
-                checkSuccess = false;
-            }
-            if (checkBoxCopy.Checked && listBoxMods.SelectedIndex == -1)
-            {
-                LoggingHelper.Write("No mod selected.", 2);
-                checkSuccess = false;
-            }
+            return checkSuccess && CheckExistenceCopy() && CheckExistenceManual();
+        }
+
+        private bool CheckExistenceManual()
+        {
+            bool checkSuccess = true;
             if (checkBoxManual.Checked)
             {
                 if (!File.Exists(textBoxGDT.Text))
                 {
-                    LoggingHelper.Write("Failed to locate generated dialog timelines file.", 2);
+                    LoggingHelper.Write(Resources.GDTFileDoesNotExist, 2);
                     checkSuccess = false;
                 }
                 if (!File.Exists(textBoxDB.Text))
                 {
-                    LoggingHelper.Write("Failed to locate dialogs binary file.", 2);
+                    LoggingHelper.Write(Resources.DBFileDoesNotExist, 2);
                     checkSuccess = false;
                 }
                 if (!File.Exists(textBoxD.Text))
                 {
-                    LoggingHelper.Write("Failed to locate dialogs file.", 2);
+                    LoggingHelper.Write(Resources.DFileDoesNotExist, 2);
                     checkSuccess = false;
                 }
                 if (!Directory.Exists(textBoxTT.Text))
                 {
-                    LoggingHelper.Write("Failed to locate timeline templates directory. This failure should be ignored if the timeline does not have templates.", 2);
+                    LoggingHelper.Write(Resources.TTDirectoryDoesNotExist, 2);
+                }
+            }
+            return checkSuccess;
+        }
+
+        private bool CheckExistenceCopy()
+        {
+            bool checkSuccess = true;
+            if (checkBoxCopy.Checked)
+            { 
+                if (!Directory.Exists(textBoxGameData.Text))
+                {
+                    LoggingHelper.Write(Resources.GameDataInputDoesNotExist, 2);
+                    checkSuccess = false;
+                }
+                if (listBoxMods.SelectedIndex == -1)
+                {
+                    LoggingHelper.Write(Resources.NoModSelected, 2);
+                    checkSuccess = false;
                 }
             }
             return checkSuccess;
@@ -405,11 +428,11 @@ namespace TMLGen
         {
             if (e.Error != null || (int)e.Result > 0)
             {
-                LoggingHelper.Write("An error occurred during generation.", 3);
+                LoggingHelper.Write(Resources.GenerationError, 3);
                 if (e.Error != null) CleanupHelper.WriteException(e.Error);
             }
             else
-                LoggingHelper.Write("Generation finished.", 1);
+                LoggingHelper.Write(Resources.GenerationFinished, 1);
             buttonGenerate.Enabled = true;
             CleanupHelper.EmptyStaticCollections();
             CleanupHelper.DeleteTempFiles(PreparationHelper.visualPaths);
@@ -423,45 +446,55 @@ namespace TMLGen
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            if (CacheHelper.TryPrepareSettingsCache())
+            textBoxData.Text = Settings.Default.UnpackedDataDirectory;
+            textBoxGameData.Text = Settings.Default.GameDataDirectory;
+            textBoxSource.Text = Settings.Default.SourceFile;
+            textBoxGDT.Text = Settings.Default.GeneratedDialogTimelinesFile;
+            textBoxDB.Text = Settings.Default.DialogsBinaryFile;
+            textBoxD.Text = Settings.Default.DialogsFile;
+            textBoxTT.Text = Settings.Default.TimelineTemplatesDirectory;
+            textBoxBatch.Text = Settings.Default.BatchSourceDirectory;
+            checkBoxManual.Checked = Settings.Default.Manual;
+            checkBoxCopy.Checked = Settings.Default.DoCopy;
+            checkBoxSeparateAnimations.Checked = Settings.Default.SeparateAnimations;
+            if (Settings.Default.Mods != null)
             {
-                Cache cache = CacheHelper.ReadSettingsCache();
-                if (cache != null)
+                foreach (string mod in Settings.Default.Mods)
                 {
-                    textBoxSource.Text = cache.sourcePath;
-                    textBoxGDT.Text = cache.gdtPath;
-                    textBoxDB.Text = cache.dbPath;
-                    textBoxD.Text = cache.dPath;
-                    textBoxData.Text = cache.dataPath;
-                    textBoxTT.Text = cache.templatePath;
-                    textBoxGameData.Text = cache.gameDataPath;
-                    textBoxBatch.Text = cache.batchPath;
-                    tabControlMode.SelectedIndex = cache.modeIndex;
-                    checkBoxManual.Checked = cache.manual;
-                    checkBoxSeparateAnimations.Checked = cache.separateAnimations;
-                    checkBoxCopy.Checked = cache.doCopy;
-                    foreach (string mod in cache.mods)
-                    {
-                        listBoxMods.Items.Add(mod);
-                    }
-                    listBoxMods.SelectedIndex = cache.modIndex;
+                    listBoxMods.Items.Add(mod);
                 }
             }
+            listBoxMods.SelectedIndex = Settings.Default.ModIndex;
+            tabControlMode.SelectedIndex = Settings.Default.ModeIndex;
         }
 
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            WriteSettingsToCache();
+            WriteSettings();
         }
 
-        private void WriteSettingsToCache()
+        private void WriteSettings()
         {
-            List<string> modList = [];
+            Settings.Default.UnpackedDataDirectory = textBoxData.Text;
+            Settings.Default.GameDataDirectory = textBoxGameData.Text;
+            Settings.Default.SourceFile = textBoxSource.Text;
+            Settings.Default.GeneratedDialogTimelinesFile = textBoxGDT.Text;
+            Settings.Default.DialogsBinaryFile = textBoxDB.Text;
+            Settings.Default.DialogsFile = textBoxD.Text;
+            Settings.Default.TimelineTemplatesDirectory = textBoxTT.Text;
+            Settings.Default.BatchSourceDirectory = textBoxBatch.Text;
+            Settings.Default.Manual = checkBoxManual.Checked;
+            Settings.Default.DoCopy = checkBoxCopy.Checked;
+            Settings.Default.SeparateAnimations = checkBoxSeparateAnimations.Checked;
+            Settings.Default.ModIndex = listBoxMods.SelectedIndex;
+            Settings.Default.ModeIndex = tabControlMode.SelectedIndex;
+            StringCollection modList = [];
             foreach (object mod in listBoxMods.Items)
             {
                 modList.Add(mod.ToString());
             }
-            CacheHelper.WriteCache(new Cache(textBoxSource.Text, textBoxGDT.Text, textBoxDB.Text, textBoxD.Text, textBoxData.Text, textBoxTT.Text, textBoxGameData.Text, textBoxBatch.Text, tabControlMode.SelectedIndex, modList, listBoxMods.SelectedIndex, checkBoxManual.Checked, checkBoxSeparateAnimations.Checked, checkBoxCopy.Checked));
+            Settings.Default.Mods = modList;
+            Settings.Default.Save();
         }
 
         private void buttonModsAdd_Click(object sender, EventArgs e)
@@ -476,7 +509,7 @@ namespace TMLGen
                 }
                 else
                 {
-                    LoggingHelper.Write("This mod already exists in the mod list.", 2);
+                    LoggingHelper.Write(Resources.DuplicateMod, 2);
                 }
             }
             selection.Dispose();

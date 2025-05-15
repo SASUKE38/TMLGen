@@ -59,5 +59,446 @@ namespace TMLGen.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find batch input directory..
+        /// </summary>
+        internal static string BatchInputDoesNotExist {
+            get {
+                return ResourceManager.GetString("BatchInputDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred when copying the generated dialog timelines file for {0}..
+        /// </summary>
+        internal static string CopyErrorGDTFile {
+            get {
+                return ResourceManager.GetString("CopyErrorGDTFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred when copying the files for {0}..
+        /// </summary>
+        internal static string CopyErrorTimelineFiles {
+            get {
+                return ResourceManager.GetString("CopyErrorTimelineFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred when copying the templates for {0}..
+        /// </summary>
+        internal static string CopyErrorTimelineTemplates {
+            get {
+                return ResourceManager.GetString("CopyErrorTimelineTemplates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred when getting the .tml output location for {0}..
+        /// </summary>
+        internal static string CopyErrorTMLOutputLocation {
+            get {
+                return ResourceManager.GetString("CopyErrorTMLOutputLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to locate dialogs binary file..
+        /// </summary>
+        internal static string DBFileDoesNotExist {
+            get {
+                return ResourceManager.GetString("DBFileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to prepare dialogs binary file..
+        /// </summary>
+        internal static string DBFilePreparationFailure {
+            get {
+                return ResourceManager.GetString("DBFilePreparationFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to prepare dialogs binary file for: {0}.
+        /// </summary>
+        internal static string DBFilePreparationFailureBatch {
+            get {
+                return ResourceManager.GetString("DBFilePreparationFailureBatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dialogs binary search path for name {0} is too long..
+        /// </summary>
+        internal static string DBSearchPathTooLong {
+            get {
+                return ResourceManager.GetString("DBSearchPathTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to locate dialogs file..
+        /// </summary>
+        internal static string DFileDoesNotExist {
+            get {
+                return ResourceManager.GetString("DFileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dialogs file search path for name {0} is too long..
+        /// </summary>
+        internal static string DSearchPathTooLong {
+            get {
+                return ResourceManager.GetString("DSearchPathTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This mod already exists in the mod list..
+        /// </summary>
+        internal static string DuplicateMod {
+            get {
+                return ResourceManager.GetString("DuplicateMod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to locate game data directory..
+        /// </summary>
+        internal static string GameDataInputDoesNotExist {
+            get {
+                return ResourceManager.GetString("GameDataInputDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to locate generated dialog timelines file..
+        /// </summary>
+        internal static string GDTFileDoesNotExist {
+            get {
+                return ResourceManager.GetString("GDTFileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error locating generated dialog timelines entry matching {0}.
+        /// </summary>
+        internal static string GDTFileLocatingError {
+            get {
+                return ResourceManager.GetString("GDTFileLocatingError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to prepare generated dialog timelines file..
+        /// </summary>
+        internal static string GDTFilePreparationFailure {
+            get {
+                return ResourceManager.GetString("GDTFilePreparationFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to prepare generated dialog timelines file for: {0}.
+        /// </summary>
+        internal static string GDTFilePreparationFailureBatch {
+            get {
+                return ResourceManager.GetString("GDTFilePreparationFailureBatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generated dialog timelines file missing dialog resource ID. Is this file correct?.
+        /// </summary>
+        internal static string GDTMissingDialogID {
+            get {
+                return ResourceManager.GetString("GDTMissingDialogID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred during generation..
+        /// </summary>
+        internal static string GenerationError {
+            get {
+                return ResourceManager.GetString("GenerationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generation failed..
+        /// </summary>
+        internal static string GenerationFailed {
+            get {
+                return ResourceManager.GetString("GenerationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generation finished..
+        /// </summary>
+        internal static string GenerationFinished {
+            get {
+                return ResourceManager.GetString("GenerationFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred creating or accessing the localization cache. The reference file can not be generated..
+        /// </summary>
+        internal static string LocalizationCacheCreationError {
+            get {
+                return ResourceManager.GetString("LocalizationCacheCreationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timeline data necessary for component collection was missing. Are the input files correct?.
+        /// </summary>
+        internal static string MissingTimelineData {
+            get {
+                return ResourceManager.GetString("MissingTimelineData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No mod selected..
+        /// </summary>
+        internal static string NoModSelected {
+            get {
+                return ResourceManager.GetString("NoModSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Collecting components....
+        /// </summary>
+        internal static string ProgressComponents {
+            get {
+                return ResourceManager.GetString("ProgressComponents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Serializing result....
+        /// </summary>
+        internal static string ProgressSerializing {
+            get {
+                return ResourceManager.GetString("ProgressSerializing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Collecting timeline settings and actor data....
+        /// </summary>
+        internal static string ProgressSettingsAndActors {
+            get {
+                return ResourceManager.GetString("ProgressSettingsAndActors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting generation....
+        /// </summary>
+        internal static string ProgressStarting {
+            get {
+                return ResourceManager.GetString("ProgressStarting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting batch generation....
+        /// </summary>
+        internal static string ProgressStartingBatch {
+            get {
+                return ResourceManager.GetString("ProgressStartingBatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to locate source file..
+        /// </summary>
+        internal static string SourceFileDoesNotExist {
+            get {
+                return ResourceManager.GetString("SourceFileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to prepare source file..
+        /// </summary>
+        internal static string SourceFilePreparationFailure {
+            get {
+                return ResourceManager.GetString("SourceFilePreparationFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to prepare source file for: {0}.
+        /// </summary>
+        internal static string SourceFilePreparationFailureBatch {
+            get {
+                return ResourceManager.GetString("SourceFilePreparationFailureBatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source file missing component information!.
+        /// </summary>
+        internal static string SourceMissingInformation {
+            get {
+                return ResourceManager.GetString("SourceMissingInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error accessing temp file..
+        /// </summary>
+        internal static string TempFilesAccessError {
+            get {
+                return ResourceManager.GetString("TempFilesAccessError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to delete temp files..
+        /// </summary>
+        internal static string TempFilesDeletionFailed {
+            get {
+                return ResourceManager.GetString("TempFilesDeletionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to locate timeline templates directory. This failure should be ignored if the timeline does not have templates..
+        /// </summary>
+        internal static string TTDirectoryDoesNotExist {
+            get {
+                return ResourceManager.GetString("TTDirectoryDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Templates folder for {0} could not be found. This failure can be ignored if the timeline does not have templates..
+        /// </summary>
+        internal static string TTDirectoryLocatingError {
+            get {
+                return ResourceManager.GetString("TTDirectoryLocatingError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpacked data directory could not be accessed..
+        /// </summary>
+        internal static string UnpackedDataAccessError {
+            get {
+                return ResourceManager.GetString("UnpackedDataAccessError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to locate unpacked data directory..
+        /// </summary>
+        internal static string UnpackedDataInputDoesNotExist {
+            get {
+                return ResourceManager.GetString("UnpackedDataInputDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpacked data directory missing dialogs binary content..
+        /// </summary>
+        internal static string UnpackedDataMissingDBContent {
+            get {
+                return ResourceManager.GetString("UnpackedDataMissingDBContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpacked data directory missing dialogs content..
+        /// </summary>
+        internal static string UnpackedDataMissingDContent {
+            get {
+                return ResourceManager.GetString("UnpackedDataMissingDContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timeline contains unsupported component type: {0}.
+        /// </summary>
+        internal static string UnsupportedComponent {
+            get {
+                return ResourceManager.GetString("UnsupportedComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred creating the visual files cache..
+        /// </summary>
+        internal static string VisualCacheCreationError {
+            get {
+                return ResourceManager.GetString("VisualCacheCreationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t find character visuals file for {0}..
+        /// </summary>
+        internal static string VisualCachePackageDoesNotExist {
+            get {
+                return ResourceManager.GetString("VisualCachePackageDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A character visual file is not a .lsf file..
+        /// </summary>
+        internal static string VisualCacheWrongExtension {
+            get {
+                return ResourceManager.GetString("VisualCacheWrongExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dialogs binary file must have a .lsf file extension..
+        /// </summary>
+        internal static string WrongDBExtension {
+            get {
+                return ResourceManager.GetString("WrongDBExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dialogs file must have a .lsj file extension..
+        /// </summary>
+        internal static string WrongDExtension {
+            get {
+                return ResourceManager.GetString("WrongDExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generated dialog timelines file must have a .lsf file extension..
+        /// </summary>
+        internal static string WrongGDTExtension {
+            get {
+                return ResourceManager.GetString("WrongGDTExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source file must have a .lsf file extension..
+        /// </summary>
+        internal static string WrongSourceExtension {
+            get {
+                return ResourceManager.GetString("WrongSourceExtension", resourceCulture);
+            }
+        }
     }
 }

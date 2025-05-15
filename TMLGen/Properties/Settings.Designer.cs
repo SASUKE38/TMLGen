@@ -22,5 +22,172 @@ namespace TMLGen.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UnpackedDataDirectory {
+            get {
+                return ((string)(this["UnpackedDataDirectory"]));
+            }
+            set {
+                this["UnpackedDataDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GameDataDirectory {
+            get {
+                return ((string)(this["GameDataDirectory"]));
+            }
+            set {
+                this["GameDataDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SourceFile {
+            get {
+                return ((string)(this["SourceFile"]));
+            }
+            set {
+                this["SourceFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GeneratedDialogTimelinesFile {
+            get {
+                return ((string)(this["GeneratedDialogTimelinesFile"]));
+            }
+            set {
+                this["GeneratedDialogTimelinesFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DialogsBinaryFile {
+            get {
+                return ((string)(this["DialogsBinaryFile"]));
+            }
+            set {
+                this["DialogsBinaryFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DialogsFile {
+            get {
+                return ((string)(this["DialogsFile"]));
+            }
+            set {
+                this["DialogsFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TimelineTemplatesDirectory {
+            get {
+                return ((string)(this["TimelineTemplatesDirectory"]));
+            }
+            set {
+                this["TimelineTemplatesDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Manual {
+            get {
+                return ((bool)(this["Manual"]));
+            }
+            set {
+                this["Manual"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DoCopy {
+            get {
+                return ((bool)(this["DoCopy"]));
+            }
+            set {
+                this["DoCopy"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SeparateAnimations {
+            get {
+                return ((bool)(this["SeparateAnimations"]));
+            }
+            set {
+                this["SeparateAnimations"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection Mods {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["Mods"]));
+            }
+            set {
+                this["Mods"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int ModIndex {
+            get {
+                return ((int)(this["ModIndex"]));
+            }
+            set {
+                this["ModIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string BatchSourceDirectory {
+            get {
+                return ((string)(this["BatchSourceDirectory"]));
+            }
+            set {
+                this["BatchSourceDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int ModeIndex {
+            get {
+                return ((int)(this["ModeIndex"]));
+            }
+            set {
+                this["ModeIndex"] = value;
+            }
+        }
     }
 }

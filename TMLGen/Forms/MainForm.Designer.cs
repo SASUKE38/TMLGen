@@ -91,6 +91,7 @@
             // 
             // buttonGenerate
             // 
+            buttonGenerate.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonGenerate.Location = new System.Drawing.Point(330, 445);
             buttonGenerate.Name = "buttonGenerate";
             buttonGenerate.Size = new System.Drawing.Size(679, 40);
@@ -107,6 +108,7 @@
             // 
             // buttonSourceBrowse
             // 
+            buttonSourceBrowse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonSourceBrowse.Location = new System.Drawing.Point(904, 21);
             buttonSourceBrowse.Name = "buttonSourceBrowse";
             buttonSourceBrowse.Size = new System.Drawing.Size(75, 23);
@@ -126,6 +128,7 @@
             // labelSource
             // 
             labelSource.AutoSize = true;
+            labelSource.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelSource.Location = new System.Drawing.Point(6, 3);
             labelSource.Name = "labelSource";
             labelSource.Size = new System.Drawing.Size(67, 15);
@@ -135,6 +138,7 @@
             // buttonGDTBrowse
             // 
             buttonGDTBrowse.Enabled = false;
+            buttonGDTBrowse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonGDTBrowse.Location = new System.Drawing.Point(904, 65);
             buttonGDTBrowse.Name = "buttonGDTBrowse";
             buttonGDTBrowse.Size = new System.Drawing.Size(75, 23);
@@ -156,6 +160,7 @@
             // 
             labelGDT.AutoSize = true;
             labelGDT.Enabled = false;
+            labelGDT.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelGDT.Location = new System.Drawing.Point(6, 47);
             labelGDT.Name = "labelGDT";
             labelGDT.Size = new System.Drawing.Size(175, 15);
@@ -165,6 +170,7 @@
             // buttonDBBrowse
             // 
             buttonDBBrowse.Enabled = false;
+            buttonDBBrowse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonDBBrowse.Location = new System.Drawing.Point(904, 110);
             buttonDBBrowse.Name = "buttonDBBrowse";
             buttonDBBrowse.Size = new System.Drawing.Size(75, 23);
@@ -185,6 +191,7 @@
             // buttonTTBrowse
             // 
             buttonTTBrowse.Enabled = false;
+            buttonTTBrowse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonTTBrowse.Location = new System.Drawing.Point(904, 198);
             buttonTTBrowse.Name = "buttonTTBrowse";
             buttonTTBrowse.Size = new System.Drawing.Size(75, 23);
@@ -197,6 +204,7 @@
             // 
             labelDB.AutoSize = true;
             labelDB.Enabled = false;
+            labelDB.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelDB.Location = new System.Drawing.Point(6, 92);
             labelDB.Name = "labelDB";
             labelDB.Size = new System.Drawing.Size(106, 15);
@@ -216,6 +224,7 @@
             // 
             labelTT.AutoSize = true;
             labelTT.Enabled = false;
+            labelTT.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelTT.Location = new System.Drawing.Point(6, 180);
             labelTT.Name = "labelTT";
             labelTT.Size = new System.Drawing.Size(162, 15);
@@ -225,6 +234,7 @@
             // checkBoxManual
             // 
             checkBoxManual.AutoSize = true;
+            checkBoxManual.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             checkBoxManual.Location = new System.Drawing.Point(6, 22);
             checkBoxManual.Name = "checkBoxManual";
             checkBoxManual.Size = new System.Drawing.Size(204, 19);
@@ -237,6 +247,7 @@
             // labelData
             // 
             labelData.AutoSize = true;
+            labelData.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelData.Location = new System.Drawing.Point(12, 9);
             labelData.Name = "labelData";
             labelData.Size = new System.Drawing.Size(141, 15);
@@ -245,6 +256,7 @@
             // 
             // buttonDataBrowse
             // 
+            buttonDataBrowse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonDataBrowse.Location = new System.Drawing.Point(920, 27);
             buttonDataBrowse.Name = "buttonDataBrowse";
             buttonDataBrowse.Size = new System.Drawing.Size(75, 23);
@@ -285,6 +297,7 @@
             // 
             labelGameData.AutoSize = true;
             labelGameData.Enabled = false;
+            labelGameData.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelGameData.Location = new System.Drawing.Point(12, 53);
             labelGameData.Name = "labelGameData";
             labelGameData.Size = new System.Drawing.Size(119, 15);
@@ -294,6 +307,7 @@
             // buttonGameDataBrowse
             // 
             buttonGameDataBrowse.Enabled = false;
+            buttonGameDataBrowse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonGameDataBrowse.Location = new System.Drawing.Point(920, 71);
             buttonGameDataBrowse.Name = "buttonGameDataBrowse";
             buttonGameDataBrowse.Size = new System.Drawing.Size(75, 23);
@@ -322,6 +336,7 @@
             checkBoxSeparateAnimations.AutoSize = true;
             checkBoxSeparateAnimations.Checked = true;
             checkBoxSeparateAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxSeparateAnimations.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             checkBoxSeparateAnimations.Location = new System.Drawing.Point(368, 22);
             checkBoxSeparateAnimations.Name = "checkBoxSeparateAnimations";
             checkBoxSeparateAnimations.Size = new System.Drawing.Size(305, 19);
@@ -333,6 +348,7 @@
             // checkBoxCopy
             // 
             checkBoxCopy.AutoSize = true;
+            checkBoxCopy.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             checkBoxCopy.Location = new System.Drawing.Point(6, 47);
             checkBoxCopy.Name = "checkBoxCopy";
             checkBoxCopy.Size = new System.Drawing.Size(204, 19);
@@ -373,6 +389,7 @@
             // labelConsole
             // 
             labelConsole.AutoSize = true;
+            labelConsole.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelConsole.Location = new System.Drawing.Point(330, 488);
             labelConsole.Name = "labelConsole";
             labelConsole.Size = new System.Drawing.Size(30, 15);
@@ -409,6 +426,7 @@
             // 
             // buttonModsAdd
             // 
+            buttonModsAdd.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonModsAdd.Location = new System.Drawing.Point(12, 636);
             buttonModsAdd.Name = "buttonModsAdd";
             buttonModsAdd.Size = new System.Drawing.Size(117, 23);
@@ -419,6 +437,7 @@
             // 
             // buttonModsRemove
             // 
+            buttonModsRemove.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonModsRemove.Location = new System.Drawing.Point(207, 636);
             buttonModsRemove.Name = "buttonModsRemove";
             buttonModsRemove.Size = new System.Drawing.Size(117, 23);
@@ -430,6 +449,7 @@
             // label1
             // 
             label1.AutoSize = true;
+            label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             label1.Location = new System.Drawing.Point(12, 364);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(40, 15);
@@ -445,6 +465,7 @@
             // 
             labelD.AutoSize = true;
             labelD.Enabled = false;
+            labelD.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelD.Location = new System.Drawing.Point(6, 136);
             labelD.Name = "labelD";
             labelD.Size = new System.Drawing.Size(70, 15);
@@ -454,6 +475,7 @@
             // buttonDBrowse
             // 
             buttonDBrowse.Enabled = false;
+            buttonDBrowse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonDBrowse.Location = new System.Drawing.Point(904, 154);
             buttonDBrowse.Name = "buttonDBrowse";
             buttonDBrowse.Size = new System.Drawing.Size(75, 23);
@@ -523,6 +545,7 @@
             // labelBatchCurrentName
             // 
             labelBatchCurrentName.AutoSize = true;
+            labelBatchCurrentName.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelBatchCurrentName.Location = new System.Drawing.Point(75, 91);
             labelBatchCurrentName.Name = "labelBatchCurrentName";
             labelBatchCurrentName.Size = new System.Drawing.Size(36, 15);
@@ -533,6 +556,7 @@
             // labelBatchCurrent
             // 
             labelBatchCurrent.AutoSize = true;
+            labelBatchCurrent.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelBatchCurrent.Location = new System.Drawing.Point(6, 91);
             labelBatchCurrent.Name = "labelBatchCurrent";
             labelBatchCurrent.Size = new System.Drawing.Size(71, 15);
@@ -543,6 +567,7 @@
             // labelBatchProgress
             // 
             labelBatchProgress.AutoSize = true;
+            labelBatchProgress.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelBatchProgress.Location = new System.Drawing.Point(6, 47);
             labelBatchProgress.Name = "labelBatchProgress";
             labelBatchProgress.Size = new System.Drawing.Size(55, 15);
@@ -551,6 +576,7 @@
             // 
             // progressBarBatch
             // 
+            progressBarBatch.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             progressBarBatch.Location = new System.Drawing.Point(6, 65);
             progressBarBatch.Name = "progressBarBatch";
             progressBarBatch.Size = new System.Drawing.Size(973, 23);
@@ -559,6 +585,7 @@
             // 
             // buttonBatch
             // 
+            buttonBatch.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonBatch.Location = new System.Drawing.Point(904, 21);
             buttonBatch.Name = "buttonBatch";
             buttonBatch.Size = new System.Drawing.Size(75, 23);
@@ -570,6 +597,7 @@
             // labelBatch
             // 
             labelBatch.AutoSize = true;
+            labelBatch.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelBatch.Location = new System.Drawing.Point(6, 3);
             labelBatch.Name = "labelBatch";
             labelBatch.Size = new System.Drawing.Size(97, 15);
@@ -613,7 +641,7 @@
             MinimumSize = new System.Drawing.Size(720, 605);
             Name = "MainForm";
             Text = "TMLGen";
-            FormClosed += MainForm_FormClosed;
+            FormClosing += MainForm_FormClosing;
             Load += MainForm_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();

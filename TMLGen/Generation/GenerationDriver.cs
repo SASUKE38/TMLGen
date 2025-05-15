@@ -10,6 +10,7 @@ using TMLGen.Generation.Collectors;
 using TMLGen.Generation.Helpers;
 using TMLGen.Models;
 using TMLGen.Models.Global;
+using TMLGen.Properties;
 
 namespace TMLGen.Generation
 {
@@ -17,7 +18,7 @@ namespace TMLGen.Generation
     {
         public static int DoGeneration(Form sender, string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string dPath, string templatePath, string gameDataPath, string rawSourcePath, string modName, bool extraPathsGiven, bool separateAnimations, bool doCopy)
         {
-            LoggingHelper.Write("Starting generation...");
+            LoggingHelper.Write(Resources.ProgressStarting);
             if (!extraPathsGiven)
             {
                 dbPath = PreparationHelper.FindDialogsBinaryFile(dataPath, sourceName);
@@ -31,7 +32,7 @@ namespace TMLGen.Generation
             }
             dbPath = PreparationHelper.SaveToLsxFile(dbPath);
 
-            if (!CheckFilePreparation(dbPath, sourcePath, gdtPath))
+            if (!CheckFilePreparation(dbPath, sourcePath, gdtPath, sourceName, false))
                 return 1;
 
             PreparationHelper.FindCharacterVisualsFiles(dataPath, []);
@@ -75,13 +76,13 @@ namespace TMLGen.Generation
                 timeline,
                 separateAnimations);
 
-            LoggingHelper.Write("Collecting timeline settings and actor data...");
+            LoggingHelper.Write(Resources.ProgressSettingsAndActors);
             timelineSettingsCollector.Collect();
             actorCollector.Collect();
-            LoggingHelper.Write("Collecting components...");
+            LoggingHelper.Write(Resources.ProgressComponents);
             componentCollector.Collect();
 
-            LoggingHelper.Write("Serializing result...");
+            LoggingHelper.Write(Resources.ProgressSerializing);
             string outputPath = CopyHelper.GetOutputPath(Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
             StreamWriter writer = new(outputPath);
 
@@ -103,7 +104,7 @@ namespace TMLGen.Generation
     
         public static int DoBatchGeneration(BackgroundWorker worker, Form sender, string inputPath, string dataPath, string gameDataPath, string modName, bool separateAnimations, bool doCopy)
         {
-            LoggingHelper.Write("Starting batch generation...");
+            LoggingHelper.Write(Resources.ProgressStartingBatch);
 
             PreparationHelper.FindCharacterVisualsFiles(dataPath, []);
             string localizationPath = PreparationHelper.FindLocalizationFile(dataPath, "English");
@@ -119,7 +120,8 @@ namespace TMLGen.Generation
                 string sourceFile = fileCollection[i];
                 string sourceName = Path.GetFileName(sourceFile);
                 string rawSourceName = Path.GetFileNameWithoutExtension(sourceFile);
-                if (Path.GetExtension(sourceFile) == ".lsf" && !rawSourceName.EndsWith("_Scene") && !rawSourceName.EndsWith("_Prefetch"))
+                //if (Path.GetExtension(sourceFile) == ".lsf" && !rawSourceName.EndsWith("_Scene") && !rawSourceName.EndsWith("_Prefetch"))
+                if (Path.GetExtension(sourceFile) == ".lsf")
                 {
                     sender.Invoke(MainForm.currentBatchFileDelegate, sourceName);
 
@@ -128,7 +130,7 @@ namespace TMLGen.Generation
                     string gdtPath = PreparationHelper.FindGeneratedDialogTimelinesFile(dataPath, sourceName);
                     string dPath = PreparationHelper.FindDialogsFile(dataPath, sourceName);
 
-                    if (!CheckFilePreparation(dbPath, sourceFile, gdtPath))
+                    if (!CheckFilePreparation(dbPath, sourceFile, gdtPath, sourceName, true))
                         continue;
 
                     CopyHelper.CopyTimelineFiles(sourceFile, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
@@ -193,21 +195,21 @@ namespace TMLGen.Generation
             return 0;
         }
 
-        private static bool CheckFilePreparation(string dbPath, string sourcePath, string gdtPath)
+        private static bool CheckFilePreparation(string dbPath, string sourcePath, string gdtPath, string sourceName, bool isBatch)
         {
             if (dbPath == null)
             {
-                LoggingHelper.Write("Failed to prepare dialogs binary file.", 2);
+                LoggingHelper.Write(isBatch ? String.Format(Resources.DBFilePreparationFailureBatch, sourceName) : Resources.DBFilePreparationFailure, 2);
                 return false;
             }
             if (sourcePath == null)
             {
-                LoggingHelper.Write("Failed to prepare source file.", 2);
+                LoggingHelper.Write(isBatch ? String.Format(Resources.SourceFilePreparationFailureBatch, sourceName) : Resources.SourceFilePreparationFailure, 2);
                 return false;
             }
             if (gdtPath == null)
             {
-                LoggingHelper.Write("Failed to prepare generated dialog timelines file.", 2);
+                LoggingHelper.Write(isBatch ? String.Format(Resources.GDTFilePreparationFailureBatch, sourceName) : Resources.GDTFilePreparationFailure, 2);
                 return false;
             }
 

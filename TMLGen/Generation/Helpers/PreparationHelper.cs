@@ -8,6 +8,7 @@ using System.Security;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
+using TMLGen.Properties;
 
 namespace TMLGen.Generation.Helpers
 {
@@ -31,7 +32,7 @@ namespace TMLGen.Generation.Helpers
                 }
                 catch (IOException)
                 {
-                    LoggingHelper.Write("Error accessing temp file.", 2);
+                    LoggingHelper.Write(Resources.TempFilesAccessError, 2);
                     return null;
                 }
             }
@@ -76,7 +77,7 @@ namespace TMLGen.Generation.Helpers
                     }
                     catch (Exception)
                     {
-                        LoggingHelper.Write("Error locating generated dialog timelines file.", 2);
+                        LoggingHelper.Write(String.Format(Resources.GDTFileLocatingError, sourceName), 2);
                         return null;
                     }
                 }
@@ -107,17 +108,17 @@ namespace TMLGen.Generation.Helpers
                     }
                     catch (DirectoryNotFoundException)
                     {
-                        LoggingHelper.Write("Unpacked data directory missing dialogs binary content.", 2);
+                        LoggingHelper.Write(Resources.UnpackedDataMissingDBContent, 2);
                         return null;
                     }
                     catch (Exception ex) when (ex is IOException || ex is SecurityException || ex is UnauthorizedAccessException)
                     {
-                        LoggingHelper.Write("Unpacked data directory could not be accessed.", 2);
+                        LoggingHelper.Write(Resources.UnpackedDataAccessError, 2);
                         return null;
                     }
                     catch (PathTooLongException)
                     {
-                        LoggingHelper.Write("Dialogs binary search path is too long.", 2);
+                        LoggingHelper.Write(String.Format(Resources.DBSearchPathTooLong, sourceName), 2);
                         return null;
                     }
                 }
@@ -149,17 +150,17 @@ namespace TMLGen.Generation.Helpers
                     }
                     catch (DirectoryNotFoundException)
                     {
-                        LoggingHelper.Write("Unpacked data directory missing dialogs content.", 2);
+                        LoggingHelper.Write(Resources.UnpackedDataMissingDContent, 2);
                         return null;
                     }
                     catch (Exception ex) when (ex is IOException || ex is SecurityException || ex is UnauthorizedAccessException)
                     {
-                        LoggingHelper.Write("Unpacked data directory could not be accessed.", 2);
+                        LoggingHelper.Write(Resources.UnpackedDataAccessError, 2);
                         return null;
                     }
                     catch (PathTooLongException)
                     {
-                        LoggingHelper.Write("Dialogs file search path is too long.", 2);
+                        LoggingHelper.Write(String.Format(Resources.DSearchPathTooLong, sourceName), 2);
                         return null;
                     }
                 }
@@ -188,7 +189,7 @@ namespace TMLGen.Generation.Helpers
                     }
                     catch (Exception)
                     {
-                        LoggingHelper.Write("Templates folder could not be found. This failure can be ignored if the timeline does not have templates.");
+                        LoggingHelper.Write(String.Format(Resources.TTDirectoryLocatingError, timelineId));
                         return null;
                     }
                 }
@@ -222,7 +223,7 @@ namespace TMLGen.Generation.Helpers
             }
             catch (Exception)
             {
-                LoggingHelper.Write("The visual files cache could not be created.", 2);
+                LoggingHelper.Write(Resources.VisualCacheCreationError, 2);
                 return;
             }
             foreach ((string prefix, string package) in packageNames)
@@ -238,11 +239,11 @@ namespace TMLGen.Generation.Helpers
                 }
                 catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
                 {
-                    LoggingHelper.Write("Couldn't find character visuals file for " + package + ".", 2);
+                    LoggingHelper.Write(String.Format(Resources.VisualCachePackageDoesNotExist, package), 2);
                 }
                 catch (Exception)
                 {
-                    LoggingHelper.Write("An error occurred creating the visual files cache.");
+                    LoggingHelper.Write(Resources.VisualCacheCreationError, 2);
                 }
             }
 
@@ -256,7 +257,7 @@ namespace TMLGen.Generation.Helpers
                 }
                 else
                 {
-                    LoggingHelper.Write("A character visual file is not a .lsf file.", 2);
+                    LoggingHelper.Write(Resources.VisualCacheWrongExtension, 2);
                 }
             }
         }
@@ -283,7 +284,7 @@ namespace TMLGen.Generation.Helpers
             }
             catch (Exception)
             {
-                LoggingHelper.Write("An error occurred creating the localization cache. The reference file can not be generated.");
+                LoggingHelper.Write(Resources.LocalizationCacheCreationError, 2);
                 return null;
             }
         }

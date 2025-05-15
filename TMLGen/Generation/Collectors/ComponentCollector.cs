@@ -15,6 +15,7 @@ using TMLGen.Models.Track;
 using TMLGen.Models.Track.Actor;
 using TMLGen.Models.Track.Component;
 using TMLGen.Models.Track.Key;
+using TMLGen.Properties;
 
 namespace TMLGen.Generation.Collectors
 {
@@ -53,7 +54,7 @@ namespace TMLGen.Generation.Collectors
 
             if (componentCollection == null || phases == null)
             {
-                LoggingHelper.Write("Source file missing component information!", 2);
+                LoggingHelper.Write(Resources.SourceMissingInformation, 2);
                 return;
             }
 
@@ -189,7 +190,7 @@ namespace TMLGen.Generation.Collectors
                             default:
                                 if (!foundUnsupportedComponentTypes.Contains(componentType))
                                 {
-                                    LoggingHelper.Write("Timeline contains unsupported component type: " + componentType, 2);
+                                    LoggingHelper.Write(String.Format(Resources.UnsupportedComponent, componentType), 2);
                                     foundUnsupportedComponentTypes.Add(componentType);
                                 }
                                 break;
@@ -203,7 +204,7 @@ namespace TMLGen.Generation.Collectors
                 }
                 catch (KeyNotFoundException)
                 {
-                    LoggingHelper.Write("Timeline data necessary for component collection was missing. Are the input files correct?", 2);
+                    LoggingHelper.Write(Resources.MissingTimelineData, 2);
                     throw;
                 }
             }
