@@ -223,6 +223,24 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generation canceled..
+        /// </summary>
+        internal static string GenerationCanceled {
+            get {
+                return ResourceManager.GetString("GenerationCanceled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Canceling generation....
+        /// </summary>
+        internal static string GenerationCanceling {
+            get {
+                return ResourceManager.GetString("GenerationCanceling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred during generation..
         /// </summary>
         internal static string GenerationError {

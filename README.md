@@ -8,6 +8,7 @@ The tool requires the path to your unpacked game directory (as unpacked by the [
 Additionally, you may select the timeline data to use manually. The definitions below detail the data the tool uses.
 
 ### Game Data Paths
+You will be prompted to enter the paths below the first time you run the program.
 
 - Unpacked Data Directory: Top level of unpacked game data as unpacked by the Baldur's Gate 3 Modder's Multitool. Likely called UnpackedData. [This article](https://github.com/ShinyHobo/BG3-Modders-Multitool/wiki/Unpacking-Game-Files) offers more information on how to unpack the game files if you haven't done so already.
 - Game Data Directory: Contains the .pak files the game uses and is only used when setting the tool to override timelines. The path likely ends with Baldurs Gate 3\Data.

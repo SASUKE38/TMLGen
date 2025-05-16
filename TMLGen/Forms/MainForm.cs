@@ -124,7 +124,7 @@ namespace TMLGen
 
         private void checkBoxCopy_CheckedChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void buttonSourceBrowse_Click(object sender, EventArgs e)
@@ -172,6 +172,12 @@ namespace TMLGen
             }
         }
 
+        private void buttonCancel_Click(object sender, EventArgs e)
+        {
+            LoggingHelper.Write(Resources.GenerationCanceling, 2);
+            backgroundWorker2.CancelAsync();
+            buttonCancel.Enabled = false;
+        }
 
         private void buttonGenerate_Click(object sender, EventArgs e)
         {
@@ -261,6 +267,7 @@ namespace TMLGen
                     };
 
                     buttonGenerate.Enabled = false;
+                    buttonCancel.Enabled = true;
                     WriteSettings();
                     backgroundWorker2.RunWorkerAsync(args);
                 }
@@ -405,7 +412,7 @@ namespace TMLGen
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
             BatchGenerationArgs args = (BatchGenerationArgs)e.Argument;
-            e.Result = GenerationDriver.DoBatchGeneration(sender as BackgroundWorker, this, args.inputName, args.dataDirectory, args.outputPath, args.modName, args.separateAnimations, args.doCopy);
+            e.Result = GenerationDriver.DoBatchGeneration(sender as BackgroundWorker, e, this, args.inputName, args.dataDirectory, args.outputPath, args.modName, args.separateAnimations, args.doCopy);
         }
 
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -423,14 +430,23 @@ namespace TMLGen
 
         private void FinishGeneration(RunWorkerCompletedEventArgs e)
         {
-            if (e.Error != null || (int)e.Result > 0)
+            if (e.Error != null)
             {
                 LoggingHelper.Write(Resources.GenerationError, 3);
-                if (e.Error != null) CleanupHelper.WriteException(e.Error);
+                CleanupHelper.WriteException(e.Error);
+            }
+            else if (e.Cancelled)
+            {
+                LoggingHelper.Write(Resources.GenerationCanceled, 3);
+            }
+            else if ((int)e.Result > 0)
+            {
+                LoggingHelper.Write(Resources.GenerationError, 3);
             }
             else
                 LoggingHelper.Write(Resources.GenerationFinished, 1);
             buttonGenerate.Enabled = true;
+            buttonCancel.Enabled = false;
             CleanupHelper.EmptyStaticCollections();
             CleanupHelper.DeleteTempFiles(PreparationHelper.visualPaths);
         }

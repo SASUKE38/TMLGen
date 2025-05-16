@@ -77,6 +77,7 @@
             backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             menuStrip1 = new System.Windows.Forms.MenuStrip();
             dataPathConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            buttonCancel = new System.Windows.Forms.Button();
             groupBox1.SuspendLayout();
             tabControlMode.SuspendLayout();
             tabPageSingle.SuspendLayout();
@@ -89,7 +90,7 @@
             buttonGenerate.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             buttonGenerate.Location = new System.Drawing.Point(330, 372);
             buttonGenerate.Name = "buttonGenerate";
-            buttonGenerate.Size = new System.Drawing.Size(679, 40);
+            buttonGenerate.Size = new System.Drawing.Size(335, 40);
             buttonGenerate.TabIndex = 0;
             buttonGenerate.Text = "Generate";
             buttonGenerate.UseVisualStyleBackColor = true;
@@ -536,6 +537,7 @@
             // backgroundWorker2
             // 
             backgroundWorker2.WorkerReportsProgress = true;
+            backgroundWorker2.WorkerSupportsCancellation = true;
             backgroundWorker2.DoWork += backgroundWorker2_DoWork;
             backgroundWorker2.ProgressChanged += backgroundWorker2_ProgressChanged;
             backgroundWorker2.RunWorkerCompleted += backgroundWorker2_RunWorkerCompleted;
@@ -556,11 +558,24 @@
             dataPathConfigurationToolStripMenuItem.Text = "Data Path Configuration";
             dataPathConfigurationToolStripMenuItem.Click += dataPathConfigurationToolStripMenuItem_Click;
             // 
+            // buttonCancel
+            // 
+            buttonCancel.Enabled = false;
+            buttonCancel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            buttonCancel.Location = new System.Drawing.Point(672, 372);
+            buttonCancel.Name = "buttonCancel";
+            buttonCancel.Size = new System.Drawing.Size(337, 40);
+            buttonCancel.TabIndex = 32;
+            buttonCancel.Text = "Cancel Batch";
+            buttonCancel.UseVisualStyleBackColor = true;
+            buttonCancel.Click += buttonCancel_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1020, 598);
+            Controls.Add(buttonCancel);
             Controls.Add(tabControlMode);
             Controls.Add(label1);
             Controls.Add(buttonModsRemove);
@@ -642,6 +657,7 @@
         private System.Windows.Forms.Label labelBatchCurrentName;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem dataPathConfigurationToolStripMenuItem;
+        private System.Windows.Forms.Button buttonCancel;
     }
 }
 

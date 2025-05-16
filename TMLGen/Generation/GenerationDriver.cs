@@ -104,7 +104,7 @@ namespace TMLGen.Generation
             return 0;
         }
     
-        public static int DoBatchGeneration(BackgroundWorker worker, Form sender, string inputPath, string dataPath, string gameDataPath, string modName, bool separateAnimations, bool doCopy)
+        public static int DoBatchGeneration(BackgroundWorker worker, DoWorkEventArgs e, Form sender, string inputPath, string dataPath, string gameDataPath, string modName, bool separateAnimations, bool doCopy)
         {
             LoggingHelper.Write(Resources.ProgressStartingBatch);
 
@@ -119,83 +119,91 @@ namespace TMLGen.Generation
 
             for (int i = 0; i < fileCollection.Length; i++)
             {
-                string sourceFile = fileCollection[i];
-                string sourceName = Path.GetFileName(sourceFile);
-                string rawSourceName = Path.GetFileNameWithoutExtension(sourceFile);
-
-                sender.Invoke(MainForm.currentBatchFileDelegate, sourceName);
-
-                if (!File.Exists(sourceFile))
+                if (worker.CancellationPending)
                 {
-                    LoggingHelper.Write(String.Format(Resources.SourceFileDoesNotExistBatch, sourceName), 2);
-                    continue;
+                    e.Cancel = true;
+                    break;
                 }
-
-                string sourceLsx = PreparationHelper.SaveToLsxFile(sourceFile);
-                string dbPath = PreparationHelper.SaveToLsxFile(PreparationHelper.FindDialogsBinaryFile(dataPath, sourceName));
-                string gdtPath = PreparationHelper.FindGeneratedDialogTimelinesFile(dataPath, sourceName);
-                string dPath = PreparationHelper.FindDialogsFile(dataPath, sourceName);
-
-                if (!CheckFilePreparation(dbPath, sourceFile, gdtPath, sourceName, true))
-                    continue;
-
-                CopyHelper.CopyTimelineFiles(sourceFile, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
-                CopyHelper.CopyGDTFile(gdtPath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
-
-                Root root = new();
-                Timeline timeline = new();
-                root.Timeline = timeline;
-
-                XDocument sourceDoc = XDocument.Load(sourceLsx);
-                XDocument gdtDoc = XDocument.Load(gdtPath);
-                XDocument dbDoc = XDocument.Load(dbPath);
-
-                TimelineSettingsCollector timelineSettingsCollector = new(
-                    sourceDoc,
-                    gdtDoc,
-                    timeline);
-                ActorCollector actorCollector = new(
-                    dataPath,
-                    Path.GetFileNameWithoutExtension(sourceName),
-                    null,
-                    gameDataPath,
-                    modName,
-                    doCopy,
-                    sourceDoc,
-                    gdtDoc,
-                    dbDoc,
-                    timeline);
-                ComponentCollector componentCollector = new(
-                    sender,
-                    sourceDoc,
-                    gdtDoc,
-                    dbDoc,
-                    timeline,
-                    separateAnimations);
-
-                timelineSettingsCollector.Collect();
-                actorCollector.Collect();
-                componentCollector.Collect();
-
-                string outputPath = CopyHelper.GetOutputPath(Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
-                StreamWriter writer = new(outputPath);
-
-                if (localizationPath != null)
+                else
                 {
-                    ReferenceCollector referenceCollector = new(dataPath, dPath, outputPath, localizationPath);
-                    referenceCollector.Collect();
+                    string sourceFile = fileCollection[i];
+                    string sourceName = Path.GetFileName(sourceFile);
+                    string rawSourceName = Path.GetFileNameWithoutExtension(sourceFile);
+
+                    sender.Invoke(MainForm.currentBatchFileDelegate, sourceName);
+
+                    if (!File.Exists(sourceFile))
+                    {
+                        LoggingHelper.Write(String.Format(Resources.SourceFileDoesNotExistBatch, sourceName), 2);
+                        continue;
+                    }
+
+                    string sourceLsx = PreparationHelper.SaveToLsxFile(sourceFile);
+                    string dbPath = PreparationHelper.SaveToLsxFile(PreparationHelper.FindDialogsBinaryFile(dataPath, sourceName));
+                    string gdtPath = PreparationHelper.FindGeneratedDialogTimelinesFile(dataPath, sourceName);
+                    string dPath = PreparationHelper.FindDialogsFile(dataPath, sourceName);
+
+                    if (!CheckFilePreparation(dbPath, sourceFile, gdtPath, sourceName, true))
+                        continue;
+
+                    CopyHelper.CopyTimelineFiles(sourceFile, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
+                    CopyHelper.CopyGDTFile(gdtPath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
+
+                    Root root = new();
+                    Timeline timeline = new();
+                    root.Timeline = timeline;
+
+                    XDocument sourceDoc = XDocument.Load(sourceLsx);
+                    XDocument gdtDoc = XDocument.Load(gdtPath);
+                    XDocument dbDoc = XDocument.Load(dbPath);
+
+                    TimelineSettingsCollector timelineSettingsCollector = new(
+                        sourceDoc,
+                        gdtDoc,
+                        timeline);
+                    ActorCollector actorCollector = new(
+                        dataPath,
+                        Path.GetFileNameWithoutExtension(sourceName),
+                        null,
+                        gameDataPath,
+                        modName,
+                        doCopy,
+                        sourceDoc,
+                        gdtDoc,
+                        dbDoc,
+                        timeline);
+                    ComponentCollector componentCollector = new(
+                        sender,
+                        sourceDoc,
+                        gdtDoc,
+                        dbDoc,
+                        timeline,
+                        separateAnimations);
+
+                    timelineSettingsCollector.Collect();
+                    actorCollector.Collect();
+                    componentCollector.Collect();
+
+                    string outputPath = CopyHelper.GetOutputPath(Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
+                    StreamWriter writer = new(outputPath);
+
+                    if (localizationPath != null)
+                    {
+                        ReferenceCollector referenceCollector = new(dataPath, dPath, outputPath, localizationPath);
+                        referenceCollector.Collect();
+                    }
+
+                    serializer.Serialize(writer, root, namespaces);
+                    writer.Close();
+
+                    XDocument processed = new(CleanupHelper.DoPostProcess(XDocument.Load(outputPath).XPathSelectElement("Root")));
+                    processed.Save(outputPath);
+
+                    CleanupHelper.DeleteTempFiles([dbPath, sourceLsx, gdtPath]);
+                    CleanupHelper.EmptyStaticCollections();
+
+                    worker.ReportProgress((int)(((double)i / fileCollection.Length) * 100));
                 }
-
-                serializer.Serialize(writer, root, namespaces);
-                writer.Close();
-
-                XDocument processed = new(CleanupHelper.DoPostProcess(XDocument.Load(outputPath).XPathSelectElement("Root")));
-                processed.Save(outputPath);
-
-                CleanupHelper.DeleteTempFiles([dbPath, sourceLsx, gdtPath]);
-                CleanupHelper.EmptyStaticCollections();
-
-                worker.ReportProgress((int)(((double)i / fileCollection.Length) * 100));
             }
             return 0;
         }
