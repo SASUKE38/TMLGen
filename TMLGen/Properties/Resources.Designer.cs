@@ -331,6 +331,15 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A source file that was part of the batch could not be found: {0}.
+        /// </summary>
+        internal static string SourceFileDoesNotExistBatch {
+            get {
+                return ResourceManager.GetString("SourceFileDoesNotExistBatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to prepare source file..
         /// </summary>
         internal static string SourceFilePreparationFailure {

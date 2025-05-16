@@ -117,58 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="openFileDialogSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>407, 17</value>
   </metadata>
-  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>326, 67</value>
+  <metadata name="folderBrowserDialogData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>20, 13</value>
   </metadata>
-  <data name="textBoxSource.ToolTip" xml:space="preserve">
-    <value>The source file of the timeline whose TML you want to generate. It is likely located in a package's Timeline\Generated directory.
-Example: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Timeline\Generated\CAMP_DaisyAcknowledgement_AvD_ROM.lsf</value>
-  </data>
-  <data name="textBoxGDT.ToolTip" xml:space="preserve">
-    <value>Contains information linking the timeline and dialog. It is likely located in a package's Content\Generated\[PAK]_GeneratedDialogTimelines folder.
-Example: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Content\Generated\[PAK]_GeneratedDialogTimelines\_merged.lsf</value>
-  </data>
-  <data name="textBoxDB.ToolTip" xml:space="preserve">
-    <value>The compiled dialog file for the timeline. It is likely located in a package's Story\DialogsBinary folder.
-Example: F:\BG3Multitool\UnpackedData\Gustav\Mods\GustavDev\Story\DialogsBinary\Camp\Campfire_Moments\CAMP_DaisyAcknowledgement_AvD_ROM.lsf</value>
-  </data>
-  <data name="textBoxTT.ToolTip" xml:space="preserve">
-    <value>The directory that contains the timeline's templates. 
-NOTE: Will be absent if a timeline has no templates.
-Example: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\TimelineTemplates\0e18fce2-99f6-75be-5404-1faee5d19471</value>
-  </data>
-  <metadata name="openFileDialogGDT.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>186, 17</value>
-  </metadata>
-  <metadata name="openFileDialogDB.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>340, 17</value>
-  </metadata>
-  <metadata name="folderBrowserDialogTemplates.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>609, 17</value>
-  </metadata>
-  <data name="textBoxD.ToolTip" xml:space="preserve">
-    <value>The raw dialog file for the timeline. It is likely located in a package's Story\Dialogs folder.
-Example: F:\BG3Multitool\UnpackedData\Gustav\Mods\GustavDev\Story\Dialogs\Camp\Campfire_Moments\CAMP_DaisyAcknowledgement_AvD_ROM.lsj</value>
-  </data>
-  <metadata name="backgroundWorker1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>19, 60</value>
-  </metadata>
-  <metadata name="openFileDialogD.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>480, 16</value>
-  </metadata>
-  <metadata name="folderBrowserDialogBatchSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>809, 21</value>
-  </metadata>
-  <metadata name="backgroundWorker2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>173, 64</value>
-  </metadata>
-  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>417, 67</value>
-  </metadata>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>140</value>
+  <metadata name="folderBrowserDialogGameData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>191, 17</value>
   </metadata>
 </root>

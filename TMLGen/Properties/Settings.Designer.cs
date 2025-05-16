@@ -189,5 +189,17 @@ namespace TMLGen.Properties {
                 this["ModeIndex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DidFirstLoad {
+            get {
+                return ((bool)(this["DidFirstLoad"]));
+            }
+            set {
+                this["DidFirstLoad"] = value;
+            }
+        }
     }
 }

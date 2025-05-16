@@ -264,4 +264,7 @@
   <data name="GDTFilePreparationFailureBatch" xml:space="preserve">
     <value>Failed to prepare generated dialog timelines file for: {0}</value>
   </data>
+  <data name="SourceFileDoesNotExistBatch" xml:space="preserve">
+    <value>A source file that was part of the batch could not be found: {0}</value>
+  </data>
 </root>

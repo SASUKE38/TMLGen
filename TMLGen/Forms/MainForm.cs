@@ -124,9 +124,7 @@ namespace TMLGen
 
         private void checkBoxCopy_CheckedChanged(object sender, EventArgs e)
         {
-            labelGameData.Enabled = !labelGameData.Enabled;
-            buttonGameDataBrowse.Enabled = !buttonGameDataBrowse.Enabled;
-            textBoxGameData.Enabled = !textBoxGameData.Enabled;
+            
         }
 
         private void buttonSourceBrowse_Click(object sender, EventArgs e)
@@ -174,23 +172,6 @@ namespace TMLGen
             }
         }
 
-        private void buttonDataBrowse_Click(object sender, EventArgs e)
-        {
-            DialogResult result = folderBrowserDialogData.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                textBoxData.Text = folderBrowserDialogData.SelectedPath;
-            }
-        }
-
-        private void buttonGameDataBrowse_Click(object sender, EventArgs e)
-        {
-            DialogResult result = folderBrowserDialogGameData.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                textBoxGameData.Text = folderBrowserDialogGameData.SelectedPath;
-            }
-        }
 
         private void buttonGenerate_Click(object sender, EventArgs e)
         {
@@ -228,7 +209,7 @@ namespace TMLGen
                 string dbFile = null;
                 string dFile = null;
                 string templateDirectory = null;
-                string dataDirectory = textBoxData.Text;
+                string dataDirectory = Settings.Default.UnpackedDataDirectory;
                 if (checkBoxManual.Checked)
                 {
                     dbFile = textBoxDB.Text;
@@ -246,7 +227,7 @@ namespace TMLGen
                     dbFile = dbFile,
                     dFile = dFile,
                     templateDirectory = templateDirectory,
-                    outputPath = textBoxGameData.Text,
+                    outputPath = Settings.Default.GameDataDirectory,
                     rawSourcePath = textBoxSource.Text,
                     manual = checkBoxManual.Checked,
                     modName = modName,
@@ -265,15 +246,15 @@ namespace TMLGen
 
         private void BatchGeneration()
         {
-            if (CheckExistenceCopy())
+            if (CheckExistenceBatch())
             {
-                if (Directory.Exists(textBoxBatch.Text))
+                if (Directory.Exists(textBoxBatch.Text) && CheckExistenceBatch())
                 {
                     BatchGenerationArgs args = new()
                     {
                         inputName = textBoxBatch.Text,
-                        dataDirectory = textBoxData.Text,
-                        outputPath = textBoxGameData.Text,
+                        dataDirectory = Settings.Default.UnpackedDataDirectory,
+                        outputPath = Settings.Default.GameDataDirectory,
                         modName = modName,
                         separateAnimations = checkBoxSeparateAnimations.Checked,
                         doCopy = checkBoxCopy.Checked
@@ -285,7 +266,6 @@ namespace TMLGen
                 }
                 else
                 {
-                    LoggingHelper.Write(Resources.BatchInputDoesNotExist, 2);
                     LoggingHelper.Write(Resources.GenerationFailed, 3);
                 }
             }
@@ -339,12 +319,29 @@ namespace TMLGen
                 LoggingHelper.Write(Resources.SourceFileDoesNotExist, 2);
                 checkSuccess = false;
             }
-            if (!Directory.Exists(textBoxData.Text))
+            return checkSuccess && CheckExistenceUnpackedData() && CheckExistenceCopy() && CheckExistenceManual();
+        }
+
+        private bool CheckExistenceBatch()
+        {
+            bool checkSuccess = true;
+            if (!Directory.Exists(textBoxBatch.Text))
+            {
+                LoggingHelper.Write(Resources.BatchInputDoesNotExist, 2);
+                checkSuccess = false;
+            }
+            return checkSuccess && CheckExistenceUnpackedData() && CheckExistenceCopy();
+        }
+
+        private bool CheckExistenceUnpackedData()
+        {
+            bool checkSuccess = true;
+            if (!Directory.Exists(Settings.Default.UnpackedDataDirectory))
             {
                 LoggingHelper.Write(Resources.UnpackedDataInputDoesNotExist, 2);
                 checkSuccess = false;
             }
-            return checkSuccess && CheckExistenceCopy() && CheckExistenceManual();
+            return checkSuccess;
         }
 
         private bool CheckExistenceManual()
@@ -379,8 +376,8 @@ namespace TMLGen
         {
             bool checkSuccess = true;
             if (checkBoxCopy.Checked)
-            { 
-                if (!Directory.Exists(textBoxGameData.Text))
+            {
+                if (!Directory.Exists(Settings.Default.GameDataDirectory))
                 {
                     LoggingHelper.Write(Resources.GameDataInputDoesNotExist, 2);
                     checkSuccess = false;
@@ -446,8 +443,6 @@ namespace TMLGen
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            textBoxData.Text = Settings.Default.UnpackedDataDirectory;
-            textBoxGameData.Text = Settings.Default.GameDataDirectory;
             textBoxSource.Text = Settings.Default.SourceFile;
             textBoxGDT.Text = Settings.Default.GeneratedDialogTimelinesFile;
             textBoxDB.Text = Settings.Default.DialogsBinaryFile;
@@ -468,6 +463,16 @@ namespace TMLGen
             tabControlMode.SelectedIndex = Settings.Default.ModeIndex;
         }
 
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            if (!Settings.Default.DidFirstLoad)
+            {
+                ShowConfiguration();
+                Settings.Default.DidFirstLoad = true;
+                Settings.Default.Save();
+            }
+        }
+
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             WriteSettings();
@@ -475,8 +480,6 @@ namespace TMLGen
 
         private void WriteSettings()
         {
-            Settings.Default.UnpackedDataDirectory = textBoxData.Text;
-            Settings.Default.GameDataDirectory = textBoxGameData.Text;
             Settings.Default.SourceFile = textBoxSource.Text;
             Settings.Default.GeneratedDialogTimelinesFile = textBoxGDT.Text;
             Settings.Default.DialogsBinaryFile = textBoxDB.Text;
@@ -533,6 +536,18 @@ namespace TMLGen
         private void tabControlMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             checkBoxManual.Enabled = !checkBoxManual.Enabled;
+        }
+
+        private void dataPathConfigurationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowConfiguration();
+        }
+
+        private void ShowConfiguration()
+        {
+            DataConfiguration config = new();
+            config.ShowDialog();
+            config.Dispose();
         }
     }
 }

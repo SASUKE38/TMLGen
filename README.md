@@ -4,15 +4,17 @@
 
 ## Usage
 
-The tool requires the path to your unpacked game directory (as unpacked by the [Baldur's Gate 3 Modder's Multitool](https://github.com/ShinyHobo/BG3-Modders-Multitool)) along with the source file of the timeline you wish to edit.
+The tool requires the path to your unpacked game directory (as unpacked by the [Baldur's Gate 3 Modder's Multitool](https://github.com/ShinyHobo/BG3-Modders-Multitool)) along with the source file(s) of the timeline(s) you wish to edit.
 Additionally, you may select the timeline data to use manually. The definitions below detail the data the tool uses.
 
+### Game Data Paths
+
 - Unpacked Data Directory: Top level of unpacked game data as unpacked by the Baldur's Gate 3 Modder's Multitool. Likely called UnpackedData. [This article](https://github.com/ShinyHobo/BG3-Modders-Multitool/wiki/Unpacking-Game-Files) offers more information on how to unpack the game files if you haven't done so already.
+- Game Data Directory: Contains the .pak files the game uses and is only used when setting the tool to override timelines. The path likely ends with Baldurs Gate 3\Data.
+
+### Single Generation
+
 - Source File: .lsf source file of the timeline you wish to edit. Likely located in a Public\\<mod name\>\Timeline\Generated directory.
-
-The following directory is only used when setting the tool to override timelines.
-
-- Game Data Directory: Contains the .pak files the game uses. The path likely ends with Baldurs Gate 3\Data.
 
 The following files are used only for manual selection and can be ignored for automatic generation.
 
@@ -20,6 +22,10 @@ The following files are used only for manual selection and can be ignored for au
 - Dialogs Binary File: .lsf file that contains the compiled dialog data. Likely located in a subdirectory of the Mods\\<mod name\>\Story\DialogsBinary directory.
 - Dialogs File: .lsj file that contains the raw dialog data. Likely located in a subdirectory of the Mods\\<mod name\>\Story\Dialogs directory.
 - Timeline Templates Directory: Not required (will not be present for timelines with no templates). Contains the templates a timeline uses. Likely located in a Public\\<mod name\>\TimelineTemplates folder and will be named with the timeline's GUID.
+
+### Batch Generation
+
+- Source Directory: The directory containing the timeline source files whose TMLs you want to generate. Note that only .lsf files whose names do not end with _Scene or _Prefetch are used; all others in this directory are ignored.
 
 ### Input Examples
 

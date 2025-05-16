@@ -45,16 +45,9 @@
             textBoxTT = new System.Windows.Forms.TextBox();
             labelTT = new System.Windows.Forms.Label();
             checkBoxManual = new System.Windows.Forms.CheckBox();
-            labelData = new System.Windows.Forms.Label();
-            buttonDataBrowse = new System.Windows.Forms.Button();
-            textBoxData = new System.Windows.Forms.TextBox();
             openFileDialogGDT = new System.Windows.Forms.OpenFileDialog();
             openFileDialogDB = new System.Windows.Forms.OpenFileDialog();
-            folderBrowserDialogData = new System.Windows.Forms.FolderBrowserDialog();
             folderBrowserDialogTemplates = new System.Windows.Forms.FolderBrowserDialog();
-            labelGameData = new System.Windows.Forms.Label();
-            buttonGameDataBrowse = new System.Windows.Forms.Button();
-            textBoxGameData = new System.Windows.Forms.TextBox();
             toolTip = new System.Windows.Forms.ToolTip(components);
             checkBoxSeparateAnimations = new System.Windows.Forms.CheckBox();
             checkBoxCopy = new System.Windows.Forms.CheckBox();
@@ -68,7 +61,6 @@
             buttonModsAdd = new System.Windows.Forms.Button();
             buttonModsRemove = new System.Windows.Forms.Button();
             label1 = new System.Windows.Forms.Label();
-            folderBrowserDialogGameData = new System.Windows.Forms.FolderBrowserDialog();
             labelD = new System.Windows.Forms.Label();
             buttonDBrowse = new System.Windows.Forms.Button();
             openFileDialogD = new System.Windows.Forms.OpenFileDialog();
@@ -83,16 +75,19 @@
             labelBatch = new System.Windows.Forms.Label();
             folderBrowserDialogBatchSource = new System.Windows.Forms.FolderBrowserDialog();
             backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            menuStrip1 = new System.Windows.Forms.MenuStrip();
+            dataPathConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             groupBox1.SuspendLayout();
             tabControlMode.SuspendLayout();
             tabPageSingle.SuspendLayout();
             tabPageBatch.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // buttonGenerate
             // 
             buttonGenerate.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            buttonGenerate.Location = new System.Drawing.Point(330, 445);
+            buttonGenerate.Location = new System.Drawing.Point(330, 372);
             buttonGenerate.Name = "buttonGenerate";
             buttonGenerate.Size = new System.Drawing.Size(679, 40);
             buttonGenerate.TabIndex = 0;
@@ -244,35 +239,6 @@
             checkBoxManual.UseVisualStyleBackColor = true;
             checkBoxManual.CheckedChanged += checkBoxManual_CheckedChanged;
             // 
-            // labelData
-            // 
-            labelData.AutoSize = true;
-            labelData.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            labelData.Location = new System.Drawing.Point(12, 9);
-            labelData.Name = "labelData";
-            labelData.Size = new System.Drawing.Size(141, 15);
-            labelData.TabIndex = 12;
-            labelData.Text = "Unpacked Data Directory:";
-            // 
-            // buttonDataBrowse
-            // 
-            buttonDataBrowse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            buttonDataBrowse.Location = new System.Drawing.Point(920, 27);
-            buttonDataBrowse.Name = "buttonDataBrowse";
-            buttonDataBrowse.Size = new System.Drawing.Size(75, 23);
-            buttonDataBrowse.TabIndex = 10;
-            buttonDataBrowse.Text = "Browse";
-            buttonDataBrowse.UseVisualStyleBackColor = true;
-            buttonDataBrowse.Click += buttonDataBrowse_Click;
-            // 
-            // textBoxData
-            // 
-            textBoxData.Location = new System.Drawing.Point(12, 27);
-            textBoxData.Name = "textBoxData";
-            textBoxData.Size = new System.Drawing.Size(902, 23);
-            textBoxData.TabIndex = 11;
-            toolTip.SetToolTip(textBoxData, "The path to the top level of your unpacked data, such as that extracted by the BG3 Modder's Multitool.\r\nExample: F:\\BG3Multitool\\UnpackedData");
-            // 
             // openFileDialogGDT
             // 
             openFileDialogGDT.Filter = "Generated Dialog Timelines Files|*.lsf";
@@ -283,47 +249,10 @@
             openFileDialogDB.Filter = "Dialogs Binary Files|*.lsf";
             openFileDialogDB.Title = "Choose Dialogs Binary File";
             // 
-            // folderBrowserDialogData
-            // 
-            folderBrowserDialogData.Description = "Choose Unpacked Data Directory";
-            folderBrowserDialogData.UseDescriptionForTitle = true;
-            // 
             // folderBrowserDialogTemplates
             // 
             folderBrowserDialogTemplates.Description = "Choose Timeline Templates Folder";
             folderBrowserDialogTemplates.UseDescriptionForTitle = true;
-            // 
-            // labelGameData
-            // 
-            labelGameData.AutoSize = true;
-            labelGameData.Enabled = false;
-            labelGameData.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            labelGameData.Location = new System.Drawing.Point(12, 53);
-            labelGameData.Name = "labelGameData";
-            labelGameData.Size = new System.Drawing.Size(119, 15);
-            labelGameData.TabIndex = 15;
-            labelGameData.Text = "Game Data Directory:";
-            // 
-            // buttonGameDataBrowse
-            // 
-            buttonGameDataBrowse.Enabled = false;
-            buttonGameDataBrowse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            buttonGameDataBrowse.Location = new System.Drawing.Point(920, 71);
-            buttonGameDataBrowse.Name = "buttonGameDataBrowse";
-            buttonGameDataBrowse.Size = new System.Drawing.Size(75, 23);
-            buttonGameDataBrowse.TabIndex = 13;
-            buttonGameDataBrowse.Text = "Browse";
-            buttonGameDataBrowse.UseVisualStyleBackColor = true;
-            buttonGameDataBrowse.Click += buttonGameDataBrowse_Click;
-            // 
-            // textBoxGameData
-            // 
-            textBoxGameData.Enabled = false;
-            textBoxGameData.Location = new System.Drawing.Point(12, 71);
-            textBoxGameData.Name = "textBoxGameData";
-            textBoxGameData.Size = new System.Drawing.Size(902, 23);
-            textBoxGameData.TabIndex = 14;
-            toolTip.SetToolTip(textBoxGameData, "The path to the directory that contains the game's .pak files. Likely ends with Baldurs Gate 3\\Data.\r\nExample: F:\\SteamLibrary\\steamapps\\common\\Baldurs Gate 3\\Data");
             // 
             // toolTip
             // 
@@ -373,12 +302,12 @@
             textBoxBatch.Name = "textBoxBatch";
             textBoxBatch.Size = new System.Drawing.Size(892, 23);
             textBoxBatch.TabIndex = 4;
-            toolTip.SetToolTip(textBoxBatch, resources.GetString("textBoxBatch.ToolTip"));
+            toolTip.SetToolTip(textBoxBatch, "The directory containing the timeline source files whose TMLs you want to generate.");
             // 
             // formConsole
             // 
             formConsole.BackColor = System.Drawing.SystemColors.InfoText;
-            formConsole.Location = new System.Drawing.Point(330, 506);
+            formConsole.Location = new System.Drawing.Point(330, 433);
             formConsole.Name = "formConsole";
             formConsole.ReadOnly = true;
             formConsole.Size = new System.Drawing.Size(679, 153);
@@ -390,7 +319,7 @@
             // 
             labelConsole.AutoSize = true;
             labelConsole.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            labelConsole.Location = new System.Drawing.Point(330, 488);
+            labelConsole.Location = new System.Drawing.Point(330, 415);
             labelConsole.Name = "labelConsole";
             labelConsole.Size = new System.Drawing.Size(30, 15);
             labelConsole.TabIndex = 17;
@@ -407,7 +336,7 @@
             groupBox1.Controls.Add(checkBoxCopy);
             groupBox1.Controls.Add(checkBoxManual);
             groupBox1.Controls.Add(checkBoxSeparateAnimations);
-            groupBox1.Location = new System.Drawing.Point(330, 367);
+            groupBox1.Location = new System.Drawing.Point(330, 294);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new System.Drawing.Size(679, 72);
             groupBox1.TabIndex = 19;
@@ -418,7 +347,7 @@
             // 
             listBoxMods.FormattingEnabled = true;
             listBoxMods.ItemHeight = 15;
-            listBoxMods.Location = new System.Drawing.Point(12, 382);
+            listBoxMods.Location = new System.Drawing.Point(12, 309);
             listBoxMods.Name = "listBoxMods";
             listBoxMods.Size = new System.Drawing.Size(312, 244);
             listBoxMods.TabIndex = 20;
@@ -427,7 +356,7 @@
             // buttonModsAdd
             // 
             buttonModsAdd.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            buttonModsAdd.Location = new System.Drawing.Point(12, 636);
+            buttonModsAdd.Location = new System.Drawing.Point(12, 563);
             buttonModsAdd.Name = "buttonModsAdd";
             buttonModsAdd.Size = new System.Drawing.Size(117, 23);
             buttonModsAdd.TabIndex = 24;
@@ -438,7 +367,7 @@
             // buttonModsRemove
             // 
             buttonModsRemove.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            buttonModsRemove.Location = new System.Drawing.Point(207, 636);
+            buttonModsRemove.Location = new System.Drawing.Point(207, 563);
             buttonModsRemove.Name = "buttonModsRemove";
             buttonModsRemove.Size = new System.Drawing.Size(117, 23);
             buttonModsRemove.TabIndex = 25;
@@ -450,16 +379,11 @@
             // 
             label1.AutoSize = true;
             label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            label1.Location = new System.Drawing.Point(12, 364);
+            label1.Location = new System.Drawing.Point(12, 291);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(40, 15);
             label1.TabIndex = 26;
             label1.Text = "Mods:";
-            // 
-            // folderBrowserDialogGameData
-            // 
-            folderBrowserDialogGameData.Description = "Select Game Data Directory";
-            folderBrowserDialogGameData.UseDescriptionForTitle = true;
             // 
             // labelD
             // 
@@ -493,7 +417,7 @@
             // 
             tabControlMode.Controls.Add(tabPageSingle);
             tabControlMode.Controls.Add(tabPageBatch);
-            tabControlMode.Location = new System.Drawing.Point(12, 100);
+            tabControlMode.Location = new System.Drawing.Point(12, 27);
             tabControlMode.Name = "tabControlMode";
             tabControlMode.SelectedIndex = 0;
             tabControlMode.Size = new System.Drawing.Size(997, 261);
@@ -616,12 +540,27 @@
             backgroundWorker2.ProgressChanged += backgroundWorker2_ProgressChanged;
             backgroundWorker2.RunWorkerCompleted += backgroundWorker2_RunWorkerCompleted;
             // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { dataPathConfigurationToolStripMenuItem });
+            menuStrip1.Location = new System.Drawing.Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new System.Drawing.Size(1020, 24);
+            menuStrip1.TabIndex = 31;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // dataPathConfigurationToolStripMenuItem
+            // 
+            dataPathConfigurationToolStripMenuItem.Name = "dataPathConfigurationToolStripMenuItem";
+            dataPathConfigurationToolStripMenuItem.Size = new System.Drawing.Size(147, 20);
+            dataPathConfigurationToolStripMenuItem.Text = "Data Path Configuration";
+            dataPathConfigurationToolStripMenuItem.Click += dataPathConfigurationToolStripMenuItem_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1020, 672);
-            Controls.Add(labelData);
+            ClientSize = new System.Drawing.Size(1020, 598);
             Controls.Add(tabControlMode);
             Controls.Add(label1);
             Controls.Add(buttonModsRemove);
@@ -631,18 +570,16 @@
             Controls.Add(labelConsole);
             Controls.Add(formConsole);
             Controls.Add(buttonGenerate);
-            Controls.Add(buttonDataBrowse);
-            Controls.Add(textBoxData);
-            Controls.Add(labelGameData);
-            Controls.Add(textBoxGameData);
-            Controls.Add(buttonGameDataBrowse);
+            Controls.Add(menuStrip1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            MainMenuStrip = menuStrip1;
             MaximizeBox = false;
             MinimumSize = new System.Drawing.Size(720, 605);
             Name = "MainForm";
             Text = "TMLGen";
             FormClosing += MainForm_FormClosing;
             Load += MainForm_Load;
+            Shown += MainForm_Shown;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             tabControlMode.ResumeLayout(false);
@@ -650,6 +587,8 @@
             tabPageSingle.PerformLayout();
             tabPageBatch.ResumeLayout(false);
             tabPageBatch.PerformLayout();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -671,15 +610,9 @@
         private System.Windows.Forms.TextBox textBoxTT;
         private System.Windows.Forms.Label labelTT;
         private System.Windows.Forms.CheckBox checkBoxManual;
-        private System.Windows.Forms.Label labelData;
-        private System.Windows.Forms.Button buttonDataBrowse;
-        private System.Windows.Forms.TextBox textBoxData;
         private System.Windows.Forms.OpenFileDialog openFileDialogGDT;
         private System.Windows.Forms.OpenFileDialog openFileDialogDB;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogData;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogTemplates;
-        private System.Windows.Forms.Label labelGameData;
-        private System.Windows.Forms.Button buttonGameDataBrowse;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Label labelConsole;
         public System.Windows.Forms.RichTextBox formConsole;
@@ -688,11 +621,9 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox checkBoxCopy;
         private System.Windows.Forms.ListBox listBoxMods;
-        private System.Windows.Forms.TextBox textBoxGameData;
         private System.Windows.Forms.Button buttonModsAdd;
         private System.Windows.Forms.Button buttonModsRemove;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogGameData;
         private System.Windows.Forms.Label labelD;
         private System.Windows.Forms.TextBox textBoxD;
         private System.Windows.Forms.Button buttonDBrowse;
@@ -709,6 +640,8 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
         private System.Windows.Forms.Label labelBatchCurrent;
         private System.Windows.Forms.Label labelBatchCurrentName;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem dataPathConfigurationToolStripMenuItem;
     }
 }
 
