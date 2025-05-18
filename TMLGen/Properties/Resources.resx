@@ -273,4 +273,13 @@
   <data name="GenerationCanceling" xml:space="preserve">
     <value>Canceling generation...</value>
   </data>
+  <data name="DFilePreparationFailure" xml:space="preserve">
+    <value>Failed to prepare dialogs file. The reference file (_ref.json) cannot be generated.</value>
+  </data>
+  <data name="DFilePreparationFailureBatch" xml:space="preserve">
+    <value>Failed to prepare dialogs file for {0}. The reference file (_ref.json) cannot be generated.</value>
+  </data>
+  <data name="GenerationErrorBatch" xml:space="preserve">
+    <value>An error occurred during generation of {0}</value>
+  </data>
 </root>

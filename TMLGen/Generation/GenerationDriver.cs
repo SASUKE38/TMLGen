@@ -34,7 +34,7 @@ namespace TMLGen.Generation
             }
             dbPath = PreparationHelper.SaveToLsxFile(dbPath);
 
-            if (!CheckFilePreparation(dbPath, sourcePath, gdtPath, sourceName, false))
+            if (!CheckFilePreparation(dbPath, sourcePath, gdtPath, sourceName, dPath, false))
                 return 1;
 
             PreparationHelper.FindCharacterVisualsFiles(dataPath, []);
@@ -88,7 +88,7 @@ namespace TMLGen.Generation
             string outputPath = CopyHelper.GetOutputPath(Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
             StreamWriter writer = new(outputPath);
 
-            if (localizationPath != null)
+            if (localizationPath != null && dPath != null)
             {
                 ReferenceCollector referenceCollector = new(dataPath, dPath, outputPath, localizationPath);
                 referenceCollector.Collect();
@@ -126,89 +126,99 @@ namespace TMLGen.Generation
                 }
                 else
                 {
-                    string sourceFile = fileCollection[i];
-                    string sourceName = Path.GetFileName(sourceFile);
-                    string rawSourceName = Path.GetFileNameWithoutExtension(sourceFile);
-
-                    sender.Invoke(MainForm.currentBatchFileDelegate, sourceName);
-
-                    if (!File.Exists(sourceFile))
+                    try
                     {
-                        LoggingHelper.Write(String.Format(Resources.SourceFileDoesNotExistBatch, sourceName), 2);
+                        string sourceFile = fileCollection[i];
+                        string sourceName = Path.GetFileName(sourceFile);
+                        string rawSourceName = Path.GetFileNameWithoutExtension(sourceFile);
+
+                        sender.Invoke(MainForm.currentBatchFileDelegate, sourceName);
+
+                        if (!File.Exists(sourceFile))
+                        {
+                            LoggingHelper.Write(String.Format(Resources.SourceFileDoesNotExistBatch, sourceName), 2);
+                            continue;
+                        }
+
+                        string sourceLsx = PreparationHelper.SaveToLsxFile(sourceFile);
+                        string dbPath = PreparationHelper.SaveToLsxFile(PreparationHelper.FindDialogsBinaryFile(dataPath, sourceName));
+                        string gdtPath = PreparationHelper.FindGeneratedDialogTimelinesFile(dataPath, sourceName);
+                        string dPath = PreparationHelper.FindDialogsFile(dataPath, sourceName);
+
+                        if (!CheckFilePreparation(dbPath, sourceFile, gdtPath, sourceName, dPath, true))
+                            continue;
+
+                        CopyHelper.CopyTimelineFiles(sourceFile, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
+                        CopyHelper.CopyGDTFile(gdtPath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
+
+                        Root root = new();
+                        Timeline timeline = new();
+                        root.Timeline = timeline;
+
+                        XDocument sourceDoc = XDocument.Load(sourceLsx);
+                        XDocument gdtDoc = XDocument.Load(gdtPath);
+                        XDocument dbDoc = XDocument.Load(dbPath);
+
+                        TimelineSettingsCollector timelineSettingsCollector = new(
+                            sourceDoc,
+                            gdtDoc,
+                            timeline);
+                        ActorCollector actorCollector = new(
+                            dataPath,
+                            Path.GetFileNameWithoutExtension(sourceName),
+                            null,
+                            gameDataPath,
+                            modName,
+                            doCopy,
+                            sourceDoc,
+                            gdtDoc,
+                            dbDoc,
+                            timeline);
+                        ComponentCollector componentCollector = new(
+                            sender,
+                            sourceDoc,
+                            gdtDoc,
+                            dbDoc,
+                            timeline,
+                            separateAnimations);
+
+                        timelineSettingsCollector.Collect();
+                        actorCollector.Collect();
+                        componentCollector.Collect();
+
+                        string outputPath = CopyHelper.GetOutputPath(Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
+                        StreamWriter writer = new(outputPath);
+
+                        if (localizationPath != null && dPath != null)
+                        {
+                            ReferenceCollector referenceCollector = new(dataPath, dPath, outputPath, localizationPath);
+                            referenceCollector.Collect();
+                        }
+
+                        serializer.Serialize(writer, root, namespaces);
+                        writer.Close();
+
+                        XDocument processed = new(CleanupHelper.DoPostProcess(XDocument.Load(outputPath).XPathSelectElement("Root")));
+                        processed.Save(outputPath);
+
+                        CleanupHelper.DeleteTempFiles([dbPath, sourceLsx, gdtPath]);
+                        CleanupHelper.EmptyStaticCollections();
+
+                        worker.ReportProgress((int)(((double)i / fileCollection.Length) * 100));
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggingHelper.Write(String.Format(Resources.GenerationErrorBatch, Path.GetFileName(fileCollection[i])), 3);
+                        CleanupHelper.WriteException(ex);
+                        CleanupHelper.EmptyStaticCollections();
                         continue;
                     }
-
-                    string sourceLsx = PreparationHelper.SaveToLsxFile(sourceFile);
-                    string dbPath = PreparationHelper.SaveToLsxFile(PreparationHelper.FindDialogsBinaryFile(dataPath, sourceName));
-                    string gdtPath = PreparationHelper.FindGeneratedDialogTimelinesFile(dataPath, sourceName);
-                    string dPath = PreparationHelper.FindDialogsFile(dataPath, sourceName);
-
-                    if (!CheckFilePreparation(dbPath, sourceFile, gdtPath, sourceName, true))
-                        continue;
-
-                    CopyHelper.CopyTimelineFiles(sourceFile, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
-                    CopyHelper.CopyGDTFile(gdtPath, Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
-
-                    Root root = new();
-                    Timeline timeline = new();
-                    root.Timeline = timeline;
-
-                    XDocument sourceDoc = XDocument.Load(sourceLsx);
-                    XDocument gdtDoc = XDocument.Load(gdtPath);
-                    XDocument dbDoc = XDocument.Load(dbPath);
-
-                    TimelineSettingsCollector timelineSettingsCollector = new(
-                        sourceDoc,
-                        gdtDoc,
-                        timeline);
-                    ActorCollector actorCollector = new(
-                        dataPath,
-                        Path.GetFileNameWithoutExtension(sourceName),
-                        null,
-                        gameDataPath,
-                        modName,
-                        doCopy,
-                        sourceDoc,
-                        gdtDoc,
-                        dbDoc,
-                        timeline);
-                    ComponentCollector componentCollector = new(
-                        sender,
-                        sourceDoc,
-                        gdtDoc,
-                        dbDoc,
-                        timeline,
-                        separateAnimations);
-
-                    timelineSettingsCollector.Collect();
-                    actorCollector.Collect();
-                    componentCollector.Collect();
-
-                    string outputPath = CopyHelper.GetOutputPath(Path.GetFileNameWithoutExtension(sourceName), gameDataPath, modName, doCopy);
-                    StreamWriter writer = new(outputPath);
-
-                    if (localizationPath != null)
-                    {
-                        ReferenceCollector referenceCollector = new(dataPath, dPath, outputPath, localizationPath);
-                        referenceCollector.Collect();
-                    }
-
-                    serializer.Serialize(writer, root, namespaces);
-                    writer.Close();
-
-                    XDocument processed = new(CleanupHelper.DoPostProcess(XDocument.Load(outputPath).XPathSelectElement("Root")));
-                    processed.Save(outputPath);
-
-                    CleanupHelper.DeleteTempFiles([dbPath, sourceLsx, gdtPath]);
-                    CleanupHelper.EmptyStaticCollections();
-
-                    worker.ReportProgress((int)(((double)i / fileCollection.Length) * 100));
                 }
             }
             return 0;
         }
 
-        private static bool CheckFilePreparation(string dbPath, string sourcePath, string gdtPath, string sourceName, bool isBatch)
+        private static bool CheckFilePreparation(string dbPath, string sourcePath, string gdtPath, string sourceName, string dPath, bool isBatch)
         {
             if (dbPath == null)
             {
@@ -224,6 +234,10 @@ namespace TMLGen.Generation
             {
                 LoggingHelper.Write(isBatch ? String.Format(Resources.GDTFilePreparationFailureBatch, sourceName) : Resources.GDTFilePreparationFailure, 2);
                 return false;
+            }
+            if (dPath == null)
+            {
+                LoggingHelper.Write(isBatch ? String.Format(Resources.DFilePreparationFailureBatch, sourceName) : Resources.DFilePreparationFailure, 2);
             }
 
             return true;

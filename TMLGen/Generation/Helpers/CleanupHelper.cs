@@ -18,7 +18,7 @@ namespace TMLGen.Generation.Helpers
                 string exceptionDir = "ExceptionLogs";
                 Directory.CreateDirectory(exceptionDir);
                 DateTime time = DateTime.Now;
-                string timeString = time.Month + "-" + time.Day + "-" + time.Year + " " + time.Hour + "-" + time.Minute + "-" + time.Second;
+                string timeString = time.Month + "-" + time.Day + "-" + time.Year + " " + time.Hour + "-" + time.Minute + "-" + time.Second + "-" + time.Millisecond;
                 File.WriteAllText(Path.Combine(exceptionDir, timeString + ".txt"), e.ToString());
             }
             catch (Exception)

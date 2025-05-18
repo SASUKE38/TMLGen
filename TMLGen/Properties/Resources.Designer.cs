@@ -151,6 +151,24 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to prepare dialogs file. The reference file (_ref.json) cannot be generated..
+        /// </summary>
+        internal static string DFilePreparationFailure {
+            get {
+                return ResourceManager.GetString("DFilePreparationFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to prepare dialogs file for {0}. The reference file (_ref.json) cannot be generated..
+        /// </summary>
+        internal static string DFilePreparationFailureBatch {
+            get {
+                return ResourceManager.GetString("DFilePreparationFailureBatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dialogs file search path for name {0} is too long..
         /// </summary>
         internal static string DSearchPathTooLong {
@@ -246,6 +264,15 @@ namespace TMLGen.Properties {
         internal static string GenerationError {
             get {
                 return ResourceManager.GetString("GenerationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred during generation of {0}.
+        /// </summary>
+        internal static string GenerationErrorBatch {
+            get {
+                return ResourceManager.GetString("GenerationErrorBatch", resourceCulture);
             }
         }
         

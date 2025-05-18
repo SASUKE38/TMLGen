@@ -29,6 +29,19 @@ namespace TMLGen.Generation.Collectors
         private static readonly Guid narratorActorId = Guid.Parse("bbb9c649-e86d-43a1-b171-d0a8006e8b5e");
         private static readonly int narratorSpeakerId = -666;
 
+        // Contains the small handful of timelines that for some reason use the actor ID in the timeline source file instead of the dialogs binary file
+        // Not currently used since it seems like the GustavDev ones override these
+        private static readonly string[] unusualMappingIdTimelines =
+        [
+            //"GEB_AD_Investigation_AttackFallback",
+            //"GEB_AD_Approached",
+            //"GEB_AD_Investigation_RunFromCriminal",
+            //"GEB_AD_Attack_GuardKiller",
+            //"GEB_AD_GuardNPCInterrogation",
+            //"GEB_AD_WaitingForGuards_CriminalRunsAway",
+            //"GEB_AD_WitnessedGuardKilling"
+        ]; 
+
         private int initiatorCount;
         private int additionalCount;
         private string templatePath;
@@ -127,9 +140,12 @@ namespace TMLGen.Generation.Collectors
                     if (actorType != "timeline") actorTrack = HandleOther(data, (Guid)idAtt, actorType);
                 }
 
-                SetBehaviourConditions((Guid) idAtt, actorTrack);
-                SetActorIdleOverride((Guid)idAtt, actorTrack);
-                SetWorldActorEndState((Guid)idAtt, actorTrack);
+                if (worldTimelineData != null)
+                {
+                    SetBehaviourConditions((Guid)idAtt, actorTrack);
+                    SetActorIdleOverride((Guid)idAtt, actorTrack);
+                    SetWorldActorEndState((Guid)idAtt, actorTrack);
+                }
             }
 
             SetBehaviourSpeakerInteractions();
@@ -142,7 +158,7 @@ namespace TMLGen.Generation.Collectors
             timeline.Tracks.Add(lightsContainer);
         }
 
-        private ActorTrackSpeaker HandleSpeaker(XElement data, int speakerSlot, string ActorType, Guid narratorMappingId)
+        private ActorTrackSpeaker HandleSpeaker(XElement data, int speakerSlot, string ActorType, Guid timelineMappingId)
         {
             ActorTrackSpeaker res = new();
             XElement dbSpeakerData = dbSpeakerList.XPathSelectElement("./node/attribute[@id='index' and @value='" + speakerSlot + "']/..");
@@ -153,7 +169,7 @@ namespace TMLGen.Generation.Collectors
                 {
                     res.IsPeanut = ExtractBool(dbSpeakerData.XPathSelectElement("./attribute[@id='IsPeanutSpeaker']")) ?? res.IsPeanut;
                     res.SceneActorType = Enum.GetName(typeof(SceneActorType), int.Parse(data.XPathSelectElement("./attribute[@id='SceneActorType']").Attribute("value").Value));
-                    res.SpeakerMappingId = ExtractGuid(dbSpeakerData.XPathSelectElement("./attribute[@id='SpeakerMappingId']")) ?? res.SpeakerMappingId;
+
                     string actorIdList = ExtractString(dbSpeakerData.XPathSelectElement("./attribute[@id='list']"));
                     if (actorIdList != null)
                     {
@@ -165,13 +181,15 @@ namespace TMLGen.Generation.Collectors
                         res.ActorId = Guid.Empty;
                     }
 
+                    res.SpeakerMappingId = unusualMappingIdTimelines.Contains(sourceName) ? timelineMappingId : ExtractGuid(dbSpeakerData.XPathSelectElement("./attribute[@id='SpeakerMappingId']")) ?? res.SpeakerMappingId;
+
                     if (res.SceneActorType == "Initiator") res.Name = "Initiator " + (1 + initiatorCount++);
                     else res.Name = "Additional " + (1 + additionalCount++);
                 }
                 else
                 {
                     res.Name = "Narrator";
-                    res.SpeakerMappingId = narratorMappingId;
+                    res.SpeakerMappingId = timelineMappingId;
                     res.ActorId = narratorActorId;
                 }
 
