@@ -8,27 +8,26 @@ namespace TMLGen.Forms
     public partial class LocationSelection : Form
     {
         public Guid selected;
-        private List<Guid> candidates;
 
-        public LocationSelection(List<Guid> candidates)
+        public LocationSelection(HashSet<Guid> candidates)
         {
             InitializeComponent();
             foreach (Guid id in candidates)
             {
                 listBoxSelection.Items.Add(id);
             }
-            this.candidates = candidates;
         }
 
         private void listBoxSelection_SelectedValueChanged(object sender, EventArgs e)
         {
-            buttonOK.Enabled = true;
-            buttonCopy.Enabled = true;
+            bool isSelected = listBoxSelection.SelectedIndex != -1;
+            buttonOK.Enabled = isSelected;
+            buttonCopy.Enabled = isSelected;
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            selected = candidates[listBoxSelection.SelectedIndex];
+            selected = (Guid)listBoxSelection.SelectedItem;
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)

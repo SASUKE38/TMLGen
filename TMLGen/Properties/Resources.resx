@@ -178,7 +178,7 @@
     <value>Generation finished.</value>
   </data>
   <data name="MissingTimelineData" xml:space="preserve">
-    <value>Timeline data necessary for component collection was missing. Are the input files correct?</value>
+    <value>Timeline data necessary for component collection was missing. This can happen if the input files are incorrect or they have an unexpected structure.</value>
   </data>
   <data name="NoModSelected" xml:space="preserve">
     <value>No mod selected.</value>

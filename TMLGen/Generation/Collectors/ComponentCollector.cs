@@ -23,7 +23,7 @@ namespace TMLGen.Generation.Collectors
     {
         private readonly XElement dbNodes;
         private readonly List<Guid> dbRootNodes = [];
-        private readonly List<Guid> rootLocations = [];
+        private readonly HashSet<Guid> rootLocations = [];
         private readonly Dictionary<int, List<TrackBase>> globalTrackMapping = [];
         private readonly Dictionary<(Guid, Guid), List<ComponentTrackMaterial>> otherMaterialTracks = [];
         private readonly Dictionary<(Guid, Guid), List<ComponentTrackAnimation>> animationTracks = [];
@@ -1912,19 +1912,12 @@ namespace TMLGen.Generation.Collectors
             int locations = rootLocations.Count;
             if (locations == 1)
             {
-                timeline.TimelinePosition.BoundSceneId = rootLocations[0];
+                timeline.TimelinePosition.BoundSceneId = rootLocations.FirstOrDefault();
             }
             else if (locations > 1)
             {
-                if (!rootLocations.Any(o => o != rootLocations[0]))
-                {
-                    timeline.TimelinePosition.BoundSceneId = rootLocations[0];
-                }
-                else
-                {
-                    Guid selected = (Guid)sender.Invoke(MainForm.locationSelectionDelegate, rootLocations);
-                    timeline.TimelinePosition.BoundSceneId = selected;
-                }
+                Guid selected = (Guid)sender.Invoke(MainForm.locationSelectionDelegate, rootLocations);
+                timeline.TimelinePosition.BoundSceneId = selected;
             }
         }
 

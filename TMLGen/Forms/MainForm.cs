@@ -21,7 +21,7 @@ namespace TMLGen
         public static UpdateCurrentBatchFile currentBatchFileDelegate;
         public delegate Guid ShowMaterialSelection(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId);
         public static ShowMaterialSelection materialSelectionDelegate;
-        public delegate Guid ShowLocationSelection(List<Guid> candidates);
+        public delegate Guid ShowLocationSelection(HashSet<Guid> candidates);
         public static ShowLocationSelection locationSelectionDelegate;
         private string modName = string.Empty;
 
@@ -66,7 +66,7 @@ namespace TMLGen
             return selectionRes;
         }
 
-        public Guid LocationSelectionMethod(List<Guid> candidates)
+        public Guid LocationSelectionMethod(HashSet<Guid> candidates)
         {
             Guid selectionRes = Guid.Empty;
             LocationSelection selection = new(candidates);

@@ -281,9 +281,9 @@
             checkBoxCopy.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             checkBoxCopy.Location = new System.Drawing.Point(6, 47);
             checkBoxCopy.Name = "checkBoxCopy";
-            checkBoxCopy.Size = new System.Drawing.Size(204, 19);
+            checkBoxCopy.Size = new System.Drawing.Size(217, 19);
             checkBoxCopy.TabIndex = 19;
-            checkBoxCopy.Text = "Override timeline in selected mod";
+            checkBoxCopy.Text = "Override timeline(s) in selected mod";
             toolTip.SetToolTip(checkBoxCopy, "Will copy the timeline's data files to the selected mod instead of to the Timeline Data directory.");
             checkBoxCopy.UseVisualStyleBackColor = true;
             checkBoxCopy.CheckedChanged += checkBoxCopy_CheckedChanged;

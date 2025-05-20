@@ -29,19 +29,6 @@ namespace TMLGen.Generation.Collectors
         private static readonly Guid narratorActorId = Guid.Parse("bbb9c649-e86d-43a1-b171-d0a8006e8b5e");
         private static readonly int narratorSpeakerId = -666;
 
-        // Contains the small handful of timelines that for some reason use the actor ID in the timeline source file instead of the dialogs binary file
-        // Not currently used since it seems like the GustavDev ones override these
-        private static readonly string[] unusualMappingIdTimelines =
-        [
-            //"GEB_AD_Investigation_AttackFallback",
-            //"GEB_AD_Approached",
-            //"GEB_AD_Investigation_RunFromCriminal",
-            //"GEB_AD_Attack_GuardKiller",
-            //"GEB_AD_GuardNPCInterrogation",
-            //"GEB_AD_WaitingForGuards_CriminalRunsAway",
-            //"GEB_AD_WitnessedGuardKilling"
-        ]; 
-
         private int initiatorCount;
         private int additionalCount;
         private string templatePath;
@@ -180,8 +167,7 @@ namespace TMLGen.Generation.Collectors
                     {
                         res.ActorId = Guid.Empty;
                     }
-
-                    res.SpeakerMappingId = unusualMappingIdTimelines.Contains(sourceName) ? timelineMappingId : ExtractGuid(dbSpeakerData.XPathSelectElement("./attribute[@id='SpeakerMappingId']")) ?? res.SpeakerMappingId;
+                    res.SpeakerMappingId = timelineMappingId;
 
                     if (res.SceneActorType == "Initiator") res.Name = "Initiator " + (1 + initiatorCount++);
                     else res.Name = "Additional " + (1 + additionalCount++);
