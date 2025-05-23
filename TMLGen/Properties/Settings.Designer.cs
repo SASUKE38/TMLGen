@@ -26,30 +26,6 @@ namespace TMLGen.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string UnpackedDataDirectory {
-            get {
-                return ((string)(this["UnpackedDataDirectory"]));
-            }
-            set {
-                this["UnpackedDataDirectory"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GameDataDirectory {
-            get {
-                return ((string)(this["GameDataDirectory"]));
-            }
-            set {
-                this["GameDataDirectory"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string SourceFile {
             get {
                 return ((string)(this["SourceFile"]));
@@ -192,13 +168,13 @@ namespace TMLGen.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool DidFirstLoad {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SelectedMod {
             get {
-                return ((bool)(this["DidFirstLoad"]));
+                return ((string)(this["SelectedMod"]));
             }
             set {
-                this["DidFirstLoad"] = value;
+                this["SelectedMod"] = value;
             }
         }
     }

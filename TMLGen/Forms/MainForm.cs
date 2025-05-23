@@ -23,7 +23,6 @@ namespace TMLGen
         public static ShowMaterialSelection materialSelectionDelegate;
         public delegate Guid ShowLocationSelection(HashSet<Guid> candidates);
         public static ShowLocationSelection locationSelectionDelegate;
-        private string modName = string.Empty;
 
         private static readonly uint logMax = 100u;
 
@@ -77,33 +76,6 @@ namespace TMLGen
             }
             selection.Dispose();
             return selectionRes;
-        }
-
-        private struct GenerationArgs
-        {
-            public string sourceName;
-            public string dataDirectory;
-            public string sourceFile;
-            public string gdtFile;
-            public string dbFile;
-            public string dFile;
-            public string templateDirectory;
-            public string outputPath;
-            public string rawSourcePath;
-            public string modName;
-            public bool manual;
-            public bool separateAnimations;
-            public bool doCopy;
-        }
-
-        private struct BatchGenerationArgs
-        {
-            public string inputName;
-            public string dataDirectory;
-            public string outputPath;
-            public string modName;
-            public bool separateAnimations;
-            public bool doCopy;
         }
 
         private void checkBoxManual_CheckedChanged(object sender, EventArgs e)
@@ -204,45 +176,9 @@ namespace TMLGen
         {
             if (CheckFiles())
             {
-                string sourceName = Path.GetFileName(textBoxSource.Text);
-                string sourceFile = PreparationHelper.SaveToLsxFile(textBoxSource.Text);
-                if (sourceFile == null)
-                {
-                    LoggingHelper.Write(Resources.SourceFilePreparationFailure, 2);
-                    return;
-                }
-                string gdtFile = null;
-                string dbFile = null;
-                string dFile = null;
-                string templateDirectory = null;
-                string dataDirectory = Settings.Default.UnpackedDataDirectory;
-                if (checkBoxManual.Checked)
-                {
-                    dbFile = textBoxDB.Text;
-                    dFile = textBoxD.Text;
-                    gdtFile = textBoxGDT.Text;
-                    templateDirectory = textBoxTT.Text;
-                }
-
-                GenerationArgs args = new()
-                {
-                    sourceName = sourceName,
-                    dataDirectory = dataDirectory,
-                    sourceFile = sourceFile,
-                    gdtFile = gdtFile,
-                    dbFile = dbFile,
-                    dFile = dFile,
-                    templateDirectory = templateDirectory,
-                    outputPath = Settings.Default.GameDataDirectory,
-                    rawSourcePath = textBoxSource.Text,
-                    manual = checkBoxManual.Checked,
-                    modName = modName,
-                    separateAnimations = checkBoxSeparateAnimations.Checked,
-                    doCopy = checkBoxCopy.Checked
-                };
                 buttonGenerate.Enabled = false;
                 WriteSettings();
-                backgroundWorker1.RunWorkerAsync(args);
+                backgroundWorker1.RunWorkerAsync();
             }
             else
             {
@@ -256,20 +192,10 @@ namespace TMLGen
             {
                 if (Directory.Exists(textBoxBatch.Text) && CheckExistenceBatch())
                 {
-                    BatchGenerationArgs args = new()
-                    {
-                        inputName = textBoxBatch.Text,
-                        dataDirectory = Settings.Default.UnpackedDataDirectory,
-                        outputPath = Settings.Default.GameDataDirectory,
-                        modName = modName,
-                        separateAnimations = checkBoxSeparateAnimations.Checked,
-                        doCopy = checkBoxCopy.Checked
-                    };
-
                     buttonGenerate.Enabled = false;
                     buttonCancel.Enabled = true;
                     WriteSettings();
-                    backgroundWorker2.RunWorkerAsync(args);
+                    backgroundWorker2.RunWorkerAsync();
                 }
                 else
                 {
@@ -343,7 +269,7 @@ namespace TMLGen
         private bool CheckExistenceUnpackedData()
         {
             bool checkSuccess = true;
-            if (!Directory.Exists(Settings.Default.UnpackedDataDirectory))
+            if (!Directory.Exists(PathConfigurationSettings.Default.UnpackedDataDirectory))
             {
                 LoggingHelper.Write(Resources.UnpackedDataInputDoesNotExist, 2);
                 checkSuccess = false;
@@ -384,7 +310,7 @@ namespace TMLGen
             bool checkSuccess = true;
             if (checkBoxCopy.Checked)
             {
-                if (!Directory.Exists(Settings.Default.GameDataDirectory))
+                if (!Directory.Exists(PathConfigurationSettings.Default.GameDataDirectory))
                 {
                     LoggingHelper.Write(Resources.GameDataInputDoesNotExist, 2);
                     checkSuccess = false;
@@ -400,8 +326,7 @@ namespace TMLGen
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            GenerationArgs args = (GenerationArgs)e.Argument;
-            e.Result = GenerationDriver.DoGeneration(this, args.sourceName, args.dataDirectory, args.sourceFile, args.gdtFile, args.dbFile, args.dFile, args.templateDirectory, args.outputPath, args.rawSourcePath, args.modName, args.manual, args.separateAnimations, args.doCopy);
+            e.Result = GenerationDriver.DoGeneration(this);
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -411,8 +336,7 @@ namespace TMLGen
 
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
-            BatchGenerationArgs args = (BatchGenerationArgs)e.Argument;
-            e.Result = GenerationDriver.DoBatchGeneration(sender as BackgroundWorker, e, this, args.inputName, args.dataDirectory, args.outputPath, args.modName, args.separateAnimations, args.doCopy);
+            e.Result = GenerationDriver.DoBatchGeneration(sender as BackgroundWorker, e, this);
         }
 
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -481,11 +405,11 @@ namespace TMLGen
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            if (!Settings.Default.DidFirstLoad)
+            if (!PathConfigurationSettings.Default.DidFirstLoad)
             {
                 ShowConfiguration();
-                Settings.Default.DidFirstLoad = true;
-                Settings.Default.Save();
+                PathConfigurationSettings.Default.DidFirstLoad = true;
+                PathConfigurationSettings.Default.Save();
             }
         }
 
@@ -506,6 +430,7 @@ namespace TMLGen
             Settings.Default.DoCopy = checkBoxCopy.Checked;
             Settings.Default.SeparateAnimations = checkBoxSeparateAnimations.Checked;
             Settings.Default.ModIndex = listBoxMods.SelectedIndex;
+            Settings.Default.SelectedMod = (string)listBoxMods.SelectedItem;
             Settings.Default.ModeIndex = tabControlMode.SelectedIndex;
             StringCollection modList = [];
             foreach (object mod in listBoxMods.Items)
@@ -545,8 +470,7 @@ namespace TMLGen
 
         private void listBoxMods_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string selected = (string)listBoxMods.SelectedItem;
-            if (selected != null) modName = selected;
+            
         }
 
         private void tabControlMode_SelectedIndexChanged(object sender, EventArgs e)

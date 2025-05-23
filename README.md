@@ -33,8 +33,8 @@ The following files are used only for manual selection and can be ignored for au
 The following details an example set of paths one would use to generate the .tml file for the timeline CAMP_DaisyAcknowledgement_AvD_ROM. Other timelines will have similarly structured input paths.
 
 - Unpacked Data Directory: F:\BG3Multitool\UnpackedData
-- Source File: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Timeline\Generated\CAMP_DaisyAcknowledgement_AvD_ROM.lsf
 - Game Data Directory: F:\SteamLibrary\steamapps\common\Baldurs Gate 3\Data
+- Source File: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Timeline\Generated\CAMP_DaisyAcknowledgement_AvD_ROM.lsf
 - Generated Dialog Timelines File: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Content\Generated\\[PAK]_GeneratedDialogTimelines\\_merged.lsf
 - Dialogs Binary File: F:\BG3Multitool\UnpackedData\Gustav\Mods\GustavDev\Story\DialogsBinary\Camp\Campfire_Moments\CAMP_DaisyAcknowledgement_AvD_ROM.lsf
 - Dialogs File: F:\BG3Multitool\UnpackedData\Gustav\Mods\GustavDev\Story\Dialogs\Camp\Campfire_Moments\CAMP_DaisyAcknowledgement_AvD_ROM.lsj

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,8 +17,22 @@ namespace TMLGen.Generation
 {
     public static class GenerationDriver
     {
-        public static int DoGeneration(Form sender, string sourceName, string dataPath, string sourcePath, string gdtPath, string dbPath, string dPath, string templatePath, string gameDataPath, string rawSourcePath, string modName, bool extraPathsGiven, bool separateAnimations, bool doCopy)
+        public static int DoGeneration(Form sender)
         {
+            string dataPath = PathConfigurationSettings.Default.UnpackedDataDirectory;
+            string gameDataPath = PathConfigurationSettings.Default.GameDataDirectory;
+            bool extraPathsGiven = Settings.Default.Manual;
+            bool separateAnimations = Settings.Default.SeparateAnimations;
+            bool doCopy = Settings.Default.DoCopy;
+            string sourceName = Path.GetFileName(Settings.Default.SourceFile);
+            string sourcePath = null;
+            string gdtPath = extraPathsGiven ? Settings.Default.GeneratedDialogTimelinesFile : null;
+            string dbPath = extraPathsGiven ? Settings.Default.DialogsBinaryFile : null;
+            string dPath = extraPathsGiven ? Settings.Default.DialogsFile : null;
+            string templatePath = extraPathsGiven ? Settings.Default.TimelineTemplatesDirectory : null;
+            string rawSourcePath = Settings.Default.SourceFile;
+            string modName = Settings.Default.SelectedMod;
+
             LoggingHelper.Write(Resources.ProgressStarting);
             if (!extraPathsGiven)
             {
@@ -33,6 +46,7 @@ namespace TMLGen.Generation
                 gdtPath = PreparationHelper.GetGDTElementFromMerged(gdtPath, Path.GetFileNameWithoutExtension(sourceName));
             }
             dbPath = PreparationHelper.SaveToLsxFile(dbPath);
+            sourcePath = PreparationHelper.SaveToLsxFile(rawSourcePath);
 
             if (!CheckFilePreparation(dbPath, sourcePath, gdtPath, sourceName, dPath, false))
                 return 1;
@@ -103,9 +117,16 @@ namespace TMLGen.Generation
             CleanupHelper.DeleteTempFiles([dbPath, sourcePath, gdtPath]);
             return 0;
         }
-    
-        public static int DoBatchGeneration(BackgroundWorker worker, DoWorkEventArgs e, Form sender, string inputPath, string dataPath, string gameDataPath, string modName, bool separateAnimations, bool doCopy)
+
+        public static int DoBatchGeneration(BackgroundWorker worker, DoWorkEventArgs e, Form sender)
         {
+            string inputPath = Settings.Default.BatchSourceDirectory;
+            string dataPath = PathConfigurationSettings.Default.UnpackedDataDirectory;
+            string gameDataPath = PathConfigurationSettings.Default.GameDataDirectory;
+            string modName = Settings.Default.SelectedMod;
+            bool separateAnimations = Settings.Default.SeparateAnimations;
+            bool doCopy = Settings.Default.DoCopy;
+
             LoggingHelper.Write(Resources.ProgressStartingBatch);
 
             PreparationHelper.FindCharacterVisualsFiles(dataPath, []);

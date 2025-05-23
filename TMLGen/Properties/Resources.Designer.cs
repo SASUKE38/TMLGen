@@ -61,7 +61,7 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not find batch input directory..
+        ///   Looks up a localized string similar to Failed to locate batch input directory..
         /// </summary>
         internal static string BatchInputDoesNotExist {
             get {

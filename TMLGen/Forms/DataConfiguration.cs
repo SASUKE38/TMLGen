@@ -31,20 +31,20 @@ namespace TMLGen.Forms
 
         private void DataConfiguration_Load(object sender, EventArgs e)
         {
-            textBoxData.Text = Properties.Settings.Default.UnpackedDataDirectory;
-            textBoxGameData.Text = Properties.Settings.Default.GameDataDirectory;
+            textBoxData.Text = Properties.PathConfigurationSettings.Default.UnpackedDataDirectory;
+            textBoxGameData.Text = Properties.PathConfigurationSettings.Default.GameDataDirectory;
         }
 
         private void DataConfiguration_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Properties.Settings.Default.UnpackedDataDirectory = textBoxData.Text;
-            Properties.Settings.Default.GameDataDirectory = textBoxGameData.Text;
-            Properties.Settings.Default.Save();
+            Properties.PathConfigurationSettings.Default.UnpackedDataDirectory = textBoxData.Text;
+            Properties.PathConfigurationSettings.Default.GameDataDirectory = textBoxGameData.Text;
+            Properties.PathConfigurationSettings.Default.Save();
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            //Properties.Settings.Default.Save();
+            //Properties.PathConfigurationSettings.Default.Save();
         }
     }
 }
