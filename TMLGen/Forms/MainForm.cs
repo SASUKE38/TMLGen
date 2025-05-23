@@ -55,6 +55,12 @@ namespace TMLGen
         public Guid MaterialSelectionMethod(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId)
         {
             Guid selectionRes = Guid.Empty;
+
+            if (Settings.Default.SkipSelectionPrompt)
+            {
+                return selectionRes;
+            }
+
             SlotMaterialSelection selection = new(candidates, materialId, resourceId);
             DialogResult diaRes = selection.ShowDialog();
             if (diaRes == DialogResult.OK)
@@ -68,6 +74,12 @@ namespace TMLGen
         public Guid LocationSelectionMethod(HashSet<Guid> candidates)
         {
             Guid selectionRes = Guid.Empty;
+
+            if (Settings.Default.SkipSelectionPrompt)
+            {
+                return selectionRes;
+            }
+
             LocationSelection selection = new(candidates);
             DialogResult diaRes = selection.ShowDialog();
             if (diaRes == DialogResult.OK)
@@ -392,6 +404,7 @@ namespace TMLGen
             checkBoxManual.Checked = Settings.Default.Manual;
             checkBoxCopy.Checked = Settings.Default.DoCopy;
             checkBoxSeparateAnimations.Checked = Settings.Default.SeparateAnimations;
+            checkBoxNoLocationSelection.Checked = Settings.Default.SkipSelectionPrompt;
             if (Settings.Default.Mods != null)
             {
                 foreach (string mod in Settings.Default.Mods)
@@ -429,6 +442,7 @@ namespace TMLGen
             Settings.Default.Manual = checkBoxManual.Checked;
             Settings.Default.DoCopy = checkBoxCopy.Checked;
             Settings.Default.SeparateAnimations = checkBoxSeparateAnimations.Checked;
+            Settings.Default.SkipSelectionPrompt = checkBoxNoLocationSelection.Checked;
             Settings.Default.ModIndex = listBoxMods.SelectedIndex;
             Settings.Default.SelectedMod = (string)listBoxMods.SelectedItem;
             Settings.Default.ModeIndex = tabControlMode.SelectedIndex;
@@ -470,7 +484,7 @@ namespace TMLGen
 
         private void listBoxMods_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void tabControlMode_SelectedIndexChanged(object sender, EventArgs e)
@@ -488,6 +502,11 @@ namespace TMLGen
             DataConfiguration config = new();
             config.ShowDialog();
             config.Dispose();
+        }
+
+        private void checkBoxNoLocationSelection_CheckedChanged(object sender, EventArgs e)
+        {
+            WriteSettings();
         }
     }
 }

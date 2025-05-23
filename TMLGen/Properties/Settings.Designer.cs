@@ -177,5 +177,17 @@ namespace TMLGen.Properties {
                 this["SelectedMod"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SkipSelectionPrompt {
+            get {
+                return ((bool)(this["SkipSelectionPrompt"]));
+            }
+            set {
+                this["SkipSelectionPrompt"] = value;
+            }
+        }
     }
 }

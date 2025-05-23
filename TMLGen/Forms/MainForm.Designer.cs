@@ -53,6 +53,7 @@
             checkBoxCopy = new System.Windows.Forms.CheckBox();
             textBoxD = new System.Windows.Forms.TextBox();
             textBoxBatch = new System.Windows.Forms.TextBox();
+            checkBoxNoLocationSelection = new System.Windows.Forms.CheckBox();
             formConsole = new System.Windows.Forms.RichTextBox();
             labelConsole = new System.Windows.Forms.Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -305,6 +306,18 @@
             textBoxBatch.TabIndex = 4;
             toolTip.SetToolTip(textBoxBatch, "The directory containing the timeline source files whose TMLs you want to generate.");
             // 
+            // checkBoxNoLocationSelection
+            // 
+            checkBoxNoLocationSelection.AutoSize = true;
+            checkBoxNoLocationSelection.Location = new System.Drawing.Point(368, 47);
+            checkBoxNoLocationSelection.Name = "checkBoxNoLocationSelection";
+            checkBoxNoLocationSelection.Size = new System.Drawing.Size(302, 19);
+            checkBoxNoLocationSelection.TabIndex = 20;
+            checkBoxNoLocationSelection.Text = "Always skip ambiguous location and visual selection";
+            toolTip.SetToolTip(checkBoxNoLocationSelection, "Will not prompt you to choose the timeline's starting location or a slot material's character visual ID if they are ambiguous.");
+            checkBoxNoLocationSelection.UseVisualStyleBackColor = true;
+            checkBoxNoLocationSelection.CheckedChanged += checkBoxNoLocationSelection_CheckedChanged;
+            // 
             // formConsole
             // 
             formConsole.BackColor = System.Drawing.SystemColors.InfoText;
@@ -334,6 +347,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(checkBoxNoLocationSelection);
             groupBox1.Controls.Add(checkBoxCopy);
             groupBox1.Controls.Add(checkBoxManual);
             groupBox1.Controls.Add(checkBoxSeparateAnimations);
@@ -658,6 +672,7 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem dataPathConfigurationToolStripMenuItem;
         private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.CheckBox checkBoxNoLocationSelection;
     }
 }
 
