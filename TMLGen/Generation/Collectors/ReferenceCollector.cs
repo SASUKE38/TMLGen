@@ -146,8 +146,8 @@ namespace TMLGen.Generation.Collectors
                     if (textData["CustomSequenceId"] != null)
                     {
                         Guid sequenceId = Guid.Parse(textData["CustomSequenceId"]!["value"].ToString());
-                        linesDict.Add(sequenceId, translatedString);
-                        flagDict.Add(sequenceId, flags);
+                        linesDict.TryAdd(sequenceId, translatedString);
+                        flagDict.TryAdd(sequenceId, flags);
                     }
                     else
                     {
@@ -236,7 +236,7 @@ namespace TMLGen.Generation.Collectors
             {
                 foreach (JsonNode tagCollection in ruleCollection.AsArray())
                 {
-                    JsonNode tags = tagCollection["Tags"]![0]!["Tag"];
+                    JsonNode tags = tagCollection["Tags"]?[0]?["Tag"];
                     if (tags != null)
                     {
                         foreach (JsonNode tag in tags.AsArray())

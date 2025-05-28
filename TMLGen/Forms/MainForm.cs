@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
@@ -446,12 +445,6 @@ namespace TMLGen
             Settings.Default.ModIndex = listBoxMods.SelectedIndex;
             Settings.Default.SelectedMod = (string)listBoxMods.SelectedItem;
             Settings.Default.ModeIndex = tabControlMode.SelectedIndex;
-            StringCollection modList = [];
-            foreach (object mod in listBoxMods.Items)
-            {
-                modList.Add(mod.ToString());
-            }
-            Settings.Default.Mods = modList;
             Settings.Default.Save();
         }
 
@@ -464,6 +457,8 @@ namespace TMLGen
                 if (!listBoxMods.Items.Contains(selection.modName))
                 {
                     listBoxMods.Items.Add(selection.modName);
+                    Settings.Default.Mods.Add(selection.modName);
+                    WriteSettings();
                 }
                 else
                 {
@@ -479,6 +474,8 @@ namespace TMLGen
             if (item != null)
             {
                 listBoxMods.Items.Remove(item);
+                Settings.Default.Mods.Remove(item);
+                WriteSettings();
             }
         }
 
@@ -506,7 +503,8 @@ namespace TMLGen
 
         private void checkBoxNoLocationSelection_CheckedChanged(object sender, EventArgs e)
         {
-            WriteSettings();
+            Settings.Default.SkipSelectionPrompt = checkBoxNoLocationSelection.Checked;
+            Settings.Default.Save();
         }
     }
 }

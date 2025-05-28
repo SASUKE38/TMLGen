@@ -150,53 +150,52 @@ namespace TMLGen.Generation.Collectors
             ActorTrackSpeaker res = new();
             XElement dbSpeakerData = dbSpeakerList.XPathSelectElement("./node/attribute[@id='index' and @value='" + speakerSlot + "']/..");
 
-            if (speakerSlot == narratorSpeakerId || dbSpeakerData != null)
+            if (speakerSlot != narratorSpeakerId)
             {
-                if (speakerSlot != narratorSpeakerId)
+                if (dbSpeakerData != null)
                 {
                     res.IsPeanut = ExtractBool(dbSpeakerData.XPathSelectElement("./attribute[@id='IsPeanutSpeaker']")) ?? res.IsPeanut;
-                    res.SceneActorType = Enum.GetName(typeof(SceneActorType), int.Parse(data.XPathSelectElement("./attribute[@id='SceneActorType']").Attribute("value").Value));
-
                     string actorIdList = ExtractString(dbSpeakerData.XPathSelectElement("./attribute[@id='list']"));
                     if (actorIdList != null)
                     {
                         int delimiterIndex = actorIdList.IndexOf(';');
                         res.ActorId = delimiterIndex == -1 ? Guid.Parse(actorIdList) : Guid.Parse(actorIdList.Substring(0, delimiterIndex));
                     }
-                    else
-                    {
-                        res.ActorId = Guid.Empty;
-                    }
-                    res.SpeakerMappingId = timelineMappingId;
-
-                    if (res.SceneActorType == "Initiator") res.Name = "Initiator " + (1 + initiatorCount++);
-                    else res.Name = "Additional " + (1 + additionalCount++);
                 }
-                else
+                int? sceneActorType = ExtractInt(data.XPathSelectElement("./attribute[@id='SceneActorType']"));
+                if (sceneActorType.HasValue)
                 {
-                    res.Name = "Narrator";
-                    res.SpeakerMappingId = timelineMappingId;
-                    res.ActorId = narratorActorId;
+                    res.SceneActorType = Enum.GetName(typeof(SceneActorType), sceneActorType);
                 }
 
-                res.SpeakerId = speakerSlot;
-                res.IsPlayer = ExtractBool(data.XPathSelectElement("./attribute[@id='IsPlayer']")) ?? res.IsPlayer;
-                res.IsImportantForStaging = !ExtractBool(data.XPathSelectElement("./attribute[@id='ShouldIgnoreForStaging']")) ?? res.IsImportantForStaging;
-                res.SceneActorIndex = ExtractInt(data.XPathSelectElement("./attribute[@id='SceneActorIndex']")) ?? res.SceneActorIndex;
-                res.AlwaysInclude = ExtractBool(data.XPathSelectElement("./attribute[@id='AlwaysInclude']")) ?? res.AlwaysInclude;
-                res.ActorType = ActorType;
-                SetAttenuation(data, res);
-                CheckAutomatedLookAt(data, res);
+                if (res.SceneActorType == "Initiator") res.Name = "Initiator " + (1 + initiatorCount++);
+                else res.Name = "Additional " + (1 + additionalCount++);
 
-                speakerTrackMapping.Add(res.SpeakerMappingId, res.TrackId);
-                actorTrackMapping.Add(res.SpeakerMappingId, res.TrackId);
-
-                trackMapping.Add(res.SpeakerMappingId, res);
-                speakerContainer.Tracks.Add(res);
-
-                return res;
+                res.SpeakerMappingId = timelineMappingId;
             }
-            return null;
+            else
+            {
+                res.Name = "Narrator";
+                res.SpeakerMappingId = timelineMappingId;
+                res.ActorId = narratorActorId;
+            }
+
+            res.SpeakerId = speakerSlot;
+            res.IsPlayer = ExtractBool(data.XPathSelectElement("./attribute[@id='IsPlayer']")) ?? res.IsPlayer;
+            res.IsImportantForStaging = !ExtractBool(data.XPathSelectElement("./attribute[@id='ShouldIgnoreForStaging']")) ?? res.IsImportantForStaging;
+            res.SceneActorIndex = ExtractInt(data.XPathSelectElement("./attribute[@id='SceneActorIndex']")) ?? res.SceneActorIndex;
+            res.AlwaysInclude = ExtractBool(data.XPathSelectElement("./attribute[@id='AlwaysInclude']")) ?? res.AlwaysInclude;
+            res.ActorType = ActorType;
+            SetAttenuation(data, res);
+            CheckAutomatedLookAt(data, res);
+
+            speakerTrackMapping.Add(res.SpeakerMappingId, res.TrackId);
+            actorTrackMapping.Add(res.SpeakerMappingId, res.TrackId);
+
+            trackMapping.Add(res.SpeakerMappingId, res);
+            speakerContainer.Tracks.Add(res);
+
+            return res;
         }
 
         private PeanutTrack HandlePeanut(XElement data, Guid peanutId)
