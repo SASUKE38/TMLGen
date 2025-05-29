@@ -412,6 +412,15 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One or more speakers in {0} are missing a dialogs binary entry. This can happen if the input files are incorrect or if the timeline data does not properly reflect the dialog data..
+        /// </summary>
+        internal static string SpeakerMissingDBEntry {
+            get {
+                return ResourceManager.GetString("SpeakerMissingDBEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error accessing temp file..
         /// </summary>
         internal static string TempFilesAccessError {

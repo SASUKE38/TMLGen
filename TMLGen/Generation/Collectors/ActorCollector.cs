@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using TMLGen.Forms.Logging;
 using TMLGen.Generation.Helpers;
 using TMLGen.Models.Core;
 using TMLGen.Models.Global;
 using TMLGen.Models.Track;
 using TMLGen.Models.Track.Actor;
 using TMLGen.Models.Track.Component;
+using TMLGen.Properties;
 
 namespace TMLGen.Generation.Collectors
 {
@@ -39,6 +41,8 @@ namespace TMLGen.Generation.Collectors
         private string modName;
         private string gameDataPath;
         private List<(ActorTrackBase, Guid)> behaviourSpeakerTargets;
+
+        private bool didMissingDBWarning = false;
 
         public ActorCollector(string dataDirectory, string sourceName, string templateDirectory, string gameDataPath, string modName, bool doCopy, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
         {
@@ -162,6 +166,15 @@ namespace TMLGen.Generation.Collectors
                         res.ActorId = delimiterIndex == -1 ? Guid.Parse(actorIdList) : Guid.Parse(actorIdList.Substring(0, delimiterIndex));
                     }
                 }
+                else
+                {
+                    if (!didMissingDBWarning)
+                    {
+                        LoggingHelper.Write(String.Format(Resources.SpeakerMissingDBEntry, sourceName), 2);
+                        didMissingDBWarning = true;
+                    }
+                }
+
                 int? sceneActorType = ExtractInt(data.XPathSelectElement("./attribute[@id='SceneActorType']"));
                 if (sceneActorType.HasValue)
                 {

@@ -282,4 +282,7 @@
   <data name="GenerationErrorBatch" xml:space="preserve">
     <value>An error occurred during generation of {0}</value>
   </data>
+  <data name="SpeakerMissingDBEntry" xml:space="preserve">
+    <value>One or more speakers in {0} are missing a dialogs binary entry. This can happen if the input files are incorrect or if the timeline data does not properly reflect the dialog data.</value>
+  </data>
 </root>

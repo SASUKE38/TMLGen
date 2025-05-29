@@ -23,7 +23,7 @@ namespace TMLGen
         public delegate Guid ShowLocationSelection(HashSet<Guid> candidates);
         public static ShowLocationSelection locationSelectionDelegate;
 
-        private static readonly uint logMax = 100u;
+        private static readonly uint logMax = 200u;
 
         public MainForm()
         {
