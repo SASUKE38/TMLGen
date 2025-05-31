@@ -404,13 +404,7 @@ namespace TMLGen
             checkBoxCopy.Checked = Settings.Default.DoCopy;
             checkBoxSeparateAnimations.Checked = Settings.Default.SeparateAnimations;
             checkBoxNoLocationSelection.Checked = Settings.Default.SkipSelectionPrompt;
-            if (Settings.Default.Mods != null)
-            {
-                foreach (string mod in Settings.Default.Mods)
-                {
-                    listBoxMods.Items.Add(mod);
-                }
-            }
+            foreach (string mod in Settings.Default.Mods) listBoxMods.Items.Add(mod);
             listBoxMods.SelectedIndex = Settings.Default.ModIndex;
             tabControlMode.SelectedIndex = Settings.Default.ModeIndex;
         }
