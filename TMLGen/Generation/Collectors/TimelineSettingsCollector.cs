@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
 using TMLGen.Models.Global;
+using TMLGen.Properties;
 
 namespace TMLGen.Generation.Collectors
 {
@@ -47,7 +48,7 @@ namespace TMLGen.Generation.Collectors
             }
             catch (NullReferenceException)
             {
-                LoggingHelper.Write("Generated dialogs binary file missing dialog resource ID. Is this file correct?", 2);
+                LoggingHelper.Write(Resources.GDTMissingDialogID, 2);
             }
         }
 

@@ -15,6 +15,7 @@ using TMLGen.Models.Track;
 using TMLGen.Models.Track.Actor;
 using TMLGen.Models.Track.Component;
 using TMLGen.Models.Track.Key;
+using TMLGen.Properties;
 
 namespace TMLGen.Generation.Collectors
 {
@@ -22,7 +23,7 @@ namespace TMLGen.Generation.Collectors
     {
         private readonly XElement dbNodes;
         private readonly List<Guid> dbRootNodes = [];
-        private readonly List<Guid> rootLocations = [];
+        private readonly HashSet<Guid> rootLocations = [];
         private readonly Dictionary<int, List<TrackBase>> globalTrackMapping = [];
         private readonly Dictionary<(Guid, Guid), List<ComponentTrackMaterial>> otherMaterialTracks = [];
         private readonly Dictionary<(Guid, Guid), List<ComponentTrackAnimation>> animationTracks = [];
@@ -30,9 +31,10 @@ namespace TMLGen.Generation.Collectors
         private readonly List<ComponentTrackSoundEvent> globalSoundEventTracks = [];
         private readonly HashSet<string> foundUnsupportedComponentTypes = [];
         private static bool separateOverlappingAnimations;
+        private bool skipShowArmor;
         private readonly Form sender;
 
-        public ComponentCollector(Form sender, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations) : base(doc, gdtDoc, timeline)
+        public ComponentCollector(Form sender, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations, bool skipShowArmor) : base(doc, gdtDoc, timeline)
         {
             dbNodes = dbDoc.XPathSelectElement("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children");
             IEnumerable<XElement> dbRootNodeElements = dbDoc.XPathSelectElements("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children/node[@id='RootNodes']");
@@ -42,6 +44,7 @@ namespace TMLGen.Generation.Collectors
                 if (rootId.HasValue) dbRootNodes.Add((Guid)rootId);
             }
             separateOverlappingAnimations = separateAnimations;
+            this.skipShowArmor = skipShowArmor;
             this.sender = sender;
         }
 
@@ -53,7 +56,7 @@ namespace TMLGen.Generation.Collectors
 
             if (componentCollection == null || phases == null)
             {
-                LoggingHelper.Write("Source file missing component information!", 2);
+                LoggingHelper.Write(Resources.SourceMissingInformation, 2);
                 return;
             }
 
@@ -150,7 +153,7 @@ namespace TMLGen.Generation.Collectors
                                 HandleTLShot(componentData, seq);
                                 break;
                             case "TLShowArmor":
-                                HandleTLShowArmor(componentData, seq);
+                                if (!skipShowArmor) HandleTLShowArmor(componentData, seq);
                                 break;
                             case "TLShowPeanuts":
                                 HandleGlobalExclusiveMutableComponent<ComponentTrackShowPeanuts, ComponentShowPeanuts, BooleanKey, bool>
@@ -189,7 +192,7 @@ namespace TMLGen.Generation.Collectors
                             default:
                                 if (!foundUnsupportedComponentTypes.Contains(componentType))
                                 {
-                                    LoggingHelper.Write("Timeline contains unsupported component type: " + componentType, 2);
+                                    LoggingHelper.Write(String.Format(Resources.UnsupportedComponent, componentType), 2);
                                     foundUnsupportedComponentTypes.Add(componentType);
                                 }
                                 break;
@@ -203,7 +206,7 @@ namespace TMLGen.Generation.Collectors
                 }
                 catch (KeyNotFoundException)
                 {
-                    LoggingHelper.Write("Timeline data necessary for component collection was missing. Are the input files correct?", 2);
+                    LoggingHelper.Write(Resources.MissingTimelineData, 2);
                     throw;
                 }
             }
@@ -1911,19 +1914,12 @@ namespace TMLGen.Generation.Collectors
             int locations = rootLocations.Count;
             if (locations == 1)
             {
-                timeline.TimelinePosition.BoundSceneId = rootLocations[0];
+                timeline.TimelinePosition.BoundSceneId = rootLocations.FirstOrDefault();
             }
             else if (locations > 1)
             {
-                if (!rootLocations.Any(o => o != rootLocations[0]))
-                {
-                    timeline.TimelinePosition.BoundSceneId = rootLocations[0];
-                }
-                else
-                {
-                    Guid selected = (Guid)sender.Invoke(MainForm.locationSelectionDelegate, rootLocations);
-                    timeline.TimelinePosition.BoundSceneId = selected;
-                }
+                Guid selected = (Guid)sender.Invoke(MainForm.locationSelectionDelegate, rootLocations);
+                timeline.TimelinePosition.BoundSceneId = selected;
             }
         }
 

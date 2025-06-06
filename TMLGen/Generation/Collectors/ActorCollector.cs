@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using TMLGen.Forms.Logging;
 using TMLGen.Generation.Helpers;
 using TMLGen.Models.Core;
 using TMLGen.Models.Global;
 using TMLGen.Models.Track;
 using TMLGen.Models.Track.Actor;
 using TMLGen.Models.Track.Component;
+using TMLGen.Properties;
 
 namespace TMLGen.Generation.Collectors
 {
@@ -39,6 +41,8 @@ namespace TMLGen.Generation.Collectors
         private string modName;
         private string gameDataPath;
         private List<(ActorTrackBase, Guid)> behaviourSpeakerTargets;
+
+        private bool didMissingDBWarning = false;
 
         public ActorCollector(string dataDirectory, string sourceName, string templateDirectory, string gameDataPath, string modName, bool doCopy, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline) : base(doc, gdtDoc, timeline)
         {
@@ -127,9 +131,12 @@ namespace TMLGen.Generation.Collectors
                     if (actorType != "timeline") actorTrack = HandleOther(data, (Guid)idAtt, actorType);
                 }
 
-                SetBehaviourConditions((Guid) idAtt, actorTrack);
-                SetActorIdleOverride((Guid)idAtt, actorTrack);
-                SetWorldActorEndState((Guid)idAtt, actorTrack);
+                if (worldTimelineData != null)
+                {
+                    SetBehaviourConditions((Guid)idAtt, actorTrack);
+                    SetActorIdleOverride((Guid)idAtt, actorTrack);
+                    SetWorldActorEndState((Guid)idAtt, actorTrack);
+                }
             }
 
             SetBehaviourSpeakerInteractions();
@@ -142,57 +149,66 @@ namespace TMLGen.Generation.Collectors
             timeline.Tracks.Add(lightsContainer);
         }
 
-        private ActorTrackSpeaker HandleSpeaker(XElement data, int speakerSlot, string ActorType, Guid narratorMappingId)
+        private ActorTrackSpeaker HandleSpeaker(XElement data, int speakerSlot, string ActorType, Guid timelineMappingId)
         {
             ActorTrackSpeaker res = new();
             XElement dbSpeakerData = dbSpeakerList.XPathSelectElement("./node/attribute[@id='index' and @value='" + speakerSlot + "']/..");
 
-            if (speakerSlot == narratorSpeakerId || dbSpeakerData != null)
+            if (speakerSlot != narratorSpeakerId)
             {
-                if (speakerSlot != narratorSpeakerId)
+                if (dbSpeakerData != null)
                 {
                     res.IsPeanut = ExtractBool(dbSpeakerData.XPathSelectElement("./attribute[@id='IsPeanutSpeaker']")) ?? res.IsPeanut;
-                    res.SceneActorType = Enum.GetName(typeof(SceneActorType), int.Parse(data.XPathSelectElement("./attribute[@id='SceneActorType']").Attribute("value").Value));
-                    res.SpeakerMappingId = ExtractGuid(dbSpeakerData.XPathSelectElement("./attribute[@id='SpeakerMappingId']")) ?? res.SpeakerMappingId;
                     string actorIdList = ExtractString(dbSpeakerData.XPathSelectElement("./attribute[@id='list']"));
                     if (actorIdList != null)
                     {
                         int delimiterIndex = actorIdList.IndexOf(';');
                         res.ActorId = delimiterIndex == -1 ? Guid.Parse(actorIdList) : Guid.Parse(actorIdList.Substring(0, delimiterIndex));
                     }
-                    else
-                    {
-                        res.ActorId = Guid.Empty;
-                    }
-
-                    if (res.SceneActorType == "Initiator") res.Name = "Initiator " + (1 + initiatorCount++);
-                    else res.Name = "Additional " + (1 + additionalCount++);
                 }
                 else
                 {
-                    res.Name = "Narrator";
-                    res.SpeakerMappingId = narratorMappingId;
-                    res.ActorId = narratorActorId;
+                    if (!didMissingDBWarning)
+                    {
+                        LoggingHelper.Write(String.Format(Resources.SpeakerMissingDBEntry, sourceName), 2);
+                        didMissingDBWarning = true;
+                    }
                 }
 
-                res.SpeakerId = speakerSlot;
-                res.IsPlayer = ExtractBool(data.XPathSelectElement("./attribute[@id='IsPlayer']")) ?? res.IsPlayer;
-                res.IsImportantForStaging = !ExtractBool(data.XPathSelectElement("./attribute[@id='ShouldIgnoreForStaging']")) ?? res.IsImportantForStaging;
-                res.SceneActorIndex = ExtractInt(data.XPathSelectElement("./attribute[@id='SceneActorIndex']")) ?? res.SceneActorIndex;
-                res.AlwaysInclude = ExtractBool(data.XPathSelectElement("./attribute[@id='AlwaysInclude']")) ?? res.AlwaysInclude;
-                res.ActorType = ActorType;
-                SetAttenuation(data, res);
-                CheckAutomatedLookAt(data, res);
+                int? sceneActorType = ExtractInt(data.XPathSelectElement("./attribute[@id='SceneActorType']"));
+                if (sceneActorType.HasValue)
+                {
+                    res.SceneActorType = Enum.GetName(typeof(SceneActorType), sceneActorType);
+                }
 
-                speakerTrackMapping.Add(res.SpeakerMappingId, res.TrackId);
-                actorTrackMapping.Add(res.SpeakerMappingId, res.TrackId);
+                if (res.SceneActorType == "Initiator") res.Name = "Initiator " + (1 + initiatorCount++);
+                else res.Name = "Additional " + (1 + additionalCount++);
 
-                trackMapping.Add(res.SpeakerMappingId, res);
-                speakerContainer.Tracks.Add(res);
-
-                return res;
+                res.SpeakerMappingId = timelineMappingId;
             }
-            return null;
+            else
+            {
+                res.Name = "Narrator";
+                res.SpeakerMappingId = timelineMappingId;
+                res.ActorId = narratorActorId;
+            }
+
+            res.SpeakerId = speakerSlot;
+            res.IsPlayer = ExtractBool(data.XPathSelectElement("./attribute[@id='IsPlayer']")) ?? res.IsPlayer;
+            res.IsImportantForStaging = !ExtractBool(data.XPathSelectElement("./attribute[@id='ShouldIgnoreForStaging']")) ?? res.IsImportantForStaging;
+            res.SceneActorIndex = ExtractInt(data.XPathSelectElement("./attribute[@id='SceneActorIndex']")) ?? res.SceneActorIndex;
+            res.AlwaysInclude = ExtractBool(data.XPathSelectElement("./attribute[@id='AlwaysInclude']")) ?? res.AlwaysInclude;
+            res.ActorType = ActorType;
+            SetAttenuation(data, res);
+            CheckAutomatedLookAt(data, res);
+
+            speakerTrackMapping.Add(res.SpeakerMappingId, res.TrackId);
+            actorTrackMapping.Add(res.SpeakerMappingId, res.TrackId);
+
+            trackMapping.Add(res.SpeakerMappingId, res);
+            speakerContainer.Tracks.Add(res);
+
+            return res;
         }
 
         private PeanutTrack HandlePeanut(XElement data, Guid peanutId)

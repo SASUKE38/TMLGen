@@ -4,15 +4,18 @@
 
 ## Usage
 
-The tool requires the path to your unpacked game directory (as unpacked by the [Baldur's Gate 3 Modder's Multitool](https://github.com/ShinyHobo/BG3-Modders-Multitool)) along with the source file of the timeline you wish to edit.
+The tool requires the path to your unpacked game directory (as unpacked by the [Baldur's Gate 3 Modder's Multitool](https://github.com/ShinyHobo/BG3-Modders-Multitool)) along with the source file(s) of the timeline(s) you wish to edit.
 Additionally, you may select the timeline data to use manually. The definitions below detail the data the tool uses.
 
+### Game Data Paths
+You will be prompted to enter the paths below the first time you run the program.
+
 - Unpacked Data Directory: Top level of unpacked game data as unpacked by the Baldur's Gate 3 Modder's Multitool. Likely called UnpackedData. [This article](https://github.com/ShinyHobo/BG3-Modders-Multitool/wiki/Unpacking-Game-Files) offers more information on how to unpack the game files if you haven't done so already.
+- Game Data Directory: Contains the .pak files the game uses and is only used when setting the tool to override timelines. The path likely ends with Baldurs Gate 3\Data.
+
+### Single Generation
+
 - Source File: .lsf source file of the timeline you wish to edit. Likely located in a Public\\<mod name\>\Timeline\Generated directory.
-
-The following directory is only used when setting the tool to override timelines.
-
-- Game Data Directory: Contains the .pak files the game uses. The path likely ends with Baldurs Gate 3\Data.
 
 The following files are used only for manual selection and can be ignored for automatic generation.
 
@@ -21,13 +24,17 @@ The following files are used only for manual selection and can be ignored for au
 - Dialogs File: .lsj file that contains the raw dialog data. Likely located in a subdirectory of the Mods\\<mod name\>\Story\Dialogs directory.
 - Timeline Templates Directory: Not required (will not be present for timelines with no templates). Contains the templates a timeline uses. Likely located in a Public\\<mod name\>\TimelineTemplates folder and will be named with the timeline's GUID.
 
+### Batch Generation
+
+- Source Directory: The directory containing the timeline source files whose TMLs you want to generate. Note that only .lsf files whose names do not end with _Scene or _Prefetch are used; all others in this directory are ignored.
+
 ### Input Examples
 
 The following details an example set of paths one would use to generate the .tml file for the timeline CAMP_DaisyAcknowledgement_AvD_ROM. Other timelines will have similarly structured input paths.
 
 - Unpacked Data Directory: F:\BG3Multitool\UnpackedData
-- Source File: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Timeline\Generated\CAMP_DaisyAcknowledgement_AvD_ROM.lsf
 - Game Data Directory: F:\SteamLibrary\steamapps\common\Baldurs Gate 3\Data
+- Source File: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Timeline\Generated\CAMP_DaisyAcknowledgement_AvD_ROM.lsf
 - Generated Dialog Timelines File: F:\BG3Multitool\UnpackedData\Gustav\Public\GustavDev\Content\Generated\\[PAK]_GeneratedDialogTimelines\\_merged.lsf
 - Dialogs Binary File: F:\BG3Multitool\UnpackedData\Gustav\Mods\GustavDev\Story\DialogsBinary\Camp\Campfire_Moments\CAMP_DaisyAcknowledgement_AvD_ROM.lsf
 - Dialogs File: F:\BG3Multitool\UnpackedData\Gustav\Mods\GustavDev\Story\Dialogs\Camp\Campfire_Moments\CAMP_DaisyAcknowledgement_AvD_ROM.lsj
@@ -52,10 +59,12 @@ If you want to override a timeline manually, you can do so with the steps below.
 
 ## Known Limitations and Workarounds
 
+### TMLGen Limitations
+
 - The tool does not support Combat Timelines.
 - The tool currently only supports English for creating timeline reference (_ref.json) files.
 - Generation does not give actors descriptive names, relying instead on names like "Additional 2" or "Initiator 1." You can find their actual names by referencing the dialog's speaker list or by hovering over the actor's track.
-- The timeline's initial location is inferred. If it is incorrect, you can set it by hand in the editor.
+- The timeline's preview location is inferred. If it is incorrect, you can set it by hand in the editor.
 - Slot materials might not work correctly as is. To overcome this, try the following steps:
   1. Select the actor that owns the slot material.
   2. Locate the Visual Resource ID property in the sidebar and copy the associated GUID.
@@ -79,18 +88,26 @@ If you want to override a timeline manually, you can do so with the steps below.
   8. Use the Find feature (CTRL + F) to search for the name of the actor.
   9. Replace the ParentTemplateId with the one you copied. If no such attribute is present, add it with the form ParentTemplateId="00000000-0000-0000-0000-000000000000"
 
-### Animations
+### Toolkit Limitations
 
-Many timelines use overlapping animations, but at the time of writing these cause crashes and/or errors in the toolkit. TMLGen separates them into different tracks by default, but this can occasionally cause inconsistencies between the generated file and the original.
+#### Animation Components
+
+Many timelines use overlapping animations, but as of MoonGlasses 1.3.0.553 (public beta) these cause crashes and/or errors in the toolkit. TMLGen separates them into different tracks by default, but this can occasionally cause inconsistencies between the generated cinematic and the original.
 This often happens due to separated animations relying on one or the other for actor transform information; if you notice actors in incorrect positions or orientations due to animations, try modifying the Offset Type in the animation's properties (for example: changing Previous to Self Start and editing position and rotation).
 
-Similarly, many timelines use overlapping voice components that also crash the toolkit or cause errors. If you attempt to open a timeline sequence and the toolkit crashes, try the following:
+#### Voice Components
+
+Similarly to animations, many timelines use overlapping voice components that also crash the toolkit or cause errors. If you attempt to open a timeline sequence and the toolkit crashes, try the following:
 
 1. Override the associated dialog if it is not overridden already and open it.
 2. Click on the offending dialog node. An error message might appear, but the sequence should be opened (the preview could be unresponsive) in the timeline editor without crashing.
 3. Search the voice components for overlapping lines. Components overlapping by any duration can cause the crash.
 4. Edit the lines so they no longer overlap.
 5. Save the changes and reopen the timeline.
+
+#### Show Armor/Clothing Component
+
+As of MoonGlasses 1.3.0.553 (public beta), timelines that use the Show Armor/Clothing component cannot be opened in the timeline editor. TMLGen ignores this component by default, but this will reduce the accuracy of the recreated cinematic.
 
 ## Credits
 

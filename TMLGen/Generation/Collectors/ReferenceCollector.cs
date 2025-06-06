@@ -137,20 +137,23 @@ namespace TMLGen.Generation.Collectors
 
         private void BindHandlesAndFlags(JsonNode textNode, Guid nodeId, HashSet<string> flags)
         {
-            JsonArray textArray = textNode["TagTexts"]![0]!["TagText"].AsArray();
-            foreach (JsonNode textData in textArray)
+            JsonArray textArray = textNode["TagTexts"]![0]!["TagText"]?.AsArray();
+            if (textArray != null)
             {
-                string translatedString = GetTranslatedString(textData["TagText"]!["handle"].ToString());
-                if (textData["CustomSequenceId"] != null)
+                foreach (JsonNode textData in textArray)
                 {
-                    Guid sequenceId = Guid.Parse(textData["CustomSequenceId"]!["value"].ToString());
-                    linesDict.Add(sequenceId, translatedString);
-                    flagDict.Add(sequenceId, flags);
-                }
-                else
-                {
-                    linesDict.TryAdd(nodeId, translatedString);
-                    flagDict.TryAdd(nodeId, flags);
+                    string translatedString = GetTranslatedString(textData["TagText"]!["handle"].ToString());
+                    if (textData["CustomSequenceId"] != null)
+                    {
+                        Guid sequenceId = Guid.Parse(textData["CustomSequenceId"]!["value"].ToString());
+                        linesDict.TryAdd(sequenceId, translatedString);
+                        flagDict.TryAdd(sequenceId, flags);
+                    }
+                    else
+                    {
+                        linesDict.TryAdd(nodeId, translatedString);
+                        flagDict.TryAdd(nodeId, flags);
+                    }
                 }
             }
         }
@@ -233,7 +236,7 @@ namespace TMLGen.Generation.Collectors
             {
                 foreach (JsonNode tagCollection in ruleCollection.AsArray())
                 {
-                    JsonNode tags = tagCollection["Tags"]![0]!["Tag"];
+                    JsonNode tags = tagCollection["Tags"]?[0]?["Tag"];
                     if (tags != null)
                     {
                         foreach (JsonNode tag in tags.AsArray())

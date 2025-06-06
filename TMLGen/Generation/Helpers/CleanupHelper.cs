@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using TMLGen.Forms.Logging;
 using TMLGen.Generation.Collectors;
+using TMLGen.Properties;
 
 namespace TMLGen.Generation.Helpers
 {
@@ -17,7 +18,7 @@ namespace TMLGen.Generation.Helpers
                 string exceptionDir = "ExceptionLogs";
                 Directory.CreateDirectory(exceptionDir);
                 DateTime time = DateTime.Now;
-                string timeString = time.Month + "-" + time.Day + "-" + time.Year + " " + time.Hour + "-" + time.Minute + "-" + time.Second;
+                string timeString = time.Month + "-" + time.Day + "-" + time.Year + " " + time.Hour + "-" + time.Minute + "-" + time.Second + "-" + time.Millisecond;
                 File.WriteAllText(Path.Combine(exceptionDir, timeString + ".txt"), e.ToString());
             }
             catch (Exception)
@@ -63,7 +64,7 @@ namespace TMLGen.Generation.Helpers
             }
             catch (IOException)
             {
-                LoggingHelper.Write("Failed to delete temp files.", 2);
+                LoggingHelper.Write(Resources.TempFilesDeletionFailed, 2);
                 return;
             }
         }

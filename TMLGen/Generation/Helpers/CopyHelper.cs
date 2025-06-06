@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
+using TMLGen.Properties;
 
 namespace TMLGen.Generation.Helpers
 {
@@ -39,7 +40,7 @@ namespace TMLGen.Generation.Helpers
             }
             catch (Exception)
             {
-                LoggingHelper.Write("An error occurred when copying the timeline's files.", 2);
+                LoggingHelper.Write(String.Format(Resources.CopyErrorTimelineFiles, sourceName), 2);
             }
         }
 
@@ -66,7 +67,7 @@ namespace TMLGen.Generation.Helpers
             }
             catch (Exception)
             {
-                LoggingHelper.Write("An error occurred when copying the timeline's templates.", 2);
+                LoggingHelper.Write(String.Format(Resources.CopyErrorTimelineTemplates, sourceName), 2);
             }
         }
 
@@ -89,7 +90,7 @@ namespace TMLGen.Generation.Helpers
             }
             catch (Exception)
             {
-                LoggingHelper.Write("An error occurred when getting the .tml output location.", 2);
+                LoggingHelper.Write(String.Format(Resources.CopyErrorTMLOutputLocation, sourceName), 2);
                 return string.Empty;
             }
         }
@@ -122,7 +123,7 @@ namespace TMLGen.Generation.Helpers
             }
             catch (Exception)
             {
-                LoggingHelper.Write("An error occurred when copying the generated dialog timelines file.", 2);
+                LoggingHelper.Write(String.Format(Resources.CopyErrorGDTFile, sourceName), 2);
             }
         }
     }

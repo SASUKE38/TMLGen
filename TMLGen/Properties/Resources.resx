@@ -46,7 +46,7 @@
     
     mimetype: application/x-microsoft.net.object.binary.base64
     value   : The object must be serialized with 
-            : System.Serialization.Formatters.Binary.BinaryFormatter
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
     
     mimetype: application/x-microsoft.net.object.soap.base64
@@ -60,6 +60,7 @@
             : and then encoded with base64 encoding.
     -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -68,9 +69,10 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="name" use="required" type="xsd:string" />
               <xsd:attribute name="type" type="xsd:string" />
               <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
@@ -85,9 +87,10 @@
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -109,9 +112,177 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BatchInputDoesNotExist" xml:space="preserve">
+    <value>Failed to locate batch input directory.</value>
+  </data>
+  <data name="VisualCacheCreationError" xml:space="preserve">
+    <value>An error occurred creating the visual files cache.</value>
+  </data>
+  <data name="CopyErrorGDTFile" xml:space="preserve">
+    <value>An error occurred when copying the generated dialog timelines file for {0}.</value>
+  </data>
+  <data name="CopyErrorTimelineFiles" xml:space="preserve">
+    <value>An error occurred when copying the files for {0}.</value>
+  </data>
+  <data name="CopyErrorTimelineTemplates" xml:space="preserve">
+    <value>An error occurred when copying the templates for {0}.</value>
+  </data>
+  <data name="CopyErrorTMLOutputLocation" xml:space="preserve">
+    <value>An error occurred when getting the .tml output location for {0}.</value>
+  </data>
+  <data name="DBFileDoesNotExist" xml:space="preserve">
+    <value>Failed to locate dialogs binary file.</value>
+  </data>
+  <data name="DBFilePreparationFailure" xml:space="preserve">
+    <value>Failed to prepare dialogs binary file.</value>
+  </data>
+  <data name="DBSearchPathTooLong" xml:space="preserve">
+    <value>Dialogs binary search path for name {0} is too long.</value>
+  </data>
+  <data name="DFileDoesNotExist" xml:space="preserve">
+    <value>Failed to locate dialogs file.</value>
+  </data>
+  <data name="DSearchPathTooLong" xml:space="preserve">
+    <value>Dialogs file search path for name {0} is too long.</value>
+  </data>
+  <data name="DuplicateMod" xml:space="preserve">
+    <value>This mod already exists in the mod list.</value>
+  </data>
+  <data name="GameDataInputDoesNotExist" xml:space="preserve">
+    <value>Failed to locate game data directory.</value>
+  </data>
+  <data name="GDTFileDoesNotExist" xml:space="preserve">
+    <value>Failed to locate generated dialog timelines file.</value>
+  </data>
+  <data name="GDTFileLocatingError" xml:space="preserve">
+    <value>Error locating generated dialog timelines entry matching {0}</value>
+  </data>
+  <data name="GDTFilePreparationFailure" xml:space="preserve">
+    <value>Failed to prepare generated dialog timelines file.</value>
+  </data>
+  <data name="GDTMissingDialogID" xml:space="preserve">
+    <value>Generated dialog timelines file missing dialog resource ID. Is this file correct?</value>
+  </data>
+  <data name="GenerationError" xml:space="preserve">
+    <value>An error occurred during generation.</value>
+  </data>
+  <data name="GenerationFailed" xml:space="preserve">
+    <value>Generation failed.</value>
+  </data>
+  <data name="GenerationFinished" xml:space="preserve">
+    <value>Generation finished.</value>
+  </data>
+  <data name="MissingTimelineData" xml:space="preserve">
+    <value>Timeline data necessary for component collection was missing. This can happen if the input files are incorrect or they have an unexpected structure.</value>
+  </data>
+  <data name="NoModSelected" xml:space="preserve">
+    <value>No mod selected.</value>
+  </data>
+  <data name="ProgressComponents" xml:space="preserve">
+    <value>Collecting components...</value>
+  </data>
+  <data name="ProgressSerializing" xml:space="preserve">
+    <value>Serializing result...</value>
+  </data>
+  <data name="ProgressSettingsAndActors" xml:space="preserve">
+    <value>Collecting timeline settings and actor data...</value>
+  </data>
+  <data name="ProgressStarting" xml:space="preserve">
+    <value>Starting generation...</value>
+  </data>
+  <data name="ProgressStartingBatch" xml:space="preserve">
+    <value>Starting batch generation...</value>
+  </data>
+  <data name="SourceFileDoesNotExist" xml:space="preserve">
+    <value>Failed to locate source file.</value>
+  </data>
+  <data name="SourceFilePreparationFailure" xml:space="preserve">
+    <value>Failed to prepare source file.</value>
+  </data>
+  <data name="SourceMissingInformation" xml:space="preserve">
+    <value>Source file missing component information!</value>
+  </data>
+  <data name="TempFilesAccessError" xml:space="preserve">
+    <value>Error accessing temp file.</value>
+  </data>
+  <data name="TempFilesDeletionFailed" xml:space="preserve">
+    <value>Failed to delete temp files.</value>
+  </data>
+  <data name="TTDirectoryDoesNotExist" xml:space="preserve">
+    <value>Failed to locate timeline templates directory. This failure should be ignored if the timeline does not have templates.</value>
+  </data>
+  <data name="TTDirectoryLocatingError" xml:space="preserve">
+    <value>Templates folder for {0} could not be found. This failure can be ignored if the timeline does not have templates.</value>
+  </data>
+  <data name="UnpackedDataAccessError" xml:space="preserve">
+    <value>Unpacked data directory could not be accessed.</value>
+  </data>
+  <data name="UnpackedDataInputDoesNotExist" xml:space="preserve">
+    <value>Failed to locate unpacked data directory.</value>
+  </data>
+  <data name="UnpackedDataMissingDBContent" xml:space="preserve">
+    <value>Unpacked data directory missing dialogs binary content.</value>
+  </data>
+  <data name="UnpackedDataMissingDContent" xml:space="preserve">
+    <value>Unpacked data directory missing dialogs content.</value>
+  </data>
+  <data name="UnsupportedComponent" xml:space="preserve">
+    <value>Timeline contains unsupported component type: {0}</value>
+  </data>
+  <data name="WrongDBExtension" xml:space="preserve">
+    <value>Dialogs binary file must have a .lsf file extension.</value>
+  </data>
+  <data name="WrongDExtension" xml:space="preserve">
+    <value>Dialogs file must have a .lsj file extension.</value>
+  </data>
+  <data name="WrongGDTExtension" xml:space="preserve">
+    <value>Generated dialog timelines file must have a .lsf file extension.</value>
+  </data>
+  <data name="WrongSourceExtension" xml:space="preserve">
+    <value>Source file must have a .lsf file extension.</value>
+  </data>
+  <data name="VisualCachePackageDoesNotExist" xml:space="preserve">
+    <value>Couldn't find character visuals file for {0}.</value>
+  </data>
+  <data name="VisualCacheWrongExtension" xml:space="preserve">
+    <value>A character visual file is not a .lsf file.</value>
+  </data>
+  <data name="LocalizationCacheCreationError" xml:space="preserve">
+    <value>An error occurred creating or accessing the localization cache. The reference file can not be generated.</value>
+  </data>
+  <data name="DBFilePreparationFailureBatch" xml:space="preserve">
+    <value>Failed to prepare dialogs binary file for: {0}</value>
+  </data>
+  <data name="SourceFilePreparationFailureBatch" xml:space="preserve">
+    <value>Failed to prepare source file for: {0}</value>
+  </data>
+  <data name="GDTFilePreparationFailureBatch" xml:space="preserve">
+    <value>Failed to prepare generated dialog timelines file for: {0}</value>
+  </data>
+  <data name="SourceFileDoesNotExistBatch" xml:space="preserve">
+    <value>A source file that was part of the batch could not be found: {0}</value>
+  </data>
+  <data name="GenerationCanceled" xml:space="preserve">
+    <value>Generation canceled.</value>
+  </data>
+  <data name="GenerationCanceling" xml:space="preserve">
+    <value>Canceling generation...</value>
+  </data>
+  <data name="DFilePreparationFailure" xml:space="preserve">
+    <value>Failed to prepare dialogs file. The reference file (_ref.json) cannot be generated.</value>
+  </data>
+  <data name="DFilePreparationFailureBatch" xml:space="preserve">
+    <value>Failed to prepare dialogs file for {0}. The reference file (_ref.json) cannot be generated.</value>
+  </data>
+  <data name="GenerationErrorBatch" xml:space="preserve">
+    <value>An error occurred during generation of {0}</value>
+  </data>
+  <data name="SpeakerMissingDBEntry" xml:space="preserve">
+    <value>One or more speakers in {0} are missing a dialogs binary entry. This can happen if the input files are incorrect or if the timeline data does not properly reflect the dialog data.</value>
+  </data>
 </root>
