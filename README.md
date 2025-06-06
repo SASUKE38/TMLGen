@@ -59,10 +59,12 @@ If you want to override a timeline manually, you can do so with the steps below.
 
 ## Known Limitations and Workarounds
 
+### TMLGen Limitations
+
 - The tool does not support Combat Timelines.
 - The tool currently only supports English for creating timeline reference (_ref.json) files.
 - Generation does not give actors descriptive names, relying instead on names like "Additional 2" or "Initiator 1." You can find their actual names by referencing the dialog's speaker list or by hovering over the actor's track.
-- The timeline's initial location is inferred. If it is incorrect, you can set it by hand in the editor.
+- The timeline's preview location is inferred. If it is incorrect, you can set it by hand in the editor.
 - Slot materials might not work correctly as is. To overcome this, try the following steps:
   1. Select the actor that owns the slot material.
   2. Locate the Visual Resource ID property in the sidebar and copy the associated GUID.
@@ -86,18 +88,26 @@ If you want to override a timeline manually, you can do so with the steps below.
   8. Use the Find feature (CTRL + F) to search for the name of the actor.
   9. Replace the ParentTemplateId with the one you copied. If no such attribute is present, add it with the form ParentTemplateId="00000000-0000-0000-0000-000000000000"
 
-### Animations
+### Toolkit Limitations
 
-Many timelines use overlapping animations, but at the time of writing these cause crashes and/or errors in the toolkit. TMLGen separates them into different tracks by default, but this can occasionally cause inconsistencies between the generated file and the original.
+#### Animation Components
+
+Many timelines use overlapping animations, but as of MoonGlasses 1.3.0.553 (public beta) these cause crashes and/or errors in the toolkit. TMLGen separates them into different tracks by default, but this can occasionally cause inconsistencies between the generated cinematic and the original.
 This often happens due to separated animations relying on one or the other for actor transform information; if you notice actors in incorrect positions or orientations due to animations, try modifying the Offset Type in the animation's properties (for example: changing Previous to Self Start and editing position and rotation).
 
-Similarly, many timelines use overlapping voice components that also crash the toolkit or cause errors. If you attempt to open a timeline sequence and the toolkit crashes, try the following:
+#### Voice Components
+
+Similarly to animations, many timelines use overlapping voice components that also crash the toolkit or cause errors. If you attempt to open a timeline sequence and the toolkit crashes, try the following:
 
 1. Override the associated dialog if it is not overridden already and open it.
 2. Click on the offending dialog node. An error message might appear, but the sequence should be opened (the preview could be unresponsive) in the timeline editor without crashing.
 3. Search the voice components for overlapping lines. Components overlapping by any duration can cause the crash.
 4. Edit the lines so they no longer overlap.
 5. Save the changes and reopen the timeline.
+
+#### Show Armor/Clothing Component
+
+As of MoonGlasses 1.3.0.553 (public beta), timelines that use the Show Armor/Clothing component cannot be opened in the timeline editor. TMLGen ignores this component by default, but this will reduce the accuracy of the recreated cinematic.
 
 ## Credits
 

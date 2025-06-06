@@ -51,9 +51,9 @@
             label1.AutoSize = true;
             label1.Location = new System.Drawing.Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(450, 30);
+            label1.Size = new System.Drawing.Size(461, 30);
             label1.TabIndex = 9;
-            label1.Text = "This timeline has multiple starting locations. You can choose one to use from the list\r\nbelow or skip this step and add it later in the editor.";
+            label1.Text = "This timeline has multiple possible preview locations.\r\nYou can choose one to use from the list below or skip this step and add it in the editor.";
             // 
             // listBoxSelection
             // 

@@ -404,6 +404,7 @@ namespace TMLGen
             checkBoxCopy.Checked = Settings.Default.DoCopy;
             checkBoxSeparateAnimations.Checked = Settings.Default.SeparateAnimations;
             checkBoxNoLocationSelection.Checked = Settings.Default.SkipSelectionPrompt;
+            checkBoxSkipShowArmor.Checked = Settings.Default.SkipShowArmor;
             foreach (string mod in Settings.Default.Mods) listBoxMods.Items.Add(mod);
             listBoxMods.SelectedIndex = Settings.Default.ModIndex;
             tabControlMode.SelectedIndex = Settings.Default.ModeIndex;
@@ -436,6 +437,7 @@ namespace TMLGen
             Settings.Default.DoCopy = checkBoxCopy.Checked;
             Settings.Default.SeparateAnimations = checkBoxSeparateAnimations.Checked;
             Settings.Default.SkipSelectionPrompt = checkBoxNoLocationSelection.Checked;
+            Settings.Default.SkipShowArmor = checkBoxSkipShowArmor.Checked;
             Settings.Default.ModIndex = listBoxMods.SelectedIndex;
             Settings.Default.SelectedMod = (string)listBoxMods.SelectedItem;
             Settings.Default.ModeIndex = tabControlMode.SelectedIndex;

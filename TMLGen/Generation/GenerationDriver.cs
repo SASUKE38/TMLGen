@@ -24,6 +24,7 @@ namespace TMLGen.Generation
             bool extraPathsGiven = Settings.Default.Manual;
             bool separateAnimations = Settings.Default.SeparateAnimations;
             bool doCopy = Settings.Default.DoCopy;
+            bool skipShowArmor = Settings.Default.SkipShowArmor;
             string sourceName = Path.GetFileName(Settings.Default.SourceFile);
             string sourcePath = null;
             string gdtPath = extraPathsGiven ? Settings.Default.GeneratedDialogTimelinesFile : null;
@@ -90,7 +91,8 @@ namespace TMLGen.Generation
                 gdtDoc,
                 dbDoc,
                 timeline,
-                separateAnimations);
+                separateAnimations,
+                skipShowArmor);
 
             LoggingHelper.Write(Resources.ProgressSettingsAndActors);
             timelineSettingsCollector.Collect();
@@ -126,6 +128,7 @@ namespace TMLGen.Generation
             string modName = Settings.Default.SelectedMod;
             bool separateAnimations = Settings.Default.SeparateAnimations;
             bool doCopy = Settings.Default.DoCopy;
+            bool skipShowArmor = Settings.Default.SkipShowArmor;
 
             LoggingHelper.Write(Resources.ProgressStartingBatch);
 
@@ -201,7 +204,8 @@ namespace TMLGen.Generation
                             gdtDoc,
                             dbDoc,
                             timeline,
-                            separateAnimations);
+                            separateAnimations,
+                            skipShowArmor);
 
                         timelineSettingsCollector.Collect();
                         actorCollector.Collect();

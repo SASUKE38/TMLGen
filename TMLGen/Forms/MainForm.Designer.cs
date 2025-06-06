@@ -54,6 +54,7 @@
             textBoxD = new System.Windows.Forms.TextBox();
             textBoxBatch = new System.Windows.Forms.TextBox();
             checkBoxNoLocationSelection = new System.Windows.Forms.CheckBox();
+            checkBoxSkipShowArmor = new System.Windows.Forms.CheckBox();
             formConsole = new System.Windows.Forms.RichTextBox();
             labelConsole = new System.Windows.Forms.Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -89,7 +90,7 @@
             // buttonGenerate
             // 
             buttonGenerate.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            buttonGenerate.Location = new System.Drawing.Point(330, 372);
+            buttonGenerate.Location = new System.Drawing.Point(331, 395);
             buttonGenerate.Name = "buttonGenerate";
             buttonGenerate.Size = new System.Drawing.Size(335, 40);
             buttonGenerate.TabIndex = 0;
@@ -160,7 +161,7 @@
             labelGDT.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelGDT.Location = new System.Drawing.Point(6, 47);
             labelGDT.Name = "labelGDT";
-            labelGDT.Size = new System.Drawing.Size(175, 15);
+            labelGDT.Size = new System.Drawing.Size(176, 15);
             labelGDT.TabIndex = 5;
             labelGDT.Text = "Generated Dialog Timelines File:";
             // 
@@ -224,7 +225,7 @@
             labelTT.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             labelTT.Location = new System.Drawing.Point(6, 180);
             labelTT.Name = "labelTT";
-            labelTT.Size = new System.Drawing.Size(162, 15);
+            labelTT.Size = new System.Drawing.Size(164, 15);
             labelTT.TabIndex = 8;
             labelTT.Text = "Timeline Templates Directory:";
             // 
@@ -309,7 +310,7 @@
             // checkBoxNoLocationSelection
             // 
             checkBoxNoLocationSelection.AutoSize = true;
-            checkBoxNoLocationSelection.Location = new System.Drawing.Point(368, 47);
+            checkBoxNoLocationSelection.Location = new System.Drawing.Point(6, 72);
             checkBoxNoLocationSelection.Name = "checkBoxNoLocationSelection";
             checkBoxNoLocationSelection.Size = new System.Drawing.Size(302, 19);
             checkBoxNoLocationSelection.TabIndex = 20;
@@ -318,10 +319,24 @@
             checkBoxNoLocationSelection.UseVisualStyleBackColor = true;
             checkBoxNoLocationSelection.CheckedChanged += checkBoxNoLocationSelection_CheckedChanged;
             // 
+            // checkBoxSkipShowArmor
+            // 
+            checkBoxSkipShowArmor.AutoSize = true;
+            checkBoxSkipShowArmor.Checked = true;
+            checkBoxSkipShowArmor.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxSkipShowArmor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            checkBoxSkipShowArmor.Location = new System.Drawing.Point(368, 47);
+            checkBoxSkipShowArmor.Name = "checkBoxSkipShowArmor";
+            checkBoxSkipShowArmor.Size = new System.Drawing.Size(199, 19);
+            checkBoxSkipShowArmor.TabIndex = 21;
+            checkBoxSkipShowArmor.Text = "Ignore Show Armor components";
+            toolTip.SetToolTip(checkBoxSkipShowArmor, "Skips processing Show Armor components.\r\nAt the time of writing, this component is not supported by MoonGlasses.\r\nSee the README for more information.\r\n");
+            checkBoxSkipShowArmor.UseVisualStyleBackColor = true;
+            // 
             // formConsole
             // 
             formConsole.BackColor = System.Drawing.SystemColors.InfoText;
-            formConsole.Location = new System.Drawing.Point(330, 433);
+            formConsole.Location = new System.Drawing.Point(330, 456);
             formConsole.Name = "formConsole";
             formConsole.ReadOnly = true;
             formConsole.Size = new System.Drawing.Size(679, 153);
@@ -333,7 +348,7 @@
             // 
             labelConsole.AutoSize = true;
             labelConsole.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            labelConsole.Location = new System.Drawing.Point(330, 415);
+            labelConsole.Location = new System.Drawing.Point(330, 438);
             labelConsole.Name = "labelConsole";
             labelConsole.Size = new System.Drawing.Size(30, 15);
             labelConsole.TabIndex = 17;
@@ -347,13 +362,14 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(checkBoxSkipShowArmor);
             groupBox1.Controls.Add(checkBoxNoLocationSelection);
             groupBox1.Controls.Add(checkBoxCopy);
             groupBox1.Controls.Add(checkBoxManual);
             groupBox1.Controls.Add(checkBoxSeparateAnimations);
             groupBox1.Location = new System.Drawing.Point(330, 294);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(679, 72);
+            groupBox1.Size = new System.Drawing.Size(679, 95);
             groupBox1.TabIndex = 19;
             groupBox1.TabStop = false;
             groupBox1.Text = "Settings";
@@ -364,14 +380,14 @@
             listBoxMods.ItemHeight = 15;
             listBoxMods.Location = new System.Drawing.Point(12, 309);
             listBoxMods.Name = "listBoxMods";
-            listBoxMods.Size = new System.Drawing.Size(312, 244);
+            listBoxMods.Size = new System.Drawing.Size(312, 274);
             listBoxMods.TabIndex = 20;
             listBoxMods.SelectedIndexChanged += listBoxMods_SelectedIndexChanged;
             // 
             // buttonModsAdd
             // 
             buttonModsAdd.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            buttonModsAdd.Location = new System.Drawing.Point(12, 563);
+            buttonModsAdd.Location = new System.Drawing.Point(12, 586);
             buttonModsAdd.Name = "buttonModsAdd";
             buttonModsAdd.Size = new System.Drawing.Size(117, 23);
             buttonModsAdd.TabIndex = 24;
@@ -382,7 +398,7 @@
             // buttonModsRemove
             // 
             buttonModsRemove.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            buttonModsRemove.Location = new System.Drawing.Point(207, 563);
+            buttonModsRemove.Location = new System.Drawing.Point(207, 586);
             buttonModsRemove.Name = "buttonModsRemove";
             buttonModsRemove.Size = new System.Drawing.Size(117, 23);
             buttonModsRemove.TabIndex = 25;
@@ -576,7 +592,7 @@
             // 
             buttonCancel.Enabled = false;
             buttonCancel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            buttonCancel.Location = new System.Drawing.Point(672, 372);
+            buttonCancel.Location = new System.Drawing.Point(672, 395);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(337, 40);
             buttonCancel.TabIndex = 32;
@@ -588,7 +604,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1020, 598);
+            ClientSize = new System.Drawing.Size(1020, 617);
             Controls.Add(buttonCancel);
             Controls.Add(tabControlMode);
             Controls.Add(label1);
@@ -673,6 +689,7 @@
         private System.Windows.Forms.ToolStripMenuItem dataPathConfigurationToolStripMenuItem;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.CheckBox checkBoxNoLocationSelection;
+        private System.Windows.Forms.CheckBox checkBoxSkipShowArmor;
     }
 }
 

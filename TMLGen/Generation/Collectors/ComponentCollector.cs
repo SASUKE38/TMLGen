@@ -31,9 +31,10 @@ namespace TMLGen.Generation.Collectors
         private readonly List<ComponentTrackSoundEvent> globalSoundEventTracks = [];
         private readonly HashSet<string> foundUnsupportedComponentTypes = [];
         private static bool separateOverlappingAnimations;
+        private bool skipShowArmor;
         private readonly Form sender;
 
-        public ComponentCollector(Form sender, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations) : base(doc, gdtDoc, timeline)
+        public ComponentCollector(Form sender, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations, bool skipShowArmor) : base(doc, gdtDoc, timeline)
         {
             dbNodes = dbDoc.XPathSelectElement("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children");
             IEnumerable<XElement> dbRootNodeElements = dbDoc.XPathSelectElements("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children/node[@id='RootNodes']");
@@ -43,6 +44,7 @@ namespace TMLGen.Generation.Collectors
                 if (rootId.HasValue) dbRootNodes.Add((Guid)rootId);
             }
             separateOverlappingAnimations = separateAnimations;
+            this.skipShowArmor = skipShowArmor;
             this.sender = sender;
         }
 
@@ -151,7 +153,7 @@ namespace TMLGen.Generation.Collectors
                                 HandleTLShot(componentData, seq);
                                 break;
                             case "TLShowArmor":
-                                HandleTLShowArmor(componentData, seq);
+                                if (!skipShowArmor) HandleTLShowArmor(componentData, seq);
                                 break;
                             case "TLShowPeanuts":
                                 HandleGlobalExclusiveMutableComponent<ComponentTrackShowPeanuts, ComponentShowPeanuts, BooleanKey, bool>
