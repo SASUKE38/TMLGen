@@ -178,7 +178,7 @@
     <value>Generation finished.</value>
   </data>
   <data name="MissingTimelineData" xml:space="preserve">
-    <value>Timeline data necessary for component collection was missing. This can happen if the input files are incorrect or they have an unexpected structure.</value>
+    <value>Timeline data necessary for component collection was missing from {0}. This can happen if the input files are incorrect or they have an unexpected structure.</value>
   </data>
   <data name="NoModSelected" xml:space="preserve">
     <value>No mod selected.</value>
@@ -205,7 +205,7 @@
     <value>Failed to prepare source file.</value>
   </data>
   <data name="SourceMissingInformation" xml:space="preserve">
-    <value>Source file missing component information!</value>
+    <value>Source file for {0} is missing component information!</value>
   </data>
   <data name="TempFilesAccessError" xml:space="preserve">
     <value>Error accessing temp file.</value>
@@ -232,7 +232,7 @@
     <value>Unpacked data directory missing dialogs content.</value>
   </data>
   <data name="UnsupportedComponent" xml:space="preserve">
-    <value>Timeline contains unsupported component type: {0}</value>
+    <value>{0} contains unsupported component type: {1}</value>
   </data>
   <data name="WrongDBExtension" xml:space="preserve">
     <value>Dialogs binary file must have a .lsf file extension.</value>

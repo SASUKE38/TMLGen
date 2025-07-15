@@ -9,8 +9,10 @@ namespace TMLGen.Forms
     {
         public Guid selected;
         private Dictionary<string, Guid> candidates;
+        private Guid materialId;
+        private Guid resourceId;
 
-        public SlotMaterialSelection(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId)
+        public SlotMaterialSelection(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId, string sourceNameExtensionless)
         {
             InitializeComponent();
             foreach ((string name, _) in candidates)
@@ -18,8 +20,11 @@ namespace TMLGen.Forms
                 listBoxSelection.Items.Add(name);
             }
             this.candidates = candidates;
-            labelMaterialId.Text += " " + materialId;
-            labelVisualId.Text += " " + resourceId;
+            this.materialId = materialId;
+            this.resourceId = resourceId;
+            labelMaterialId.Text += $" {materialId}";
+            labelVisualId.Text += $" {resourceId}";
+            Text += $" - {sourceNameExtensionless}";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -30,6 +35,16 @@ namespace TMLGen.Forms
         private void listBoxSelection_SelectedValueChanged(object sender, EventArgs e)
         {
             buttonOK.Enabled = true;
+        }
+
+        private void buttonCopyVisual_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(resourceId.ToString());
+        }
+
+        private void buttonCopyMaterial_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(materialId.ToString());
         }
     }
 }

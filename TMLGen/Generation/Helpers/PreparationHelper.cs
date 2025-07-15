@@ -215,6 +215,7 @@ namespace TMLGen.Generation.Helpers
 
         public static void FindCharacterVisualsFiles(string dataDirectory, string[] extraPaths)
         {
+            visualFiles.Clear();
             string directoryName = "TmlVisualFilesCache";
             List<(string prefix, string package)> packageNames = [("Gustav", "GustavDev"), ("Gustav", "Gustav"), ("Shared", "SharedDev"), ("Shared", "Shared")];
             try

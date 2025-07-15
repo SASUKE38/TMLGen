@@ -35,13 +35,15 @@
             buttonSkip = new System.Windows.Forms.Button();
             labelMaterialId = new System.Windows.Forms.Label();
             labelVisualId = new System.Windows.Forms.Label();
+            buttonCopyMaterial = new System.Windows.Forms.Button();
+            buttonCopyVisual = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // buttonOK
             // 
             buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             buttonOK.Enabled = false;
-            buttonOK.Location = new System.Drawing.Point(311, 306);
+            buttonOK.Location = new System.Drawing.Point(311, 332);
             buttonOK.Name = "buttonOK";
             buttonOK.Size = new System.Drawing.Size(75, 23);
             buttonOK.TabIndex = 1;
@@ -71,7 +73,7 @@
             // buttonSkip
             // 
             buttonSkip.DialogResult = System.Windows.Forms.DialogResult.Ignore;
-            buttonSkip.Location = new System.Drawing.Point(392, 306);
+            buttonSkip.Location = new System.Drawing.Point(392, 332);
             buttonSkip.Name = "buttonSkip";
             buttonSkip.Size = new System.Drawing.Size(75, 23);
             buttonSkip.TabIndex = 4;
@@ -96,12 +98,34 @@
             labelVisualId.TabIndex = 6;
             labelVisualId.Text = "Visual Resource ID:";
             // 
+            // buttonCopyMaterial
+            // 
+            buttonCopyMaterial.Location = new System.Drawing.Point(12, 303);
+            buttonCopyMaterial.Name = "buttonCopyMaterial";
+            buttonCopyMaterial.Size = new System.Drawing.Size(160, 23);
+            buttonCopyMaterial.TabIndex = 7;
+            buttonCopyMaterial.Text = "Copy Material Resource ID";
+            buttonCopyMaterial.UseVisualStyleBackColor = true;
+            buttonCopyMaterial.Click += buttonCopyMaterial_Click;
+            // 
+            // buttonCopyVisual
+            // 
+            buttonCopyVisual.Location = new System.Drawing.Point(12, 332);
+            buttonCopyVisual.Name = "buttonCopyVisual";
+            buttonCopyVisual.Size = new System.Drawing.Size(160, 23);
+            buttonCopyVisual.TabIndex = 8;
+            buttonCopyVisual.Text = "Copy Visual Resource ID";
+            buttonCopyVisual.UseVisualStyleBackColor = true;
+            buttonCopyVisual.Click += buttonCopyVisual_Click;
+            // 
             // SlotMaterialSelection
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(481, 339);
+            ClientSize = new System.Drawing.Size(481, 364);
             ControlBox = false;
+            Controls.Add(buttonCopyVisual);
+            Controls.Add(buttonCopyMaterial);
             Controls.Add(labelVisualId);
             Controls.Add(labelMaterialId);
             Controls.Add(buttonSkip);
@@ -127,5 +151,7 @@
         private System.Windows.Forms.Button buttonSkip;
         private System.Windows.Forms.Label labelMaterialId;
         private System.Windows.Forms.Label labelVisualId;
+        private System.Windows.Forms.Button buttonCopyMaterial;
+        private System.Windows.Forms.Button buttonCopyVisual;
     }
 }

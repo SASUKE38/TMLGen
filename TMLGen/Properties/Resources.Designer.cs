@@ -304,7 +304,7 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timeline data necessary for component collection was missing. This can happen if the input files are incorrect or they have an unexpected structure..
+        ///   Looks up a localized string similar to Timeline data necessary for component collection was missing from {0}. This can happen if the input files are incorrect or they have an unexpected structure..
         /// </summary>
         internal static string MissingTimelineData {
             get {
@@ -403,7 +403,7 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Source file missing component information!.
+        ///   Looks up a localized string similar to Source file for {0} is missing component information!.
         /// </summary>
         internal static string SourceMissingInformation {
             get {
@@ -493,7 +493,7 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timeline contains unsupported component type: {0}.
+        ///   Looks up a localized string similar to {0} contains unsupported component type: {1}.
         /// </summary>
         internal static string UnsupportedComponent {
             get {

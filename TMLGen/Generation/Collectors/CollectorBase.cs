@@ -15,14 +15,25 @@ namespace TMLGen.Generation.Collectors
         protected XDocument gdtDoc;
         protected Timeline timeline;
 
-        public static readonly Dictionary<Guid, Guid> actorTrackMapping = [];
-        public static readonly Dictionary<Guid, ActorTrackBase> trackMapping = [];
+        public readonly Dictionary<Guid, Guid> actorTrackMapping;
+        public readonly Dictionary<Guid, ActorTrackBase> trackMapping;
+
+        protected CollectorBase(XDocument doc, XDocument gdtDoc, Timeline timeline, Dictionary<Guid, Guid> actorTrackMapping, Dictionary<Guid, ActorTrackBase> trackMapping)
+        {
+            this.doc = doc;
+            this.gdtDoc = gdtDoc;
+            this.timeline = timeline;
+            this.actorTrackMapping = actorTrackMapping;
+            this.trackMapping = trackMapping;
+        }
 
         protected CollectorBase(XDocument doc, XDocument gdtDoc, Timeline timeline)
         {
             this.doc = doc;
             this.gdtDoc = gdtDoc;
             this.timeline = timeline;
+            this.actorTrackMapping = [];
+            this.trackMapping = [];
         }
 
         public abstract void Collect();

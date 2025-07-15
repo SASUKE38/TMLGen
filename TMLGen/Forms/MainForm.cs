@@ -16,11 +16,9 @@ namespace TMLGen
     {
         public delegate void UpdateLog();
         public static UpdateLog logDelegate;
-        public delegate void UpdateCurrentBatchFile(string fileName);
-        public static UpdateCurrentBatchFile currentBatchFileDelegate;
-        public delegate Guid ShowMaterialSelection(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId);
+        public delegate Guid ShowMaterialSelection(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId, string sourceNameExtensionless);
         public static ShowMaterialSelection materialSelectionDelegate;
-        public delegate Guid ShowLocationSelection(HashSet<Guid> candidates);
+        public delegate Guid ShowLocationSelection(HashSet<Guid> candidates, string sourceNameExtensionless);
         public static ShowLocationSelection locationSelectionDelegate;
 
         private static readonly uint logMax = 200u;
@@ -34,7 +32,6 @@ namespace TMLGen
             LoggingHelper.Set(new(logMax), formConsole, this);
 
             logDelegate = new UpdateLog(UpdateLogMethod);
-            currentBatchFileDelegate = new UpdateCurrentBatchFile(UpdateCurrentBatchFileMethod);
             materialSelectionDelegate = new ShowMaterialSelection(MaterialSelectionMethod);
             locationSelectionDelegate = new ShowLocationSelection(LocationSelectionMethod);
         }
@@ -44,14 +41,7 @@ namespace TMLGen
             formConsole.Rtf = LoggingHelper.GetOutput();
         }
 
-        public void UpdateCurrentBatchFileMethod(string fileName)
-        {
-            labelBatchCurrentName.Text = fileName;
-            labelBatchCurrent.Visible = true;
-            labelBatchCurrentName.Visible = true;
-        }
-
-        public Guid MaterialSelectionMethod(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId)
+        public Guid MaterialSelectionMethod(Dictionary<string, Guid> candidates, Guid materialId, Guid resourceId, string sourceNameExtensionless)
         {
             Guid selectionRes = Guid.Empty;
 
@@ -60,7 +50,7 @@ namespace TMLGen
                 return selectionRes;
             }
 
-            SlotMaterialSelection selection = new(candidates, materialId, resourceId);
+            SlotMaterialSelection selection = new(candidates, materialId, resourceId, sourceNameExtensionless);
             DialogResult diaRes = selection.ShowDialog();
             if (diaRes == DialogResult.OK)
             {
@@ -70,7 +60,7 @@ namespace TMLGen
             return selectionRes;
         }
 
-        public Guid LocationSelectionMethod(HashSet<Guid> candidates)
+        public Guid LocationSelectionMethod(HashSet<Guid> candidates, string sourceNameExtensionless)
         {
             Guid selectionRes = Guid.Empty;
 
@@ -79,7 +69,7 @@ namespace TMLGen
                 return selectionRes;
             }
 
-            LocationSelection selection = new(candidates);
+            LocationSelection selection = new(candidates, sourceNameExtensionless);
             DialogResult diaRes = selection.ShowDialog();
             if (diaRes == DialogResult.OK)
             {
@@ -353,8 +343,6 @@ namespace TMLGen
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             progressBarBatch.Value = 0;
-            labelBatchCurrentName.Visible = false;
-            labelBatchCurrent.Visible = false;
             FinishGeneration(e);
         }
 
@@ -382,7 +370,6 @@ namespace TMLGen
                 LoggingHelper.Write(Resources.GenerationFinished, 1);
             buttonGenerate.Enabled = true;
             buttonCancel.Enabled = false;
-            CleanupHelper.EmptyStaticCollections();
             CleanupHelper.DeleteTempFiles(PreparationHelper.visualPaths);
         }
 

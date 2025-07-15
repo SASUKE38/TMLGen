@@ -9,13 +9,14 @@ namespace TMLGen.Forms
     {
         public Guid selected;
 
-        public LocationSelection(HashSet<Guid> candidates)
+        public LocationSelection(HashSet<Guid> candidates, string sourceNameExtensionless)
         {
             InitializeComponent();
             foreach (Guid id in candidates)
             {
                 listBoxSelection.Items.Add(id);
             }
+            Text += $" - {sourceNameExtensionless}";
         }
 
         private void listBoxSelection_SelectedValueChanged(object sender, EventArgs e)

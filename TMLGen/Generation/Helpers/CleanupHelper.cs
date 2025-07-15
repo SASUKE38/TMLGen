@@ -46,13 +46,6 @@ namespace TMLGen.Generation.Helpers
             return root;
         }
 
-        public static void EmptyStaticCollections()
-        {
-            CollectorBase.actorTrackMapping.Clear();
-            CollectorBase.trackMapping.Clear();
-            PreparationHelper.visualFiles.Clear();
-        }
-
         public static void DeleteTempFiles(string[] files)
         {
             try

@@ -69,8 +69,6 @@
             tabControlMode = new System.Windows.Forms.TabControl();
             tabPageSingle = new System.Windows.Forms.TabPage();
             tabPageBatch = new System.Windows.Forms.TabPage();
-            labelBatchCurrentName = new System.Windows.Forms.Label();
-            labelBatchCurrent = new System.Windows.Forms.Label();
             labelBatchProgress = new System.Windows.Forms.Label();
             progressBarBatch = new System.Windows.Forms.ProgressBar();
             buttonBatch = new System.Windows.Forms.Button();
@@ -482,8 +480,6 @@
             // 
             // tabPageBatch
             // 
-            tabPageBatch.Controls.Add(labelBatchCurrentName);
-            tabPageBatch.Controls.Add(labelBatchCurrent);
             tabPageBatch.Controls.Add(labelBatchProgress);
             tabPageBatch.Controls.Add(progressBarBatch);
             tabPageBatch.Controls.Add(textBoxBatch);
@@ -496,28 +492,6 @@
             tabPageBatch.TabIndex = 1;
             tabPageBatch.Text = "Batch";
             tabPageBatch.UseVisualStyleBackColor = true;
-            // 
-            // labelBatchCurrentName
-            // 
-            labelBatchCurrentName.AutoSize = true;
-            labelBatchCurrentName.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            labelBatchCurrentName.Location = new System.Drawing.Point(75, 91);
-            labelBatchCurrentName.Name = "labelBatchCurrentName";
-            labelBatchCurrentName.Size = new System.Drawing.Size(36, 15);
-            labelBatchCurrentName.TabIndex = 9;
-            labelBatchCurrentName.Text = "None";
-            labelBatchCurrentName.Visible = false;
-            // 
-            // labelBatchCurrent
-            // 
-            labelBatchCurrent.AutoSize = true;
-            labelBatchCurrent.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            labelBatchCurrent.Location = new System.Drawing.Point(6, 91);
-            labelBatchCurrent.Name = "labelBatchCurrent";
-            labelBatchCurrent.Size = new System.Drawing.Size(71, 15);
-            labelBatchCurrent.TabIndex = 8;
-            labelBatchCurrent.Text = "Current File:";
-            labelBatchCurrent.Visible = false;
             // 
             // labelBatchProgress
             // 

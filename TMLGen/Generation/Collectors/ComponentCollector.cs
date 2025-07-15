@@ -30,11 +30,22 @@ namespace TMLGen.Generation.Collectors
         private readonly Dictionary<Guid, int> totalSoundEvents = [];
         private readonly List<ComponentTrackSoundEvent> globalSoundEventTracks = [];
         private readonly HashSet<string> foundUnsupportedComponentTypes = [];
-        private static bool separateOverlappingAnimations;
-        private bool skipShowArmor;
+        private readonly bool separateOverlappingAnimations;
+        private readonly bool skipShowArmor;
         private readonly Form sender;
+        private readonly string sourceNameExtensionless;
 
-        public ComponentCollector(Form sender, XDocument doc, XDocument gdtDoc, XDocument dbDoc, Timeline timeline, bool separateAnimations, bool skipShowArmor) : base(doc, gdtDoc, timeline)
+        public ComponentCollector(
+            Form sender,
+            string sourceNameExtensionless,
+            XDocument doc,
+            XDocument gdtDoc,
+            XDocument dbDoc,
+            Timeline timeline,
+            bool separateAnimations,
+            bool skipShowArmor,
+            Dictionary<Guid, Guid> actorTrackMapping,
+            Dictionary<Guid, ActorTrackBase> trackMapping) : base(doc, gdtDoc, timeline, actorTrackMapping, trackMapping)
         {
             dbNodes = dbDoc.XPathSelectElement("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children");
             IEnumerable<XElement> dbRootNodeElements = dbDoc.XPathSelectElements("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children/node[@id='RootNodes']");
@@ -46,6 +57,7 @@ namespace TMLGen.Generation.Collectors
             separateOverlappingAnimations = separateAnimations;
             this.skipShowArmor = skipShowArmor;
             this.sender = sender;
+            this.sourceNameExtensionless = sourceNameExtensionless;
         }
 
         public override void Collect()
@@ -56,7 +68,7 @@ namespace TMLGen.Generation.Collectors
 
             if (componentCollection == null || phases == null)
             {
-                LoggingHelper.Write(Resources.SourceMissingInformation, 2);
+                LoggingHelper.Write(String.Format(Resources.SourceMissingInformation, sourceNameExtensionless), 2);
                 return;
             }
 
@@ -192,7 +204,7 @@ namespace TMLGen.Generation.Collectors
                             default:
                                 if (!foundUnsupportedComponentTypes.Contains(componentType))
                                 {
-                                    LoggingHelper.Write(String.Format(Resources.UnsupportedComponent, componentType), 2);
+                                    LoggingHelper.Write(String.Format(Resources.UnsupportedComponent, sourceNameExtensionless, componentType), 2);
                                     foundUnsupportedComponentTypes.Add(componentType);
                                 }
                                 break;
@@ -206,14 +218,14 @@ namespace TMLGen.Generation.Collectors
                 }
                 catch (KeyNotFoundException)
                 {
-                    LoggingHelper.Write(Resources.MissingTimelineData, 2);
+                    LoggingHelper.Write(String.Format(Resources.MissingTimelineData, sourceNameExtensionless), 2);
                     throw;
                 }
             }
             TrySetTimelineLocation();
         }
 
-        // Sequence Initialization
+        #region Sequence Initialization
 
         private Sequence SequenceInit(int currentPhase, XElement phases, IEnumerable<XElement> components)
         {
@@ -337,7 +349,9 @@ namespace TMLGen.Generation.Collectors
             return CollectGlobalSoundEvents(events);
         }
 
-        // Component Initialization
+        #endregion
+
+        #region Component Initialization
 
         /// <summary>
         /// Should be called when a new component needs to be added to a UNIQUE
@@ -354,7 +368,7 @@ namespace TMLGen.Generation.Collectors
         /// <param name="trackKey"></param>
         /// <param name="trackId"></param>
         /// <returns></returns>
-        private static ComponentType GetExclusiveComponent<TrackType, ComponentType>(Guid actorId, XElement componentData, Sequence seq, int trackKey, out Guid trackId, out ComponentContainer curContainer)
+        private ComponentType GetExclusiveComponent<TrackType, ComponentType>(Guid actorId, XElement componentData, Sequence seq, int trackKey, out Guid trackId, out ComponentContainer curContainer)
             where TrackType : ComponentTrackBase, new()
             where ComponentType : ComponentBase, new()
         {
@@ -442,7 +456,7 @@ namespace TMLGen.Generation.Collectors
             return curComponent;
         }
 
-        private static ComponentAnimation GetAnimationComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer)
+        private ComponentAnimation GetAnimationComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer)
         {
             try
             {
@@ -469,7 +483,9 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // Animation Initialization
+        #endregion
+
+        #region Animation Initialization
 
         // Combine this animation separation stuff with the material track logic
         private ComponentAnimation GetSeparatedAnimationComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer)
@@ -565,7 +581,9 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // Material Initialization
+        #endregion
+
+        #region Material Initialization
 
         private ComponentMaterial GetMaterialComponent(Guid actorId, XElement componentData, Sequence seq, out ComponentTrackMaterial trackToUse, out Guid trackId, out ComponentContainer curContainer)
         {
@@ -726,7 +744,9 @@ namespace TMLGen.Generation.Collectors
             return newTrack;
         }
 
-        // Sound Event Initialization
+        #endregion
+
+        #region Sound Event Initialization
 
         private ComponentSoundEvent GetSoundEventComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer)
         {
@@ -787,9 +807,11 @@ namespace TMLGen.Generation.Collectors
             return GetComponentInternal<ComponentSoundEvent>(trackId, componentData, seq, out curContainer);
         }
 
-        // Springs Initialization
+        #endregion
 
-        private static ComponentSprings GetSpringsComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer, out string trackName)
+        #region Springs Initialization
+
+        private ComponentSprings GetSpringsComponent(Guid actorId, XElement componentData, Sequence seq, out Guid trackId, out ComponentContainer curContainer, out string trackName)
         {
             try
             {
@@ -815,6 +837,10 @@ namespace TMLGen.Generation.Collectors
                 throw;
             }
         }
+
+        #endregion
+
+        #region Component Helpers/Handlers
 
         /// <summary>
         /// Determines if a track is ina track list.
@@ -904,7 +930,7 @@ namespace TMLGen.Generation.Collectors
         /// <param name="seq"></param>
         /// <param name="trackKey"></param>
         /// <param name="channelName"></param>
-        private static void HandleExclusiveMutableComponent<TrackType, ComponentType, KeyType, KeyDataType>(XElement componentData, Sequence seq, int trackKey, string channelName)
+        private void HandleExclusiveMutableComponent<TrackType, ComponentType, KeyType, KeyDataType>(XElement componentData, Sequence seq, int trackKey, string channelName)
             where TrackType : ComponentTrackBase, new()
             where ComponentType : ComponentBase, new()
             where KeyType : MutableKeyBase<KeyDataType>, new()
@@ -999,7 +1025,7 @@ namespace TMLGen.Generation.Collectors
         /// <param name="seq"></param>
         /// <param name="trackKey"></param>
         /// <param name="channelName"></param>
-        private static void HandleExclusiveImmutableComponent<TrackType, ComponentType, KeyType, KeyDataType>(XElement componentData, Sequence seq, int trackKey, string channelName)
+        private void HandleExclusiveImmutableComponent<TrackType, ComponentType, KeyType, KeyDataType>(XElement componentData, Sequence seq, int trackKey, string channelName)
             where TrackType : ComponentTrackBase, new()
             where ComponentType : ComponentBase, new()
             where KeyType : ImmutableKeyBase<KeyDataType>, new()
@@ -1082,9 +1108,11 @@ namespace TMLGen.Generation.Collectors
             BindChannelAndComponent(newChannel, curComponent, curContainer, seq, trackId);
         }
 
-        // TimelineActorPropertiesReflection; Unique Handling
+        #endregion
 
-        private static void HandleTimelineActorPropertiesReflection(XElement componentData, Sequence seq)
+        #region TimelineActorPropertiesReflection; Unique Handling
+
+        private void HandleTimelineActorPropertiesReflection(XElement componentData, Sequence seq)
         {
             Guid? actorId = GetComponentActor(componentData);
             if (actorId.HasValue)
@@ -1150,7 +1178,7 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        private static void TryAddPropertiesSubTrack(Guid actorId, string parameterName, int parameterDimensions, bool isBool)
+        private void TryAddPropertiesSubTrack(Guid actorId, string parameterName, int parameterDimensions, bool isBool)
         {
             try
             {
@@ -1202,7 +1230,9 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLAnimation, TLAdditiveAnimation, TLLayeredAnimation; Unique Handling
+        #endregion
+
+        #region TLAnimation, TLAdditiveAnimation, TLLayeredAnimation; Unique Handling
 
         private void HandleTLAnimation(XElement componentData, Sequence seq, object animType)
         {
@@ -1260,7 +1290,9 @@ namespace TMLGen.Generation.Collectors
             GetBooleanKeys(hideVfxChannel, animationComponent, "Value", lsfStartTime, ComponentAnimation.hideVfxPath, false);
         }
 
-        // TLAtmosphereAndLighting; Unique Handling
+        #endregion
+
+        #region TLAtmosphereAndLighting; Unique Handling
 
         private void HandleTLAtmosphereAndLighting(XElement componentData, Sequence seq)
         {
@@ -1288,17 +1320,21 @@ namespace TMLGen.Generation.Collectors
             BindComponent(curComponent, curContainer, seq, trackId);
         }
 
-        // TLAttitudeEvent; Global Exclusive Mutable Component
+        #endregion
 
-        private static void HandleTLAttitudeEvent(XElement keyData, AttitudeKeyData keyValue)
+        #region TLAttitudeEvent; Global Exclusive Mutable Component
+
+        private void HandleTLAttitudeEvent(XElement keyData, AttitudeKeyData keyValue)
         {
             keyValue.Pose = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='Pose']")) ?? keyValue.Pose;
             keyValue.Transition = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='Transition']")) ?? keyValue.Transition;
         }
 
-        // TLCameraDoF; Unique Handling
+        #endregion
 
-        private static void HandleTLCameraDoF(XElement componentData, Sequence seq)
+        #region TLCameraDoF; Unique Handling
+
+        private void HandleTLCameraDoF(XElement componentData, Sequence seq)
         {
             Guid? actorId = GetComponentActor(componentData);
             if (actorId.HasValue)
@@ -1356,7 +1392,9 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLCameraExposure; Unique Handling
+        #endregion
+
+        #region TLCameraExposure; Unique Handling
 
         private void HandleTLCameraExposure(XElement componentData, Sequence seq)
         {
@@ -1394,16 +1432,20 @@ namespace TMLGen.Generation.Collectors
             BindComponent(curComponent, curContainer, seq, trackId);
         }
 
-        // TLCameraFoV; Exclusive Mutable Component
+        #endregion
+
+        #region TLCameraFoV; Exclusive Mutable Component
 
         private static void HandleTLCameraFoV(XElement keyData, FloatKey key)
         {
             key.Value = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='FoV']")) ?? ComponentCameraFoV.defaultFov;
         }
 
-        // TLCameraLookAt; Exclusive Immutable Component
+        #endregion
 
-        private static void HandleTLCameraLookAt(XElement keyData, CameraLookAtKeyData keyValue)
+        #region TLCameraLookAt; Exclusive Immutable Component
+
+        private void HandleTLCameraLookAt(XElement keyData, CameraLookAtKeyData keyValue)
         {
             GetImmutableTargetKeyTarget(keyData, keyValue);
             keyValue.TargetBone = ExtractString(keyData.XPathSelectElement("./attribute[@id='Bone']")) ?? keyValue.TargetBone;
@@ -1417,14 +1459,18 @@ namespace TMLGen.Generation.Collectors
             keyValue.SoftZoneRampTime = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='SoftZoneRampTime']")) ?? keyValue.SoftZoneRampTime;
         }
 
-        // TLEffectPhaseEvent; Exclusive Mutable Component
+        #endregion
+
+        #region TLEffectPhaseEvent; Exclusive Mutable Component
 
         private static void HandleTLEffectPhase(XElement keyData, EffectPhaseKey key)
         {
             key.Value = ExtractInt(keyData.XPathSelectElement("./attribute[@id='EffectPhase']")) ?? ComponentEffectPhase.phaseFallback;
         }
 
-        // TLEmotionEvent; Exclusive Immutable Component
+        #endregion
+
+        #region TLEmotionEvent; Exclusive Immutable Component
 
         private static void HandleTLEmotionEvent(XElement keyData, EmotionKeyData keyValue)
         {
@@ -1438,23 +1484,29 @@ namespace TMLGen.Generation.Collectors
             keyValue.IsSustainedEmotion = ExtractBool(keyData.XPathSelectElement("./attribute[@id='IsSustainedEmotion']")) ?? keyValue.IsSustainedEmotion;
         }
 
-        // TLGenomeTextEvent; Exclusive Mutable Component
+        #endregion
+
+        #region TLGenomeTextEvent; Exclusive Mutable Component
 
         private static void HandleTLGenomeTextEvent(XElement keyData, StringKey key)
         {
             key.Value = ExtractString(keyData.XPathSelectElement("./attribute[@id='EventName']")) ?? string.Empty;
         }
 
-        // TLHandsIK, TLPhysics; Exclusive Mutable Components
+        #endregion
+
+        #region TLHandsIK, TLPhysics; Exclusive Mutable Components
 
         private static void HandleTLHandsIKOrTLPhysics(XElement keyData, BooleanKey key)
         {
             key.Value = ExtractBool(keyData.XPathSelectElement("./attribute[@id='InverseKinematics']")) ?? true;
         }
 
-        // TLLookAtEvent; Exclusive Immutable Component
+        #endregion
 
-        private static void HandleTLLookAtEvent(XElement keyData, LookAtKeyData keyValue)
+        #region TLLookAtEvent; Exclusive Immutable Component
+
+        private void HandleTLLookAtEvent(XElement keyData, LookAtKeyData keyValue)
         {
             GetImmutableTargetKeyTarget(keyData, keyValue);
             keyValue.TargetBone = ExtractString(keyData.XPathSelectElement("./attribute[@id='Bone']")) ?? keyValue.TargetBone;
@@ -1478,7 +1530,9 @@ namespace TMLGen.Generation.Collectors
             if (eyeOffset != null) keyValue.EyeOverrideOffset = eyeOffset.ToString();
         }
 
-        // TLMaterial; Unique Handling
+        #endregion
+
+        #region TLMaterial; Unique Handling
 
         private void HandleTLMaterial(XElement componentData, Sequence seq)
         {
@@ -1634,7 +1688,7 @@ namespace TMLGen.Generation.Collectors
             if (candidates.Count > 1)
             {
                 Guid actorAttempt = TryGetCharacterVisualIdWithActorId(actorId, candidates);
-                return actorAttempt == Guid.Empty ? (Guid)sender.Invoke(MainForm.materialSelectionDelegate, candidates) : actorAttempt;
+                return actorAttempt == Guid.Empty ? (Guid)sender.Invoke(MainForm.materialSelectionDelegate, candidates, materialId, resourceId, sourceNameExtensionless) : actorAttempt;
             }
             return Guid.Empty;
         }
@@ -1660,28 +1714,36 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLPlayEffectEvent; Exclusive Mutable Component
+        #endregion
+
+        #region TLPlayEffectEvent; Exclusive Mutable Component
 
         private static void HandleTLPlayEffect(XElement keyData, BooleanKey key)
         {
             key.Value = ExtractBool(keyData.XPathSelectElement("./attribute[@id='PlayEffect']")) ?? true;
         }
 
-        // TLPlayRate; Global Exclusive Mutable Component
+        #endregion
+
+        #region TLPlayRate; Global Exclusive Mutable Component
 
         private static void HandleTLPlayRate(XElement keyData, FloatKey key)
         {
             key.Value = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='Speed']")) ?? ComponentPlayRate.defaultPlayRate;
         }
 
-        // TLShapeShift; Exclusive Immutable Component
+        #endregion
+
+        #region TLShapeShift; Exclusive Immutable Component
 
         private static void HandleTLShapeshift(XElement keyData, ShapeshiftKeyData keyValue)
         {
             keyValue.TemplateId = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='TemplateId']")) ?? keyValue.TemplateId;
         }
 
-        // TLShot; Unique Handling
+        #endregion
+
+        #region TLShot; Unique Handling
 
         private void HandleTLShot(XElement componentData, Sequence seq)
         {
@@ -1712,7 +1774,7 @@ namespace TMLGen.Generation.Collectors
             seq.componentDict[trackId] = curContainer;
         }
 
-        private static List<Camera> GetCameras(XElement componentData)
+        private List<Camera> GetCameras(XElement componentData)
         {
             List<Camera> res = [];
             IEnumerable<XElement> cameraData = componentData.XPathSelectElements("./children/node[@id='CameraContainer']");
@@ -1732,9 +1794,11 @@ namespace TMLGen.Generation.Collectors
             return res;
         }
 
-        // TLShowArmor; Unique Handling
+        #endregion
 
-        private static void HandleTLShowArmor(XElement componentData, Sequence seq)
+        #region TLShowArmor; Unique Handling
+
+        private void HandleTLShowArmor(XElement componentData, Sequence seq)
         {
             Guid? actorId = GetComponentActor(componentData);
             if (actorId.HasValue)
@@ -1756,16 +1820,20 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLShowPeanuts; Global Exclusive Mutable Component
+        #endregion
+
+        #region TLShowPeanuts; Global Exclusive Mutable Component
 
         private static void HandleTLShowPeanuts(XElement keyData, BooleanKey key)
         {
             key.Value = ExtractBool(keyData.XPathSelectElement("./attribute[@id='ShowPeanuts']")) ?? true;
         }
 
-        // TLShowVisual; Unique Handling
+        #endregion
 
-        private static void HandleTLShowVisual(XElement componentData, Sequence seq)
+        #region TLShowVisual; Unique Handling
+
+        private void HandleTLShowVisual(XElement componentData, Sequence seq)
         {
             Guid? actorId = GetComponentActor(componentData);
             if (actorId.HasValue)
@@ -1779,14 +1847,18 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLShowWeapon; Exclusive Mutable Component
+        #endregion
+
+        #region TLShowWeapon; Exclusive Mutable Component
 
         private static void HandleTLShowWeapon(XElement keyData, BooleanKey key)
         {
             key.Value = ExtractBool(keyData.XPathSelectElement("./attribute[@id='ShowWeapon']")) ?? true;
         }
 
-        // TLSoundEvent; Unique Handling
+        #endregion
+
+        #region TLSoundEvent; Unique Handling
 
         private void HandleTLSoundEvent(XElement componentData, Sequence seq)
         {
@@ -1818,9 +1890,11 @@ namespace TMLGen.Generation.Collectors
             BindChannelAndComponent(newChannel, curComponent, curContainer, seq, trackId);
         }
 
-        // TLSplatter; Unique Handling
+        #endregion
 
-        private static void HandleTLSplatter(XElement componentData, Sequence seq)
+        #region TLSplatter; Unique Handling
+
+        private void HandleTLSplatter(XElement componentData, Sequence seq)
         {
             Guid? actorId = GetComponentActor(componentData);
             if (actorId.HasValue)
@@ -1868,9 +1942,11 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLSprings; Unique Handling
+        #endregion
 
-        private static void HandleTLSprings(XElement componentData, Sequence seq)
+        #region TLSprings; Unique Handling
+
+        private void HandleTLSprings(XElement componentData, Sequence seq)
         {
             Guid? actorId = GetComponentActor(componentData);
             if (actorId.HasValue)
@@ -1884,7 +1960,9 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLSwitchLocationEvent; Global Exclusive Immutable Component
+        #endregion
+
+        #region TLSwitchLocationEvent; Global Exclusive Immutable Component
 
         private static void HandleTLSwitchLocation(XElement keyData, SwitchLocationKeyData keyValue)
         {
@@ -1900,7 +1978,7 @@ namespace TMLGen.Generation.Collectors
         /// <param name="seq"></param>
         private void TryAddRootLocation(SwitchLocationKey key, SwitchLocationKeyData keyValue, Sequence seq)
         {
-            if (dbRootNodes.Contains(seq.DialogNodeReference.First().DialogNodeId) && key.Time == 0)
+            if (keyValue.Event != Guid.Empty && dbRootNodes.Contains(seq.DialogNodeReference.First().DialogNodeId) && key.Time == 0)
             {
                 rootLocations.Add(keyValue.Event);
             }
@@ -1918,12 +1996,14 @@ namespace TMLGen.Generation.Collectors
             }
             else if (locations > 1)
             {
-                Guid selected = (Guid)sender.Invoke(MainForm.locationSelectionDelegate, rootLocations);
+                Guid selected = (Guid)sender.Invoke(MainForm.locationSelectionDelegate, rootLocations, sourceNameExtensionless);
                 timeline.TimelinePosition.BoundSceneId = selected;
             }
         }
 
-        // TLSwitchStageEvent; Global Exclusive Immutable Component
+        #endregion
+
+        #region TLSwitchStageEvent; Global Exclusive Immutable Component
 
         private static void HandleTLSwitchStage(XElement keyData, SwitchStageKeyData keyValue)
         {
@@ -1932,9 +2012,11 @@ namespace TMLGen.Generation.Collectors
             keyValue.ForceUpdateCameraBehavior = ExtractBool(keyData.XPathSelectElement("./attribute[@id='ForceUpdateCameraBehavior']")) ?? keyValue.ForceUpdateCameraBehavior;
         }
 
-        // TLTransform; Unique Handling
+        #endregion
 
-        private static void HandleTLTransform(XElement componentData, Sequence seq)
+        #region TLTransform; Unique Handling
+
+        private void HandleTLTransform(XElement componentData, Sequence seq)
         {
             Guid? actorId = GetComponentActor(componentData);
             if (actorId.HasValue)
@@ -2011,7 +2093,7 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        private static void GetTransformParentKeys(XElement componentData, ComponentTransform transformComponent, float lsfStartTime)
+        private void GetTransformParentKeys(XElement componentData, ComponentTransform transformComponent, float lsfStartTime)
         {
             XElement transformChannel = componentData.XPathSelectElement("./children/node[@id='TransformChannels']/children/node[@id='TransformChannel'][6]");
             if (transformChannel != null)
@@ -2039,7 +2121,9 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        // TLVoice; Unique Handling
+        #endregion
+
+        #region TLVoice; Unique Handling
 
         private void HandleTLVoice(XElement componentData, Sequence seq)
         {
@@ -2104,7 +2188,9 @@ namespace TMLGen.Generation.Collectors
             seq.DialogNodeReference.Add(refIds);
         }
 
-        // Key Helpers
+        #endregion
+
+        #region Key Helpers
 
         /// <summary>
         /// Extracts a Vector2 from the given data with the given attribute name. Returns the vector as a string if possible, otherwise null.
@@ -2123,7 +2209,7 @@ namespace TMLGen.Generation.Collectors
         /// </summary>
         /// <param name="keyData"></param>
         /// <param name="keyValue"></param>
-        private static void GetImmutableTargetKeyTarget(XElement keyData, ImmutableTargetKeyDataBase keyValue)
+        private void GetImmutableTargetKeyTarget(XElement keyData, ImmutableTargetKeyDataBase keyValue)
         {
             Guid? target = ExtractGuid(keyData.XPathSelectElement("./attribute[@id='Target']"));
             if (target.HasValue) keyValue.TargetId = actorTrackMapping[(Guid)target];
@@ -2404,5 +2490,7 @@ namespace TMLGen.Generation.Collectors
         {
             return channel.XPathSelectElements("./children/node[@id='Keys']/children/node[@id='Key']");
         }
+
+        #endregion
     }
 }
