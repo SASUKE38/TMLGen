@@ -130,7 +130,15 @@ namespace TMLGen.Generation.Collectors
 
         private void HandleTagCinematic(Guid nodeId, JsonNode node, HashSet<string> flags)
         {
-            string name = node["editorData"]![0]!["data"]![22]!["val"]!["value"].ToString();
+            string name = "Cinematic";
+            JsonArray dataElements = node["editorData"]![0]!["data"].AsArray();
+            foreach (JsonNode data in dataElements)
+            {
+                if (data["key"]!["value"].ToString() == "logicalname")
+                {
+                    name = data["val"]!["value"].ToString();
+                }
+            }
             flagDict.Add(nodeId, flags);
             linesDict.Add(nodeId, name);
         }
