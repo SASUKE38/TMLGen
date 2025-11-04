@@ -10,6 +10,14 @@ using TMLGen.Generation.Helpers;
 
 namespace TMLGen.Generation.Collectors
 {
+    public struct ReferenceFlagPaths
+    {
+        public HashSet<string> flagPaths;
+        public HashSet<string> tagPaths;
+        public HashSet<string> scriptFlagPaths;
+        public HashSet<string> questFlagPaths;
+    }
+
     public class ReferenceCollector
     {
         private readonly JsonNode rootNode;
@@ -17,10 +25,8 @@ namespace TMLGen.Generation.Collectors
         private readonly Dictionary<Guid, string> linesDict = [];
         private readonly XDocument localizationDoc;
         private readonly string outputPath;
-        private readonly List<string> flagPaths;
-        private readonly List<string> tagPaths;
-        private readonly List<string> scriptFlagPaths;
-        private readonly List<string> questFlagPaths;
+        private readonly ReferenceFlagPaths referenceFlagPaths;
+        private readonly JsonSerializerOptions options;
 
         private static readonly List<string> validNodeTypes = ["TagAnswer", "TagGreeting", "TagCinematic"];
         private static readonly Dictionary<string, string> nodeTitles = new()
@@ -41,35 +47,13 @@ namespace TMLGen.Generation.Collectors
             public Dictionary<Guid, string> Lines { get; } = linesDict;
         }
 
-        public ReferenceCollector(string dataDirectory, string dialogDoc, string outputPath, string localizationDoc)
+        public ReferenceCollector(string dataDirectory, string dialogDoc, string outputPath, string localizationDoc, ReferenceFlagPaths referenceFlagPaths, JsonSerializerOptions options)
         {
             rootNode = JsonNode.Parse(new StreamReader(dialogDoc).BaseStream);
             this.localizationDoc = XDocument.Load(localizationDoc);
             this.outputPath = GetReferenceName(outputPath);
-            flagPaths =
-            [
-                Path.Join([dataDirectory, "Gustav", "Public", "GustavDev", "Flags"]),
-                Path.Join([dataDirectory, "Gustav", "Public", "Gustav", "Flags"]),
-                Path.Join([dataDirectory, "Shared", "Public", "SharedDev", "Flags"]),
-                Path.Join([dataDirectory, "Shared", "Public", "Shared", "Flags"]),
-            ];
-            tagPaths =
-            [
-                Path.Join([dataDirectory, "Gustav", "Public", "GustavDev", "Tags"]),
-                Path.Join([dataDirectory, "Gustav", "Public", "Gustav", "Tags"]),
-                Path.Join([dataDirectory, "Shared", "Public", "SharedDev", "Tags"]),
-                Path.Join([dataDirectory, "Shared", "Public", "Shared", "Tags"]),
-            ];
-            scriptFlagPaths =
-            [
-                Path.Join([dataDirectory, "Gustav", "Mods","GustavDev", "Story", "Dialogs", "ScriptFlags", "ScriptFlags.lsx"]),
-                Path.Join([dataDirectory, "Gustav", "Mods","Gustav", "Story", "Dialogs", "ScriptFlags", "ScriptFlags.lsx"]),
-                Path.Join([dataDirectory, "Shared", "Mods","Shared", "Story", "Dialogs", "ScriptFlags", "ScriptFlags.lsx"]),
-            ];
-            questFlagPaths =
-            [
-                Path.Join([dataDirectory, "Gustav", "Mods","GustavDev", "Story", "Journal", "quest_prototypes.lsx"])
-            ];
+            this.referenceFlagPaths = referenceFlagPaths;
+            this.options = options;
         }
 
         private string GetReferenceName(string outputPath)
@@ -117,12 +101,6 @@ namespace TMLGen.Generation.Collectors
 
         private void WriteOutput()
         {
-            JsonSerializerOptions options = new()
-            {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                WriteIndented = true
-            };
-
             ReferenceFile refFile = new(flagDict, linesDict);
             string refJson = JsonSerializer.Serialize(refFile, options);
             File.WriteAllText(outputPath, refJson);
@@ -190,8 +168,8 @@ namespace TMLGen.Generation.Collectors
                             string id = flag["UUID"]!["value"].ToString();
                             if (!foundFlags.Contains(id))
                             {
-                                string name = GetFlagName(id, flagPaths);
-                                if (name == string.Empty) name = GetFlagName(id, tagPaths);
+                                string name = GetFlagName(id, referenceFlagPaths.flagPaths);
+                                if (name == string.Empty) name = GetFlagName(id, referenceFlagPaths.tagPaths);
                                 if (name == string.Empty) name = GetScriptFlagName(id);
                                 if (name == string.Empty) name = GetQuestFlagName(id);
                                 res.Add(name);
@@ -207,7 +185,7 @@ namespace TMLGen.Generation.Collectors
 
         private string GetQuestFlagName(string flagId)
         {
-            foreach (string questFlagFile in questFlagPaths)
+            foreach (string questFlagFile in referenceFlagPaths.questFlagPaths)
             {
                 XDocument flagDoc = XDocument.Load(questFlagFile);
                 XElement flagEle = flagDoc.XPathSelectElement("save/region/node/children/node[children[node[attribute[@id='DialogFlagGUID'][@value='" + flagId + "']]]]");
@@ -224,7 +202,7 @@ namespace TMLGen.Generation.Collectors
 
         private string GetScriptFlagName(string flagId)
         {
-            foreach (string scriptFlagFile in scriptFlagPaths)
+            foreach (string scriptFlagFile in referenceFlagPaths.scriptFlagPaths)
             {
                 XDocument flagDoc = XDocument.Load(scriptFlagFile);
                 XElement flagEle = flagDoc.XPathSelectElement("save/region/node/children/node[attribute[@id='UUID'][@value='" + flagId + "']]");
@@ -252,7 +230,7 @@ namespace TMLGen.Generation.Collectors
                             string item = tag["Object"]!["value"].ToString();
                             if (!foundTags.Contains(item))
                             {
-                                flags.Add(GetFlagName(item, tagPaths));
+                                flags.Add(GetFlagName(item, referenceFlagPaths.tagPaths));
                             }
                             foundTags.Add(item);
                         }
@@ -261,7 +239,7 @@ namespace TMLGen.Generation.Collectors
             }
         }
 
-        private string GetFlagName(string flagId, List<string> pathCollection)
+        private string GetFlagName(string flagId, HashSet<string> pathCollection)
         {
             foreach (string flagDir in pathCollection)
             {

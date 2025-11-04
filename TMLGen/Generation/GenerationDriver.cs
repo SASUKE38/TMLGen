@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -42,6 +44,11 @@ namespace TMLGen.Generation
             string templatePath = extraPathsGiven ? Settings.Default.TimelineTemplatesDirectory : null;
             string rawSourcePath = Settings.Default.SourceFile;
             string modName = Settings.Default.SelectedMod;
+            JsonSerializerOptions options = new()
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            };
 
             LoggingHelper.Write(Resources.ProgressStarting);
             if (!extraPathsGiven)
@@ -62,6 +69,7 @@ namespace TMLGen.Generation
                 return 1;
 
             string localizationPath = PrepareLocalizationAndVisualFiles(dataPath, [], "English");
+            ReferenceFlagPaths flagPaths = PreparationHelper.GetReferenceFlagPaths(dataPath);
             CopyTimelineFiles(gdtPath, rawSourcePath, sourceNameExtensionless, gameDataPath, modName, doCopy);
             GetSerializer(out XmlSerializer serializer, out XmlSerializerNamespaces namespaces);
 
@@ -82,7 +90,9 @@ namespace TMLGen.Generation
                 separateAnimations,
                 skipShowArmor,
                 doCopy,
-                true);
+                true,
+                flagPaths,
+                options);
             return 0;
         }
 
@@ -103,10 +113,16 @@ namespace TMLGen.Generation
             bool separateAnimations = Settings.Default.SeparateAnimations;
             bool doCopy = Settings.Default.DoCopy;
             bool skipShowArmor = Settings.Default.SkipShowArmor;
+            JsonSerializerOptions options = new()
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            };
 
             LoggingHelper.Write(Resources.ProgressStartingBatch);
 
             string localizationPath = PrepareLocalizationAndVisualFiles(dataPath, [], "English");
+            ReferenceFlagPaths flagPaths = PreparationHelper.GetReferenceFlagPaths(dataPath);
             GetSerializer(out XmlSerializer serializer, out XmlSerializerNamespaces namespaces);
 
             string[] fileCollection = [.. Directory.GetFiles(inputPath, "*.lsf").Where(x => !x.EndsWith("_Scene.lsf") && !x.EndsWith("_Prefetch.lsf"))];
@@ -167,7 +183,9 @@ namespace TMLGen.Generation
                                 separateAnimations,
                                 skipShowArmor,
                                 doCopy,
-                                false);
+                                false,
+                                flagPaths,
+                                options);
                         }
                         catch (Exception ex) when (ex is not OperationCanceledException)
                         {
@@ -231,7 +249,9 @@ namespace TMLGen.Generation
             bool separateAnimations,
             bool skipShowArmor,
             bool doCopy,
-            bool doProgressLog)
+            bool doProgressLog,
+            ReferenceFlagPaths flagPaths,
+            JsonSerializerOptions options)
         {
             Root root = new();
             Timeline timeline = new();
@@ -279,7 +299,7 @@ namespace TMLGen.Generation
 
             if (localizationPath != null && dPath != null)
             {
-                ReferenceCollector referenceCollector = new(dataPath, dPath, outputPath, localizationPath);
+                ReferenceCollector referenceCollector = new(dataPath, dPath, outputPath, localizationPath, flagPaths, options);
                 referenceCollector.Collect();
             }
 

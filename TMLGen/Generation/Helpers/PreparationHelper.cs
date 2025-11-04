@@ -8,6 +8,7 @@ using System.Security;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using TMLGen.Forms.Logging;
+using TMLGen.Generation.Collectors;
 using TMLGen.Properties;
 
 namespace TMLGen.Generation.Helpers
@@ -295,6 +296,55 @@ namespace TMLGen.Generation.Helpers
             string localizationPath = Path.Join(dataDirectory, language, "Localization", language, language.ToLower() + ".loca");
             LocaResource resource = LocaUtils.Load(localizationPath, LocaFormat.Loca);
             LocaUtils.Save(resource, Path.GetFullPath(cachePath), LocaFormat.Xml);
+        }
+
+        public static ReferenceFlagPaths GetReferenceFlagPaths(string dataDirectory)
+        {
+            bool didMissingWarning = false;
+            bool CheckFlagPath(string path, Func<string, bool> predicate)
+            {
+                bool res = predicate(path);
+                if (!res && !didMissingWarning)
+                {
+                    didMissingWarning = true;
+                    LoggingHelper.Write(Resources.ReferenceFlagPathDoesNotExist, 2);
+                }
+                return res;
+            }
+
+            List<string> flagPaths =
+            [
+                Path.Join([dataDirectory, "Gustav", "Public", "GustavDev", "Flags"]),
+                Path.Join([dataDirectory, "Gustav", "Public", "Gustav", "Flags"]),
+                Path.Join([dataDirectory, "Shared", "Public", "SharedDev", "Flags"]),
+                Path.Join([dataDirectory, "Shared", "Public", "Shared", "Flags"]),
+            ];
+            List<string> tagPaths =
+            [
+                Path.Join([dataDirectory, "Gustav", "Public", "GustavDev", "Tags"]),
+                Path.Join([dataDirectory, "Gustav", "Public", "Gustav", "Tags"]),
+                Path.Join([dataDirectory, "Shared", "Public", "SharedDev", "Tags"]),
+                Path.Join([dataDirectory, "Shared", "Public", "Shared", "Tags"]),
+            ];
+            List<string> scriptFlagPaths =
+            [
+                Path.Join([dataDirectory, "Gustav", "Mods","GustavDev", "Story", "Dialogs", "ScriptFlags", "ScriptFlags.lsx"]),
+                Path.Join([dataDirectory, "Gustav", "Mods","Gustav", "Story", "Dialogs", "ScriptFlags", "ScriptFlags.lsx"]),
+                Path.Join([dataDirectory, "Shared", "Mods","Shared", "Story", "Dialogs", "ScriptFlags", "ScriptFlags.lsx"]),
+            ];
+            List<string> questFlagPaths =
+            [
+                Path.Join([dataDirectory, "Gustav", "Mods","GustavDev", "Story", "Journal", "quest_prototypes.lsx"])
+            ];
+
+            ReferenceFlagPaths res = new()
+            {
+                flagPaths = [.. flagPaths.Where(path => CheckFlagPath(path, Directory.Exists))],
+                tagPaths = [.. tagPaths.Where(path => CheckFlagPath(path, Directory.Exists))],
+                scriptFlagPaths = [.. scriptFlagPaths.Where(path => CheckFlagPath(path, File.Exists))],
+                questFlagPaths = [.. questFlagPaths.Where(path => CheckFlagPath(path, File.Exists))]
+            };
+            return res;
         }
     }
 }

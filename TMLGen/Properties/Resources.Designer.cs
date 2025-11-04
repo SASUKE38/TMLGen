@@ -367,6 +367,15 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Flag data does not exist. The reference file(s) might be incorrect without it. Unpack Shared.pak, SharedDev.pak, Gustav.pak, and GustavDev.pak to fix this. Alternatively, refresh the timeline(s) in the editor..
+        /// </summary>
+        internal static string ReferenceFlagPathDoesNotExist {
+            get {
+                return ResourceManager.GetString("ReferenceFlagPathDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to locate source file..
         /// </summary>
         internal static string SourceFileDoesNotExist {
