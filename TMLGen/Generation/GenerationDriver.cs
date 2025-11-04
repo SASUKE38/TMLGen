@@ -299,7 +299,7 @@ namespace TMLGen.Generation
 
             if (localizationPath != null && dPath != null)
             {
-                ReferenceCollector referenceCollector = new(dataPath, dPath, outputPath, localizationPath, flagPaths, options);
+                ReferenceCollector referenceCollector = new(dPath, outputPath, localizationPath, flagPaths, options);
                 referenceCollector.Collect();
             }
 

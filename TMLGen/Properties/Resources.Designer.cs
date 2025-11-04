@@ -259,7 +259,7 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error occurred during generation..
+        ///   Looks up a localized string similar to An exception occurred during generation..
         /// </summary>
         internal static string GenerationError {
             get {
@@ -268,11 +268,20 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error occurred during generation of {0}.
+        ///   Looks up a localized string similar to An exception occurred during generation of {0}.
         /// </summary>
         internal static string GenerationErrorBatch {
             get {
                 return ResourceManager.GetString("GenerationErrorBatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred during generation..
+        /// </summary>
+        internal static string GenerationErrorNoException {
+            get {
+                return ResourceManager.GetString("GenerationErrorNoException", resourceCulture);
             }
         }
         
@@ -300,6 +309,15 @@ namespace TMLGen.Properties {
         internal static string LocalizationCacheCreationError {
             get {
                 return ResourceManager.GetString("LocalizationCacheCreationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following exception could not be logged. {0}.
+        /// </summary>
+        internal static string LoggingExceptionError {
+            get {
+                return ResourceManager.GetString("LoggingExceptionError", resourceCulture);
             }
         }
         

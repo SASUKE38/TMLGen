@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using TMLGen.Forms.Logging;
-using TMLGen.Generation.Collectors;
 using TMLGen.Properties;
 
 namespace TMLGen.Generation.Helpers
@@ -23,7 +22,7 @@ namespace TMLGen.Generation.Helpers
             }
             catch (Exception)
             {
-
+                LoggingHelper.Write(String.Format(Resources.LoggingExceptionError, e), 3);
             }
         }
 

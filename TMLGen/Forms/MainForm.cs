@@ -364,7 +364,7 @@ namespace TMLGen
             }
             else if ((int)e.Result > 0)
             {
-                LoggingHelper.Write(Resources.GenerationError, 3);
+                LoggingHelper.Write(Resources.GenerationErrorNoException, 3);
             }
             else
                 LoggingHelper.Write(Resources.GenerationFinished, 1);

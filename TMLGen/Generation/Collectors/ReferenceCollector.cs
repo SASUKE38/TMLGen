@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
@@ -47,7 +46,7 @@ namespace TMLGen.Generation.Collectors
             public Dictionary<Guid, string> Lines { get; } = linesDict;
         }
 
-        public ReferenceCollector(string dataDirectory, string dialogDoc, string outputPath, string localizationDoc, ReferenceFlagPaths referenceFlagPaths, JsonSerializerOptions options)
+        public ReferenceCollector(string dialogDoc, string outputPath, string localizationDoc, ReferenceFlagPaths referenceFlagPaths, JsonSerializerOptions options)
         {
             rootNode = JsonNode.Parse(new StreamReader(dialogDoc).BaseStream);
             this.localizationDoc = XDocument.Load(localizationDoc);

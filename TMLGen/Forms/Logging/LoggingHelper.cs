@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace TMLGen.Forms.Logging
@@ -26,13 +28,34 @@ namespace TMLGen.Forms.Logging
         public static void Write(string text, int colorNum)
         {
             typeDict.TryGetValue(colorNum, out Color color);
-            log?.AddToLog(text, color);
+            log?.AddToLog(ConvertString(text), color);
             form.Invoke(MainForm.logDelegate);
         }
 
         public static void Write(string text)
         {
             Write(text, 0);
+        }
+
+        // https://stackoverflow.com/questions/4795709/how-to-convert-a-string-to-rtf-in-c
+        private static string ConvertString(string text)
+        {
+            //first take care of special RTF chars
+            StringBuilder backslashed = new StringBuilder(text);
+            backslashed.Replace(@"\", @"\\");
+            backslashed.Replace(@"{", @"\{");
+            backslashed.Replace(@"}", @"\}");
+
+            //then convert the string char by char
+            StringBuilder sb = new();
+            foreach (char character in backslashed.ToString())
+            {
+                if (character <= 127)
+                    sb.Append(character);
+                else
+                    sb.Append("\\u" + Convert.ToUInt32(character) + "?");
+            }
+            return sb.ToString();
         }
 
         public static string GetOutput()
