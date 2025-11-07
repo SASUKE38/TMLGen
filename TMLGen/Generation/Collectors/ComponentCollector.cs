@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -34,6 +35,7 @@ namespace TMLGen.Generation.Collectors
         private readonly bool skipShowArmor;
         private readonly Form sender;
         private readonly string sourceNameExtensionless;
+        private readonly CancellationToken? token;
 
         public ComponentCollector(
             Form sender,
@@ -45,7 +47,8 @@ namespace TMLGen.Generation.Collectors
             bool separateAnimations,
             bool skipShowArmor,
             Dictionary<Guid, Guid> actorTrackMapping,
-            Dictionary<Guid, ActorTrackBase> trackMapping) : base(doc, gdtDoc, timeline, actorTrackMapping, trackMapping)
+            Dictionary<Guid, ActorTrackBase> trackMapping,
+            CancellationToken? token) : base(doc, gdtDoc, timeline, actorTrackMapping, trackMapping)
         {
             dbNodes = dbDoc.XPathSelectElement("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children");
             IEnumerable<XElement> dbRootNodeElements = dbDoc.XPathSelectElements("save/region[@id='dialog']/node[@id='dialog']/children/node[@id='nodes']/children/node[@id='RootNodes']");
@@ -58,6 +61,7 @@ namespace TMLGen.Generation.Collectors
             this.skipShowArmor = skipShowArmor;
             this.sender = sender;
             this.sourceNameExtensionless = sourceNameExtensionless;
+            this.token = token;
         }
 
         public override void Collect()
@@ -74,6 +78,8 @@ namespace TMLGen.Generation.Collectors
 
             while (true)
             {
+                if (token.HasValue && token.Value.IsCancellationRequested) return;
+
                 IEnumerable<XElement> components = currentPhase == 0 ?
                     componentCollection.XPathSelectElements("./node[@id='EffectComponent'][not(attribute[@id='PhaseIndex'])]"):
                     componentCollection.XPathSelectElements("./node[@id='EffectComponent'][attribute[@id='PhaseIndex'][@value='" + currentPhase + "']]");
@@ -1520,6 +1526,7 @@ namespace TMLGen.Generation.Collectors
             keyValue.Weight = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='Weight']")) ?? keyValue.Weight;
             keyValue.SafeZoneAngle = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='SafeZoneAngle']")) ?? keyValue.SafeZoneAngle;
             keyValue.HeadSafeZoneAngle = ExtractFloat(keyData.XPathSelectElement("./attribute[@id='HeadSafeZoneAngle']")) ?? keyValue.HeadSafeZoneAngle;
+            keyValue.ResetEvent = ExtractBool(keyData.XPathSelectElement("./attribute[@id='Reset']")) ?? keyValue.ResetEvent;
             Vector3 offset = ExtractVector3(keyData.XPathSelectElement("./attribute[@id='Offset']"));
             if (offset != null) keyValue.Offset = offset.ToString();
             keyValue.IsEyeOverrideEnabled = ExtractBool(keyData.XPathSelectElement("./attribute[@id='IsEyeLookAtEnabled']")) ?? keyValue.IsEyeOverrideEnabled;

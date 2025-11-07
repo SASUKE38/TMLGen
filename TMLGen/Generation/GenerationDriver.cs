@@ -92,7 +92,8 @@ namespace TMLGen.Generation
                 doCopy,
                 true,
                 flagPaths,
-                options);
+                options,
+                null);
             return 0;
         }
 
@@ -140,7 +141,7 @@ namespace TMLGen.Generation
                     {
                         e.Cancel = true;
                         cts.Cancel();
-                        state.Stop();
+                        state.Break();
                     }
                     else
                     {
@@ -185,7 +186,8 @@ namespace TMLGen.Generation
                                 doCopy,
                                 false,
                                 flagPaths,
-                                options);
+                                options,
+                                cts.Token);
                         }
                         catch (Exception ex) when (ex is not OperationCanceledException)
                         {
@@ -195,8 +197,11 @@ namespace TMLGen.Generation
 
                         lock (lockObj)
                         {
-                            worker.ReportProgress((int)(((double)current / total) * 100));
-                            current++;
+                            if (!cts.IsCancellationRequested)
+                            {
+                                worker.ReportProgress((int)(((double)current / total) * 100));
+                                current++;
+                            }
                         }
                     }
                 });
@@ -232,6 +237,9 @@ namespace TMLGen.Generation
         /// <param name="skipShowArmor">Whether or not to include the TLShowArmor component in the generated .tml.</param>
         /// <param name="doCopy">Whether or not to output the files to the user's mod or to the default Timeline Data directory.</param>
         /// <param name="doProgressLog">Whether or not to log each stage of generation.</param>
+        /// <param name="flagPaths">The paths to flag files that should be used to create the _ref.json file.</param>
+        /// <param name="options">The <see cref="JsonSerializerOptions"/> to use when serializing the _ref.json file.</param>
+        /// <param name="token">The <see cref="CancellationToken"/> for the parallel loop that this function was called from, if applicable.</param>
         private static void Generate(
             Form sender,
             XmlSerializer serializer,
@@ -251,7 +259,8 @@ namespace TMLGen.Generation
             bool doCopy,
             bool doProgressLog,
             ReferenceFlagPaths flagPaths,
-            JsonSerializerOptions options)
+            JsonSerializerOptions options,
+            CancellationToken? token)
         {
             Root root = new();
             Timeline timeline = new();
@@ -289,11 +298,14 @@ namespace TMLGen.Generation
                 separateAnimations,
                 skipShowArmor,
                 actorCollector.actorTrackMapping,
-                actorCollector.trackMapping);
+                actorCollector.trackMapping,
+                token);
             if (doProgressLog) LoggingHelper.Write(Resources.ProgressComponents);
             componentCollector.Collect();
 
             if (doProgressLog) LoggingHelper.Write(Resources.ProgressSerializing);
+            if (token.HasValue && token.Value.IsCancellationRequested) return;
+
             string outputPath = CopyHelper.GetOutputPath(sourceNameExtensionless, gameDataPath, modName, doCopy);
             StreamWriter writer = new(outputPath);
 
@@ -307,6 +319,7 @@ namespace TMLGen.Generation
             writer.Close();
 
             XDocument processed = new(CleanupHelper.DoPostProcess(XDocument.Load(outputPath).XPathSelectElement("Root")));
+            if (token.HasValue && token.Value.IsCancellationRequested) return;
             processed.Save(outputPath);
 
             CleanupHelper.DeleteTempFiles([dbPath, sourceLsx, gdtPath]);
