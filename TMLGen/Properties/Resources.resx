@@ -286,12 +286,18 @@
     <value>One or more speakers in {0} are missing a dialogs binary entry. This can happen if the input files are incorrect or if the timeline data does not properly reflect the dialog data.</value>
   </data>
   <data name="ReferenceFlagPathDoesNotExist" xml:space="preserve">
-    <value>Flag data does not exist. The reference file(s) might be incorrect without it. Unpack Shared.pak, SharedDev.pak, Gustav.pak, and GustavDev.pak to fix this. Alternatively, refresh the timeline(s) in the editor.</value>
+    <value>Flag data does not exist. The reference file(s) might be incorrect without it. Unpack Shared.pak and Gustav.pak to fix this. Alternatively, refresh the timeline(s) in the editor.</value>
   </data>
   <data name="LoggingExceptionError" xml:space="preserve">
     <value>The following exception could not be logged. {0}</value>
   </data>
   <data name="GenerationErrorNoException" xml:space="preserve">
     <value>An error occurred during generation.</value>
+  </data>
+  <data name="OpenPathDoesNotExist" xml:space="preserve">
+    <value>The path {0} does not exist.</value>
+  </data>
+  <data name="OpenPathError" xml:space="preserve">
+    <value>Could not open the path {0}.</value>
   </data>
 </root>

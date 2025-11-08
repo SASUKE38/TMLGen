@@ -489,5 +489,24 @@ namespace TMLGen
             Settings.Default.SkipSelectionPrompt = checkBoxNoLocationSelection.Checked;
             Settings.Default.Save();
         }
+
+        private void openUnpackedDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FileHelper.OpenPath(PathConfigurationSettings.Default.UnpackedDataDirectory);
+        }
+
+        private void openGameDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FileHelper.OpenPath(PathConfigurationSettings.Default.GameDataDirectory);
+        }
+
+        private void openTimelineDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!Directory.Exists(CopyHelper.copiedDataDirectoryName))
+            {
+                Directory.CreateDirectory(CopyHelper.copiedDataDirectoryName);
+            }
+            FileHelper.OpenPath(CopyHelper.copiedDataDirectoryName);
+        }
     }
 }

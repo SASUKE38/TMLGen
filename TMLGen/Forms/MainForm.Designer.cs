@@ -77,6 +77,11 @@
             backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             menuStrip1 = new System.Windows.Forms.MenuStrip();
             dataPathConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            shortcutsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            openUnpackedDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            openGameDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            openTimelineDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             buttonCancel = new System.Windows.Forms.Button();
             groupBox1.SuspendLayout();
             tabControlMode.SuspendLayout();
@@ -548,7 +553,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { dataPathConfigurationToolStripMenuItem });
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { dataPathConfigurationToolStripMenuItem, shortcutsToolStripMenuItem });
             menuStrip1.Location = new System.Drawing.Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new System.Drawing.Size(1020, 24);
@@ -561,6 +566,39 @@
             dataPathConfigurationToolStripMenuItem.Size = new System.Drawing.Size(147, 20);
             dataPathConfigurationToolStripMenuItem.Text = "Data Path Configuration";
             dataPathConfigurationToolStripMenuItem.Click += dataPathConfigurationToolStripMenuItem_Click;
+            // 
+            // shortcutsToolStripMenuItem
+            // 
+            shortcutsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { openTimelineDataFolderToolStripMenuItem, toolStripSeparator1, openUnpackedDataFolderToolStripMenuItem, openGameDataFolderToolStripMenuItem });
+            shortcutsToolStripMenuItem.Name = "shortcutsToolStripMenuItem";
+            shortcutsToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            shortcutsToolStripMenuItem.Text = "Shortcuts";
+            // 
+            // openUnpackedDataFolderToolStripMenuItem
+            // 
+            openUnpackedDataFolderToolStripMenuItem.Name = "openUnpackedDataFolderToolStripMenuItem";
+            openUnpackedDataFolderToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            openUnpackedDataFolderToolStripMenuItem.Text = "Open Unpacked Data Folder";
+            openUnpackedDataFolderToolStripMenuItem.Click += openUnpackedDataFolderToolStripMenuItem_Click;
+            // 
+            // openGameDataFolderToolStripMenuItem
+            // 
+            openGameDataFolderToolStripMenuItem.Name = "openGameDataFolderToolStripMenuItem";
+            openGameDataFolderToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            openGameDataFolderToolStripMenuItem.Text = "Open Game Data Folder";
+            openGameDataFolderToolStripMenuItem.Click += openGameDataFolderToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(219, 6);
+            // 
+            // openTimelineDataFolderToolStripMenuItem
+            // 
+            openTimelineDataFolderToolStripMenuItem.Name = "openTimelineDataFolderToolStripMenuItem";
+            openTimelineDataFolderToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            openTimelineDataFolderToolStripMenuItem.Text = "Open Timeline Data Folder";
+            openTimelineDataFolderToolStripMenuItem.Click += openTimelineDataFolderToolStripMenuItem_Click;
             // 
             // buttonCancel
             // 
@@ -664,6 +702,11 @@
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.CheckBox checkBoxNoLocationSelection;
         private System.Windows.Forms.CheckBox checkBoxSkipShowArmor;
+        private System.Windows.Forms.ToolStripMenuItem shortcutsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openUnpackedDataFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openTimelineDataFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openGameDataFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
 

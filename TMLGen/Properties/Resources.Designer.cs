@@ -340,6 +340,24 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The path {0} does not exist..
+        /// </summary>
+        internal static string OpenPathDoesNotExist {
+            get {
+                return ResourceManager.GetString("OpenPathDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not open the path {0}..
+        /// </summary>
+        internal static string OpenPathError {
+            get {
+                return ResourceManager.GetString("OpenPathError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Collecting components....
         /// </summary>
         internal static string ProgressComponents {
@@ -385,7 +403,7 @@ namespace TMLGen.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flag data does not exist. The reference file(s) might be incorrect without it. Unpack Shared.pak, SharedDev.pak, Gustav.pak, and GustavDev.pak to fix this. Alternatively, refresh the timeline(s) in the editor..
+        ///   Looks up a localized string similar to Flag data does not exist. The reference file(s) might be incorrect without it. Unpack Shared.pak and Gustav.pak to fix this. Alternatively, refresh the timeline(s) in the editor..
         /// </summary>
         internal static string ReferenceFlagPathDoesNotExist {
             get {

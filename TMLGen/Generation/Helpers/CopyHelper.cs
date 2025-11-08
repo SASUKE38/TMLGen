@@ -11,7 +11,7 @@ namespace TMLGen.Generation.Helpers
 {
     public static class CopyHelper
     {
-        private static readonly string copiedDataDirectoryName = "Timeline Data";
+        public static readonly string copiedDataDirectoryName = "Timeline Data";
 
         public static void CopyTimelineFiles(string sourcePath, string sourceName, string gameDataPath, string modName, bool doModCopy)
         {

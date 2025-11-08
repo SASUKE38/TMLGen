@@ -246,7 +246,7 @@ namespace TMLGen.Generation.Collectors
                 {
                     if (flagId == Path.GetFileNameWithoutExtension(file))
                     {
-                        string flagFile = PreparationHelper.SaveToLsxFile(file);
+                        string flagFile = FileHelper.SaveToLsxFile(file);
                         XDocument flagDoc = XDocument.Load(flagFile);
                         XElement flagEle = flagDoc.XPathSelectElement("save/region/node/attribute[@id='Name']");
                         File.Delete(flagFile);

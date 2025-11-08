@@ -59,11 +59,11 @@ namespace TMLGen.Generation
             }
             else
             {
-                gdtPath = PreparationHelper.SaveToLsxFile(gdtPath);
+                gdtPath = FileHelper.SaveToLsxFile(gdtPath);
                 gdtPath = PreparationHelper.GetGDTElementFromMerged(gdtPath, sourceNameExtensionless);
             }
-            dbPath = PreparationHelper.SaveToLsxFile(dbPath);
-            sourcePath = PreparationHelper.SaveToLsxFile(rawSourcePath);
+            dbPath = FileHelper.SaveToLsxFile(dbPath);
+            sourcePath = FileHelper.SaveToLsxFile(rawSourcePath);
 
             if (!CheckFilePreparation(dbPath, sourcePath, gdtPath, sourceName, dPath, false))
                 return 1;
@@ -155,8 +155,8 @@ namespace TMLGen.Generation
                             return;
                         }
 
-                        string sourceLsx = PreparationHelper.SaveToLsxFile(sourceFile);
-                        string dbPath = PreparationHelper.SaveToLsxFile(PreparationHelper.FindDialogsBinaryFile(dataPath, sourceName));
+                        string sourceLsx = FileHelper.SaveToLsxFile(sourceFile);
+                        string dbPath = FileHelper.SaveToLsxFile(PreparationHelper.FindDialogsBinaryFile(dataPath, sourceName));
                         string gdtPath = PreparationHelper.FindGeneratedDialogTimelinesFile(dataPath, sourceName);
                         string dPath = PreparationHelper.FindDialogsFile(dataPath, sourceName);
 

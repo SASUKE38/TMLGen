@@ -18,37 +18,6 @@ namespace TMLGen.Generation.Helpers
         public static List<XDocument> visualFiles = [];
         public static string[] visualPaths = [];
 
-        public static string SaveToLsxFile(string path)
-        {
-            if (Path.GetExtension(path) == ".lsf")
-            {
-                try
-                {
-                    string tempPath = Path.GetTempFileName();
-                    string lsxTempPath = Path.ChangeExtension(tempPath, ".lsx");
-                    File.Delete(tempPath);
-                    Resource resource = ResourceUtils.LoadResource(path, ResourceLoadParameters.FromGameVersion(Game.BaldursGate3));
-                    ResourceUtils.SaveResource(resource, lsxTempPath, ResourceConversionParameters.FromGameVersion(Game.BaldursGate3));
-                    return lsxTempPath;
-                }
-                catch (IOException)
-                {
-                    LoggingHelper.Write(Resources.TempFilesAccessError, 2);
-                    return null;
-                }
-            }
-            return null;
-        }
-
-        public static void SaveToLsxFile(string path, string output)
-        {
-            if (Path.GetExtension(path) == ".lsf")
-            {
-                Resource resource = ResourceUtils.LoadResource(path, ResourceLoadParameters.FromGameVersion(Game.BaldursGate3));
-                ResourceUtils.SaveResource(resource, output, ResourceConversionParameters.FromGameVersion(Game.BaldursGate3));
-            }
-        }
-
         public static string FindGeneratedDialogTimelinesFile(string dataDirectory, string sourceName)
         {
             if (dataDirectory != null)
@@ -70,7 +39,7 @@ namespace TMLGen.Generation.Helpers
                         if (File.Exists(filePath)) return filePath;
                         if (File.Exists(mergedPath))
                         {
-                            string mergedTempFile = SaveToLsxFile(mergedPath);
+                            string mergedTempFile = FileHelper.SaveToLsxFile(mergedPath);
                             string element = GetGDTElementFromMerged(mergedTempFile, Path.GetFileNameWithoutExtension(sourceName));
                             if (element != null)
                                 return element;
@@ -253,7 +222,7 @@ namespace TMLGen.Generation.Helpers
             {
                 if (Path.GetExtension(path) == ".lsf")
                 {
-                    string lsxFile = SaveToLsxFile(path);
+                    string lsxFile = FileHelper.SaveToLsxFile(path);
                     visualFiles.Add(XDocument.Load(lsxFile));
                     visualPaths = (string[])visualPaths.Append(lsxFile);
                 }
@@ -267,7 +236,7 @@ namespace TMLGen.Generation.Helpers
         private static void CreateCachedVisualFile(string dataDirectory, string cachePath, string packagePrefix, string package)
         {
             string filePath = Path.Join([dataDirectory, packagePrefix, "Public", package, "Content", "[PAK]_CharacterVisuals", "_merged.lsf"]);
-            SaveToLsxFile(filePath, Path.GetFullPath(cachePath));
+            FileHelper.SaveToLsxFile(filePath, Path.GetFullPath(cachePath));
         }
 
         public static string FindLocalizationFile(string dataDirectory, string language)
